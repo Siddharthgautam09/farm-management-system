@@ -746,7 +746,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_room_count: {
+        Args: { room_id: string }
+        Returns: unknown
+      }
+      decrement_room_count: {
+        Args: { room_id: string }
+        Returns: unknown
+      }
     }
     Enums: {
       animal_category: "beef" | "camel" | "sheep" | "goat"

@@ -7,9 +7,17 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { searchAnimals } from '@/actions/animals'
 
+type SearchResult = {
+  id: string
+  animal_id: string
+  category: string
+  current_stage?: { display_name?: string } | null
+  current_room?: { identifier?: string } | null
+}
+
 export function AnimalSearch() {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<any[]>([])
+  const [results, setResults] = useState<SearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -17,7 +25,7 @@ export function AnimalSearch() {
     if (!query) return
     
     setLoading(true)
-    const { data, error } = await searchAnimals(query)
+  const { data } = await searchAnimals(query)
     setLoading(false)
     
     if (data) {

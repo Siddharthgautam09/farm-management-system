@@ -14,6 +14,7 @@ const eslintConfig = [
   {
     ignores: [
       "node_modules/**",
+      "src/electron/**",
       ".next/**",
       "out/**",
       "build/**",
