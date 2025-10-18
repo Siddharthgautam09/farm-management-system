@@ -9,11 +9,20 @@ export default function LoginPage() {
       <div className="flex flex-1 items-center justify-center p-8">
         <Card className="w-full max-w-md p-8 shadow-2xl rounded-3xl border-0 bg-white/95 backdrop-blur-sm">
           <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center">
-              <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-2xl p-4 shadow-lg">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" fill="white"/>
-                  <path d="M9 12l2 2 4-4" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+			            <div className="flex flex-col items-center">
+              <div className="bg-green-700 rounded-lg p-3 mb-4">
+                <svg
+                  width="40"
+                  height="40"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="24" height="24" rx="8" fill="#166534" />
+                  <path
+                    d="M12 6C10.067 6 8.5 7.567 8.5 9.5C8.5 11.433 10.067 13 12 13C13.933 13 15.5 11.433 15.5 9.5C15.5 7.567 13.933 6 12 6ZM12 11.5C11.172 11.5 10.5 10.828 10.5 10C10.5 9.172 11.172 8.5 12 8.5C12.828 8.5 13.5 9.172 13.5 10C13.5 10.828 12.828 11.5 12 11.5Z"
+                    fill="white"
+                  />
                 </svg>
               </div>
             </div>
