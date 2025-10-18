@@ -1,16 +1,6 @@
 'use client'
 
-import { signOut } from '@/actions/auth'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { User, LogOut } from 'lucide-react'
+import { LogoutButton } from '@/components/auth/LogoutButton'
 import { AnimalSearch } from '@/components/animals/AnimalSearch'
 
 type HeaderProps = {
@@ -33,8 +23,7 @@ export function Header({ user }: HeaderProps) {
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-700 mr-2">{user.email}</span>
-          {/* Client-side logout button */}
-          {require('@/components/auth/LogoutButton').LogoutButton()}
+          <LogoutButton />
         </div>
       </div>
     </header>
