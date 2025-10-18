@@ -31,23 +31,11 @@ export function Header({ user }: HeaderProps) {
           <AnimalSearch />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>
-              {user.email}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-700 mr-2">{user.email}</span>
+          {/* Client-side logout button */}
+          {require('@/components/auth/LogoutButton').LogoutButton()}
+        </div>
       </div>
     </header>
   )
