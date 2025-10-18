@@ -81,7 +81,7 @@ export function WeightEntryForm({
         router.refresh()
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

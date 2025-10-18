@@ -20,7 +20,7 @@ export function RoomGrid({ rooms, stageName }: RoomGridProps) {
   if (rooms.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">No rooms available in this stage</p>
+        <p className="text-gray-500">No rooms available in the {stageName} stage</p>
       </div>
     )
   }

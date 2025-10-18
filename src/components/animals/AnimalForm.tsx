@@ -88,7 +88,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
         router.push(`/animals/${data.animal_id}`)
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

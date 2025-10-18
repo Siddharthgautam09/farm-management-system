@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Edit, Trash2, MoveRight } from 'lucide-react'
+import { ArrowLeft, MoveRight } from 'lucide-react'
 import Link from 'next/link'
 import { WeightHistory } from '@/components/weights/WeightHistory'
 import { WeightEntryDialog } from '@/components/weights/WeightEntryDialog'
@@ -14,8 +14,9 @@ import { format } from 'date-fns'
 export default async function AnimalDetailPage({
   params,
 }: {
-  params: { animalId: string }
+  params: Promise<{ animalId: string }>
 }) {
+  const { animalId } = await params
   const supabase = await createClient()
 
   // Check authentication
@@ -49,7 +50,7 @@ export default async function AnimalDetailPage({
         room:rooms(identifier)
       )
     `)
-    .eq('animal_id', params.animalId)
+    .eq('animal_id', animalId)
     .single()
 
   if (error || !animal) {
@@ -211,7 +212,7 @@ export default async function AnimalDetailPage({
                         new Date(b.movement_date).getTime() -
                         new Date(a.movement_date).getTime()
                     )
-                    .map((movement: any) => (
+                    .map((movement) => (
                       <div
                         key={movement.id}
                         className="flex items-center justify-between p-4 border rounded-lg"
@@ -229,8 +230,8 @@ export default async function AnimalDetailPage({
                                 ? `${movement.from_stage.display_name} (Room ${movement.from_room?.identifier})`
                                 : 'Entry'}
                               {' → '}
-                              {movement.to_stage.display_name} (Room{' '}
-                              {movement.to_room.identifier})
+                              {movement.to_stage?.display_name} (Room{' '}
+                              {movement.to_room?.identifier})
                             </p>
                           </div>
                         </div>

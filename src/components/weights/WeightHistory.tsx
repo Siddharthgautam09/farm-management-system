@@ -14,7 +14,7 @@ type WeightRecord = {
   id: string
   weight: number
   recorded_date: string
-  weight_sequence: number
+  weight_sequence: number | null
   notes: string | null
   stage: {
     display_name: string
@@ -111,7 +111,11 @@ export function WeightHistory({ weights }: WeightHistoryProps) {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">#{record.weight_sequence}</Badge>
+                    {record.weight_sequence ? (
+                      <Badge variant="secondary">#{record.weight_sequence}</Badge>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
                   </TableCell>
                   <TableCell className="max-w-xs truncate">
                     {record.notes || '-'}

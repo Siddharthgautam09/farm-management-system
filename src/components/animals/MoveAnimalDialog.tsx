@@ -87,7 +87,7 @@ export function MoveAnimalDialog({
         setOpen(false)
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

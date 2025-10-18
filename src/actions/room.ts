@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { Database } from '@/lib/types/database.types'
 
 export async function createRoom(stageId: string, identifier: string, capacity: number) {
   const supabase = await createClient()
@@ -15,7 +16,7 @@ export async function createRoom(stageId: string, identifier: string, capacity: 
     .from('rooms')
     .insert({
       stage_id: stageId,
-      identifier: identifier as any,
+      identifier: identifier as Database['public']['Enums']['room_identifier'],
       capacity,
     })
     .select()
@@ -29,7 +30,7 @@ export async function createRoom(stageId: string, identifier: string, capacity: 
   return { success: true, room: data }
 }
 
-export async function getRoomsByStage(stageName: string) {
+export async function getRoomsByStage(stageName: Database['public']['Enums']['stage_type']) {
   const supabase = await createClient()
   
   const { data: stage } = await supabase
