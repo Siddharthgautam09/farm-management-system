@@ -1,0 +1,87 @@
+import { format } from 'date-fns'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
+
+type FeedingLog = {
+  id: string
+  feed_type: string
+  company_name: string | null
+  item_name: string | null
+  daily_use: number
+  date_of_use: string
+  dailyCost?: number
+  averageConsume?: number
+  calfConsumeCost?: number
+}
+
+type FeedingLogsListProps = {
+  logs: FeedingLog[]
+}
+
+const feedTypeLabels: Record<string, string> = {
+  mcr: 'MCR',
+  concentrated_feed: 'Concentrated Feed',
+  alfa_alfa: 'Alfa Alfa',
+  hay: 'Hay',
+  premix: 'Premix',
+}
+
+export function FeedingLogsList({ logs }: FeedingLogsListProps) {
+  if (logs.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        No feeding records yet
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Feed Type</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead>Daily Use</TableHead>
+            <TableHead>Daily Cost</TableHead>
+            <TableHead>Avg per Animal</TableHead>
+            <TableHead>Cost per Animal</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {logs.map((log) => (
+            <TableRow key={log.id}>
+              <TableCell>
+                {format(new Date(log.date_of_use), 'MMM dd, yyyy')}
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline">
+                  {feedTypeLabels[log.feed_type] || log.feed_type}
+                </Badge>
+              </TableCell>
+              <TableCell>{log.company_name || '-'}</TableCell>
+              <TableCell className="font-medium">{log.daily_use.toFixed(2)}</TableCell>
+              <TableCell>
+                ${log.dailyCost?.toFixed(2) || '0.00'}
+              </TableCell>
+              <TableCell>
+                {log.averageConsume?.toFixed(2) || '0.00'}
+              </TableCell>
+              <TableCell>
+                ${log.calfConsumeCost?.toFixed(2) || '0.00'}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
