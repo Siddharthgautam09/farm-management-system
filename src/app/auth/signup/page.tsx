@@ -2,10 +2,10 @@ import { SignupForm } from "@/app/auth/SignupForm";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Image from 'next/image';
 import Link from "next/link";
 
 export default function SignupPage() {
@@ -55,11 +55,7 @@ export default function SignupPage() {
       </div>
       {/* Right: Enhanced Branding Section */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden">
-        <img
-          src="/image_login.jpg"
-          alt="Farm"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+        <Image src="/image_login.jpg" alt="Farm" fill className="absolute inset-0 object-cover" />
         <div className="absolute inset-0 bg-gradient-to-br from-green-900/60 via-green-800/40 to-green-700/60"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full w-full p-12 text-center">
           <div className="mb-8"></div>

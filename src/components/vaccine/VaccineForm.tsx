@@ -109,7 +109,7 @@ export function VaccineForm({ animalId, roomId, stageId, onSuccess }: VaccineFor
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Vaccine Information */}
         <FormField
           control={form.control}

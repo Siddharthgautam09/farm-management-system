@@ -116,7 +116,6 @@ export async function getUpcomingVaccinations() {
   const supabase = await createClient()
   
   const today = new Date()
-  const tomorrow = addDays(today, 1)
   const nextWeek = addDays(today, 7)
 
   const { data, error } = await supabase

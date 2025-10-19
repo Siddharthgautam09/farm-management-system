@@ -101,9 +101,9 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
-          control={form.control as any}
+          control={form.control}
           name="animal_id"
           render={({ field }) => (
             <FormItem>
@@ -117,7 +117,7 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
         />
 
         <FormField
-          control={form.control as any}
+          control={form.control}
           name="slaughter_date"
           render={({ field }) => (
             <FormItem>
@@ -132,7 +132,7 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
-            control={form.control as any}
+            control={form.control}
             name="slaughter_weight"
             render={({ field }) => (
               <FormItem>
@@ -149,7 +149,7 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
           />
 
           <FormField
-            control={form.control as any}
+            control={form.control}
             name="carcass_weight"
             render={({ field }) => (
               <FormItem>
@@ -184,7 +184,7 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
         )}
 
         <FormField
-            control={form.control as any}
+            control={form.control}
           name="selling_price"
           render={({ field }) => (
             <FormItem>

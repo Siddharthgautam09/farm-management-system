@@ -130,7 +130,7 @@ export function FeedingForm({ roomId, stageId, onSuccess }: FeedingFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Feed Type */}
         <FormField<FeedingFormValues>
           control={form.control}

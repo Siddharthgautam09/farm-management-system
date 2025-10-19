@@ -104,7 +104,7 @@ export function MedicineForm({ animalId, roomId, stageId, onSuccess }: MedicineF
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Drug Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
