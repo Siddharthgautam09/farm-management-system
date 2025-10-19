@@ -1,5 +1,4 @@
 import React from 'react';
-'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -23,11 +22,11 @@ import { addDays, format } from 'date-fns'
 
 const vaccineFormSchema = z.object({
   vaccine_name: z.string().min(1, 'Vaccine name is required'),
-  vaccine_volume: z.coerce.number().positive().optional(),
-  vaccine_dose: z.coerce.number().positive('Dose is required'),
-  vaccine_price: z.coerce.number().positive().optional(),
+  vaccine_volume: z.number().positive().optional(),
+  vaccine_dose: z.number().positive('Dose is required'),
+  vaccine_price: z.number().positive().optional(),
   first_dose_date: z.string().optional(),
-  second_dose_days_gap: z.coerce.number().int().positive().optional(),
+  second_dose_days_gap: z.number().int().positive().optional(),
   batch_from_animal_id: z.string().optional(),
   batch_to_animal_id: z.string().optional(),
   purchase_date: z.string().optional(),
@@ -49,10 +48,10 @@ export function VaccineForm({ animalId, roomId, stageId, onSuccess }: VaccineFor
   const [calculatedSecondDose, setCalculatedSecondDose] = useState<string>('')
 
   const form = useForm<VaccineFormValues>({
-    resolver: zodResolver(vaccineFormSchema) as any,
+  resolver: zodResolver(vaccineFormSchema),
     defaultValues: {
       vaccine_name: '',
-      vaccine_dose: undefined,
+      vaccine_dose: 0,
       first_dose_date: new Date().toISOString().split('T')[0],
     },
   })
@@ -96,7 +95,7 @@ export function VaccineForm({ animalId, roomId, stageId, onSuccess }: VaccineFor
         router.refresh()
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

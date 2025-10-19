@@ -1,5 +1,4 @@
 import React from 'react';
-'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -23,9 +22,9 @@ import { useToast } from '@/hooks/use-toast'
 const slaughterFormSchema = z.object({
   animal_id: z.string().min(1, 'Animal ID is required'),
   slaughter_date: z.string().min(1, 'Date is required'),
-  slaughter_weight: z.coerce.number().positive('Weight must be positive'),
-  carcass_weight: z.coerce.number().positive('Carcass weight must be positive'),
-  selling_price: z.coerce.number().positive().optional(),
+  slaughter_weight: z.number().min(0, 'Weight must be at least 0'),
+  carcass_weight: z.number().min(0, 'Carcass weight must be at least 0'),
+  selling_price: z.number().min(0).optional(),
 }).refine(data => data.carcass_weight <= data.slaughter_weight, {
   message: 'Carcass weight cannot exceed slaughter weight',
   path: ['carcass_weight'],
@@ -45,13 +44,13 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
   const [carcassPercentage, setCarcassPercentage] = useState<number | null>(null)
 
   const form = useForm<SlaughterFormValues>({
-  resolver: zodResolver(slaughterFormSchema) as any,
+    resolver: zodResolver(slaughterFormSchema),
     defaultValues: {
       animal_id: animalId || '',
       slaughter_date: new Date().toISOString().split('T')[0],
-      slaughter_weight: undefined,
-      carcass_weight: undefined,
-      selling_price: undefined,
+      slaughter_weight: 0,
+      carcass_weight: 0,
+      selling_price: 0,
     },
   })
 
@@ -88,7 +87,7 @@ export function SlaughterReportForm({ animalId, onSuccess }: SlaughterReportForm
         router.refresh()
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
