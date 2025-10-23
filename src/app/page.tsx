@@ -9,5 +9,5 @@ export default async function Home() {
     redirect('/login')
   }
 
-  redirect('/receiving')
+  redirect('/dashboard')  // Changed from '/receiving' to '/dashboard'
 }

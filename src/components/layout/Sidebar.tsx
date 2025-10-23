@@ -11,17 +11,20 @@ import {
   CheckCircle,
   FileText,
   Package,
+  Users,
 } from 'lucide-react'
 
 const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: Home },  // Add this
   { name: 'Receiving', href: '/receiving', icon: Inbox },
   { name: 'Weaning', href: '/weaning', icon: Waves },
   { name: 'Fattening', href: '/fattening', icon: TrendingUp },
   { name: 'Finishing', href: '/finishing', icon: CheckCircle },
-  { name: 'Animals', href: '/animals', icon: Home },
+  { name: 'Animals', href: '/animals', icon: Users },  // Changed icon from Home to Users
   { name: 'Reports', href: '/reports', icon: FileText },
   { name: 'Inventory', href: '/inventory', icon: Package },
 ]
+
 
 export function Sidebar() {
   const pathname = usePathname()

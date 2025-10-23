@@ -98,7 +98,7 @@ export default async function InventoryPage() {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-green-600">
-              ${statistics.totalValue.toFixed(2)}
+              ${typeof statistics.totalValue === 'number' ? statistics.totalValue.toFixed(2) : '0.00'}
             </p>
           </CardContent>
         </Card>
