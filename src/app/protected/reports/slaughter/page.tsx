@@ -1,7 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getSlaughterReports, getSlaughterStatistics } from '@/actions/slaughter'
+import { getSlaughterReportsForExport } from '@/actions/exports'
 import { format } from 'date-fns'
+
 import {
   Table,
   TableBody,
@@ -13,6 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ExportButton } from '@/components/common/ExportButton'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
@@ -26,8 +29,10 @@ export default async function SlaughterReportsPage() {
 
   const reportsResult = await getSlaughterReports()
   const statistics = await getSlaughterStatistics()
+  const exportResult = await getSlaughterReportsForExport()
 
   const reports = reportsResult.data || []
+  const exportData = exportResult.data || []
 
   return (
     <div className="space-y-6">
@@ -38,12 +43,19 @@ export default async function SlaughterReportsPage() {
             Track animals sold and carcass clearance ratios
           </p>
         </div>
-        <Button asChild>
-          <Link href="/reports/slaughter/new">
-            <Plus className="h-4 w-4 mr-2" />
-            New Report
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <ExportButton 
+            data={exportData}
+            filename="slaughter_reports"
+            sheetName="Slaughter Reports"
+          />
+          <Button asChild>
+            <Link href="/reports/slaughter/new">
+              <Plus className="h-4 w-4 mr-2" />
+              New Report
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Statistics Cards */}

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getDeathReports, getDeathStatistics } from '@/actions/death'
+import { getDeathReportsForExport } from '@/actions/exports'
 import { format } from 'date-fns'
 import {
   Table,
@@ -13,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ExportButton } from '@/components/common/ExportButton'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
@@ -26,12 +28,14 @@ export default async function DeathReportsPage() {
 
   const reportsResult = await getDeathReports()
   const statistics = await getDeathStatistics();
+  const exportResult = await getDeathReportsForExport()
 
   if ('error' in statistics) {
     return <div>Error loading death statistics: {statistics.error}</div>;
   }
 
   const reports = reportsResult.data || []
+  const exportData = exportResult.data || []
 
   return (
     <div className="space-y-6">
@@ -42,12 +46,19 @@ export default async function DeathReportsPage() {
             Track animal mortality and causes
           </p>
         </div>
-        <Button asChild>
-          <Link href="/reports/death/new">
-            <Plus className="h-4 w-4 mr-2" />
-            New Report
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <ExportButton 
+            data={exportData}
+            filename="death_reports"
+            sheetName="Death Reports"
+          />
+          <Button asChild>
+            <Link href="/reports/death/new">
+              <Plus className="h-4 w-4 mr-2" />
+              New Report
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Statistics Cards */}

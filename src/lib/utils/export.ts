@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 
-export async function exportToExcel(data: any[], filename: string, sheetName: string) {
+export async function exportToExcel(data: Record<string, unknown>[], filename: string, sheetName: string) {
   const workbook = new ExcelJS.Workbook()
   const worksheet = workbook.addWorksheet(sheetName)
 
@@ -43,7 +43,7 @@ export async function exportToExcel(data: any[], filename: string, sheetName: st
   saveAs(blob, `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`)
 }
 
-export function exportToCSV(data: any[], filename: string) {
+export function exportToCSV(data: Record<string, unknown>[], filename: string) {
   if (data.length === 0) {
     throw new Error('No data to export')
   }
