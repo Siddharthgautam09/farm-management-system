@@ -1,68 +1,136 @@
 'use client'
 
-import { useState } from 'react'
-import { Search } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { searchAnimals } from '@/actions/animals'
+import { Input } from '@/components/ui/input'
+import { Search, Loader2 } from 'lucide-react'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Badge } from '@/components/ui/badge'
 
-type SearchResult = {
+type Animal = {
   id: string
   animal_id: string
   category: string
-  current_stage?: { display_name?: string } | null
-  current_room?: { identifier?: string } | null
+  current_stage: {
+    display_name: string
+  } | null
+  current_room: {
+    identifier: string
+  } | null
 }
 
 export function AnimalSearch() {
-  const [query, setQuery] = useState('')
-  const [results, setResults] = useState<SearchResult[]>([])
-  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [results, setResults] = useState<Animal[]>([])
+  const [isSearching, setIsSearching] = useState(false)
   const router = useRouter()
 
-  const handleSearch = async () => {
-    if (!query) return
-    
-    setLoading(true)
-  const { data } = await searchAnimals(query)
-    setLoading(false)
-    
-    if (data) {
-      setResults(data)
+  useEffect(() => {
+    const searchAnimals = async () => {
+      if (searchQuery.length < 2) {
+        setResults([])
+        return
+      }
+
+      setIsSearching(true)
+      try {
+        const response = await fetch(`/api/animals/search?q=${encodeURIComponent(searchQuery)}`)
+        const data = await response.json()
+        setResults(data.animals || [])
+      } catch (error) {
+        console.error('Search failed:', error)
+        setResults([])
+      } finally {
+        setIsSearching(false)
+      }
     }
+
+    const debounce = setTimeout(() => {
+      searchAnimals()
+    }, 300)
+
+    return () => clearTimeout(debounce)
+  }, [searchQuery])
+
+  const handleSelect = (animalId: string) => {
+    setOpen(false)
+    setSearchQuery('')
+    router.push(`/animals/${animalId}`)
   }
 
   return (
-    <div className="relative">
-      <div className="flex gap-2">
-        <Input
-          placeholder="Search by Animal ID..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-        />
-        <Button onClick={handleSearch} disabled={loading}>
-          <Search className="h-4 w-4" />
-        </Button>
-      </div>
-      
-      {results.length > 0 && (
-        <div className="absolute top-full mt-2 w-full bg-white border rounded-lg shadow-lg z-50">
-          {results.map((animal) => (
-            <div
-              key={animal.id}
-              className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
-              onClick={() => router.push(`/dashboard/animals/${animal.animal_id}`)}
-            >
-              <div className="font-medium">{animal.animal_id}</div>
-              <div className="text-sm text-gray-600">
-                {animal.category} • {animal.current_stage?.display_name} • Room {animal.current_room?.identifier}
-              </div>
-            </div>
-          ))}
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Input
+            placeholder="Search animals..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setOpen(true)
+            }}
+            onFocus={() => setOpen(true)}
+            className="pl-10"
+          />
+          {isSearching && (
+            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-gray-400" />
+          )}
         </div>
-      )}
-    </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-0" align="start">
+        <Command>
+          <CommandList>
+            {results.length === 0 && searchQuery.length >= 2 && !isSearching && (
+              <CommandEmpty>No animals found</CommandEmpty>
+            )}
+            {results.length > 0 && (
+              <CommandGroup heading="Animals">
+                {results.map((animal) => (
+                  <CommandItem
+                    key={animal.id}
+                    onSelect={() => handleSelect(animal.animal_id)}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div>
+                        <p className="font-medium">{animal.animal_id}</p>
+                        <p className="text-sm text-gray-500 capitalize">
+                          {animal.category}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {animal.current_stage && (
+                          <Badge variant="outline" className="text-xs">
+                            {animal.current_stage.display_name}
+                          </Badge>
+                        )}
+                        {animal.current_room && (
+                          <Badge variant="secondary" className="text-xs">
+                            Room {animal.current_room.identifier}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   )
 }

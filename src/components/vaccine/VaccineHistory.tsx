@@ -14,7 +14,7 @@ import { Bell, CheckCircle2, Clock } from 'lucide-react'
 type VaccineLog = {
   id: string
   vaccine_name: string
-  vaccine_dose: number
+  vaccine_dose: number | null  // Changed to nullable
   first_dose_date: string | null
   second_dose_date: string | null
   second_dose_days_gap: number | null
@@ -60,7 +60,7 @@ export function VaccineHistory({ logs, totalCost }: VaccineHistoryProps) {
             </strong>
             <div className="mt-2 space-y-1">
               {upcomingDoses.map(log => (
-                <div key={log.id} className="text-sm">
+                <div key={log.id} className="text-sm text-yellow-800">
                   • {log.vaccine_name} - {format(new Date(log.second_dose_date!), 'MMM dd, yyyy')}
                 </div>
               ))}
@@ -121,7 +121,7 @@ export function VaccineHistory({ logs, totalCost }: VaccineHistoryProps) {
                       <Badge variant="outline">Single Dose</Badge>
                     )}
                   </TableCell>
-                  <TableCell>{log.vaccine_dose.toFixed(2)} ML</TableCell>
+                  <TableCell>{log.vaccine_dose ? `${log.vaccine_dose.toFixed(2)} ML` : '-'}</TableCell>
                   <TableCell className="text-green-600 font-medium">
                     ${log.totalCost?.toFixed(2) || '0.00'}
                   </TableCell>

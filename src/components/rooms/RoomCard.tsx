@@ -2,28 +2,32 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { Eye, Plus } from 'lucide-react'
+import Link from 'next/link'
 
 type Room = {
   id: string
   identifier: string
   capacity: number
   current_count: number
-  stage: {
+  stage?: {
     name: string
     display_name: string
   }
 }
 
-export function RoomCard({ room }: { room: Room }) {
+type RoomCardProps = {
+  room: Room
+}
+
+export function RoomCard({ room }: RoomCardProps) {
   const router = useRouter()
   const occupancyRate = (room.current_count / room.capacity) * 100
   
   return (
-    <Card 
-      className="cursor-pointer hover:shadow-lg transition-shadow"
-      onClick={() => router.push(`/dashboard/${room.stage.name}/${room.id}`)}
-    >
+    <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Room {room.identifier}</span>
@@ -32,11 +36,11 @@ export function RoomCard({ room }: { room: Room }) {
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className={`h-2 rounded-full ${
+              className={`h-2 rounded-full transition-all ${
                 occupancyRate > 90 ? 'bg-red-500' : 
                 occupancyRate > 70 ? 'bg-yellow-500' : 
                 'bg-green-500'
@@ -47,6 +51,29 @@ export function RoomCard({ room }: { room: Room }) {
           <p className="text-sm text-gray-600">
             {occupancyRate.toFixed(0)}% Occupied
           </p>
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => router.push(`/rooms/${room.id}`)}
+          >
+            <Eye className="h-3 w-3 mr-1" />
+            View
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1"
+            asChild
+          >
+            <Link href="/animals/new">
+              <Plus className="h-3 w-3 mr-1" />
+              Add
+            </Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

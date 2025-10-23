@@ -16,7 +16,7 @@ type MedicineLog = {
   drug_company: string | null
   drug_name: string
   drug_type: string
-  drug_dose: number
+  drug_dose: number | null  // Changed to nullable
   treatment_days: number | null
   treatment_start_date: string | null
   illness: string | null
@@ -96,7 +96,7 @@ export function MedicineHistory({ logs, totalCost }: MedicineHistoryProps) {
                     {drugTypeLabels[log.drug_type] || log.drug_type}
                   </Badge>
                 </TableCell>
-                <TableCell>{log.drug_dose}</TableCell>
+                <TableCell>{log.drug_dose || '-'}</TableCell>
                 <TableCell>{log.treatment_days || '-'}</TableCell>
                 <TableCell className="font-medium">
                   {log.drugConsuming?.toFixed(2) || '0.00'}

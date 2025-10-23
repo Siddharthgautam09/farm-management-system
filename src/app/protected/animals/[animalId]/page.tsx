@@ -4,19 +4,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, MoveRight } from 'lucide-react'
+import { ArrowLeft, Edit, MoveRight } from 'lucide-react'
 import Link from 'next/link'
 import { WeightHistory } from '@/components/weights/WeightHistory'
 import { WeightEntryDialog } from '@/components/weights/WeightEntryDialog'
 import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
+import { FeedingLogsList } from '@/components/feeding/FeedingLogsList'
+import { MedicineHistory } from '@/components/medicine/MedicineHistory'
+import { VaccineHistory } from '@/components/vaccine/VaccineHistory'
+import { calculateFeedingCosts } from '@/actions/feeding'
+import { calculateMedicineCosts } from '@/actions/medicine'
+import { calculateVaccineCosts } from '@/actions/vaccine'
 import { format } from 'date-fns'
 
 export default async function AnimalDetailPage({
   params,
 }: {
-  params: Promise<{ animalId: string }>
+  params: { animalId: string }
 }) {
-  const { animalId } = await params
   const supabase = await createClient()
 
   // Check authentication
@@ -50,7 +55,7 @@ export default async function AnimalDetailPage({
         room:rooms(identifier)
       )
     `)
-    .eq('animal_id', animalId)
+    .eq('animal_id', params.animalId)
     .single()
 
   if (error || !animal) {
@@ -65,6 +70,20 @@ export default async function AnimalDetailPage({
   const sortedWeights = animal.weights?.sort(
     (a, b) => new Date(a.recorded_date).getTime() - new Date(b.recorded_date).getTime()
   ) || []
+
+  // Get feeding costs
+  const feedingCosts = animal.current_room_id 
+    ? await calculateFeedingCosts(animal.current_room_id)
+    : { data: [] }
+
+  // Get medicine costs
+  const medicineCosts = await calculateMedicineCosts(animal.id)
+
+  // Get vaccine costs
+  const vaccineCosts = await calculateVaccineCosts(animal.id)
+
+  const medicineData = medicineCosts.data || []
+  const vaccineData = vaccineCosts.data || []
 
   return (
     <div className="container mx-auto py-6">
@@ -85,17 +104,19 @@ export default async function AnimalDetailPage({
           </div>
         </div>
         <div className="flex gap-2">
-          <MoveAnimalDialog
-            animalId={animal.id}
-            currentStageId={animal.current_stage_id!}
-            stages={stages || []}
-            rooms={rooms || []}
-          >
-            <Button variant="outline">
-              <MoveRight className="h-4 w-4 mr-2" />
-              Move Animal
-            </Button>
-          </MoveAnimalDialog>
+          {animal.is_alive && !animal.is_sold && (
+            <MoveAnimalDialog
+              animalId={animal.id}
+              currentStageId={animal.current_stage_id!}
+              stages={stages || []}
+              rooms={rooms || []}
+            >
+              <Button variant="outline">
+                <MoveRight className="h-4 w-4 mr-2" />
+                Move Animal
+              </Button>
+            </MoveAnimalDialog>
+          )}
         </div>
       </div>
 
@@ -148,14 +169,14 @@ export default async function AnimalDetailPage({
             <div>
               <p className="text-sm text-gray-600 mb-1">Status</p>
               <Badge variant={animal.is_alive ? 'default' : 'destructive'}>
-                {animal.is_alive ? 'Alive' : 'Deceased'}
+                {animal.is_alive ? (animal.is_sold ? 'Sold' : 'Alive') : 'Deceased'}
               </Badge>
             </div>
             <div>
-              <p className="text-sm text-gray-600 mb-1">Sold</p>
-              <Badge variant={animal.is_sold ? 'secondary' : 'outline'}>
-                {animal.is_sold ? 'Yes' : 'No'}
-              </Badge>
+              <p className="text-sm text-gray-600 mb-1">Days on Farm</p>
+              <p className="font-medium">
+                {Math.floor((new Date().getTime() - new Date(animal.entry_date).getTime()) / (1000 * 60 * 60 * 24))} days
+              </p>
             </div>
           </div>
         </CardContent>
@@ -163,11 +184,12 @@ export default async function AnimalDetailPage({
 
       {/* Tabs for different sections */}
       <Tabs defaultValue="weights" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="weights">Weight History</TabsTrigger>
-          <TabsTrigger value="movements">Movements</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="weights">Weights</TabsTrigger>
           <TabsTrigger value="feeding">Feeding</TabsTrigger>
-          <TabsTrigger value="health">Health Records</TabsTrigger>
+          <TabsTrigger value="medicine">Medicine</TabsTrigger>
+          <TabsTrigger value="vaccine">Vaccine</TabsTrigger>
+          <TabsTrigger value="movements">Movements</TabsTrigger>
         </TabsList>
 
         {/* Weight History Tab */}
@@ -180,16 +202,75 @@ export default async function AnimalDetailPage({
                   Track weight changes throughout the lifecycle
                 </CardDescription>
               </div>
-              <WeightEntryDialog
-                animalId={animal.id}
-                currentStageId={animal.current_stage_id!}
-                currentRoomId={animal.current_room_id!}
-              >
-                <Button>Add Weight</Button>
-              </WeightEntryDialog>
+              {animal.is_alive && !animal.is_sold && (
+                <WeightEntryDialog
+                  animalId={animal.id}
+                  currentStageId={animal.current_stage_id!}
+                  currentRoomId={animal.current_room_id!}
+                >
+                  <Button>Add Weight</Button>
+                </WeightEntryDialog>
+              )}
             </CardHeader>
             <CardContent>
               <WeightHistory weights={sortedWeights} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Feeding Tab */}
+        <TabsContent value="feeding">
+          <Card>
+            <CardHeader>
+              <CardTitle>Feeding Records</CardTitle>
+              <CardDescription>
+                Feeding logs for Room {animal.current_room?.identifier}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {feedingCosts.data && feedingCosts.data.length > 0 ? (
+                <FeedingLogsList logs={feedingCosts.data} />
+              ) : (
+                <p className="text-center text-gray-500 py-8">
+                  No feeding records for this room yet
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Medicine Tab */}
+        <TabsContent value="medicine">
+          <Card>
+            <CardHeader>
+              <CardTitle>Medicine Records</CardTitle>
+              <CardDescription>
+                Treatment history and costs
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MedicineHistory 
+                logs={medicineData} 
+                totalCost={medicineCosts.totalCost}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Vaccine Tab */}
+        <TabsContent value="vaccine">
+          <Card>
+            <CardHeader>
+              <CardTitle>Vaccine Records</CardTitle>
+              <CardDescription>
+                Vaccination history with dose schedules
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <VaccineHistory 
+                logs={vaccineData}
+                totalCost={vaccineCosts.totalCost}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -200,7 +281,7 @@ export default async function AnimalDetailPage({
             <CardHeader>
               <CardTitle>Movement History</CardTitle>
               <CardDescription>
-                Track of all room and stage changes
+                Track all room and stage changes
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -212,10 +293,10 @@ export default async function AnimalDetailPage({
                         new Date(b.movement_date).getTime() -
                         new Date(a.movement_date).getTime()
                     )
-                    .map((movement) => (
+                    .map((movement: any) => (
                       <div
                         key={movement.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
+                        className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
                       >
                         <div className="flex items-center gap-4">
                           <div className="text-sm">
@@ -225,13 +306,13 @@ export default async function AnimalDetailPage({
                                 'MMM dd, yyyy HH:mm'
                               )}
                             </p>
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 mt-1">
                               {movement.from_stage
                                 ? `${movement.from_stage.display_name} (Room ${movement.from_room?.identifier})`
                                 : 'Entry'}
                               {' → '}
-                              {movement.to_stage?.display_name} (Room{' '}
-                              {movement.to_room?.identifier})
+                              {movement.to_stage.display_name} (Room{' '}
+                              {movement.to_room.identifier})
                             </p>
                           </div>
                         </div>
@@ -243,38 +324,6 @@ export default async function AnimalDetailPage({
                   No movement history yet
                 </p>
               )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Feeding Tab - Placeholder */}
-        <TabsContent value="feeding">
-          <Card>
-            <CardHeader>
-              <CardTitle>Feeding Records</CardTitle>
-              <CardDescription>Coming in Week 5-6</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-gray-500 py-8">
-                Feeding tracking will be implemented in the next phase
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Health Tab - Placeholder */}
-        <TabsContent value="health">
-          <Card>
-            <CardHeader>
-              <CardTitle>Health Records</CardTitle>
-              <CardDescription>
-                Medicine and vaccine history - Coming in Week 5-6
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-gray-500 py-8">
-                Medicine and vaccine tracking will be implemented in the next phase
-              </p>
             </CardContent>
           </Card>
         </TabsContent>

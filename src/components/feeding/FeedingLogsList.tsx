@@ -14,7 +14,7 @@ type FeedingLog = {
   feed_type: string
   company_name: string | null
   item_name: string | null
-  daily_use: number
+  daily_use: number | null  // Changed from number to number | null
   date_of_use: string
   dailyCost?: number
   averageConsume?: number
@@ -68,7 +68,9 @@ export function FeedingLogsList({ logs }: FeedingLogsListProps) {
                 </Badge>
               </TableCell>
               <TableCell>{log.company_name || '-'}</TableCell>
-              <TableCell className="font-medium">{log.daily_use.toFixed(2)}</TableCell>
+              <TableCell className="font-medium">
+                {log.daily_use?.toFixed(2) || '0.00'}
+              </TableCell>
               <TableCell>
                 ${log.dailyCost?.toFixed(2) || '0.00'}
               </TableCell>

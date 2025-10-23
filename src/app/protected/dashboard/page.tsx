@@ -23,22 +23,22 @@ export async function getDashboardStats() {
   const deceasedAnimals = animals?.filter(a => !a.is_alive && !a.is_sold).length || 0
 
   // Animals by stage
-  const byStage = animals?.reduce((acc: any, animal) => {
+  const byStage = animals?.reduce((acc: Record<string, number>, animal) => {
     if (animal.is_alive && !animal.is_sold && animal.current_stage) {
-      const stageName = animal.current_stage.display_name
-      acc[stageName] = (acc[stageName] || 0) + 1
+      const stageName = animal.current_stage.display_name;
+      acc[stageName] = (acc[stageName] || 0) + 1;
     }
-    return acc
-  }, {})
+    return acc;
+  }, {} as Record<string, number>);
 
   // Animals by category
-  const byCategory = animals?.reduce((acc: any, animal) => {
+  const byCategory = animals?.reduce((acc: Record<string, number>, animal) => {
     if (animal.is_alive && !animal.is_sold) {
-      const category = animal.category
-      acc[category] = (acc[category] || 0) + 1
+      const category = animal.category;
+      acc[category] = (acc[category] || 0) + 1;
     }
-    return acc
-  }, {})
+    return acc;
+  }, {} as Record<string, number>);
 
   // Get recent weight records
   const { data: recentWeights } = await supabase
