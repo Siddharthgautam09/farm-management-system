@@ -1,151 +1,173 @@
-'use server'
-
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { getDashboardStats, getFinancialSummary } from '@/actions/dashboard'
 
-export async function getDashboardStats() {
+export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // Get animal counts by stage
-  const { data: animals } = await supabase
-    .from('animals')
-    .select(`
-      id,
-      is_alive,
-      is_sold,
-      category,
-      current_stage:stages!current_stage_id(name, display_name)
-    `)
-
-  // Count animals
-  const totalAnimals = animals?.length || 0
-  const aliveAnimals = animals?.filter(a => a.is_alive && !a.is_sold).length || 0
-  const soldAnimals = animals?.filter(a => a.is_sold).length || 0
-  const deceasedAnimals = animals?.filter(a => !a.is_alive && !a.is_sold).length || 0
-
-  // Animals by stage
-  const byStage = animals?.reduce((acc: Record<string, number>, animal) => {
-    if (animal.is_alive && !animal.is_sold && animal.current_stage) {
-      const stageName = animal.current_stage.display_name;
-      acc[stageName] = (acc[stageName] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Animals by category
-  const byCategory = animals?.reduce((acc: Record<string, number>, animal) => {
-    if (animal.is_alive && !animal.is_sold) {
-      const category = animal.category;
-      acc[category] = (acc[category] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Get recent weight records
-  const { data: recentWeights } = await supabase
-    .from('weight_records')
-    .select(`
-      id,
-      weight,
-      recorded_date,
-      animal:animals(animal_id)
-    `)
-    .order('recorded_date', { ascending: false })
-    .limit(5)
-
-  // Get low stock inventory
-  const { data: inventory } = await supabase
-    .from('inventory')
-    .select('*')
-    .order('quantity', { ascending: true })
-    .limit(5)
-
-  const lowStockItems = inventory?.filter(item => {
-    const threshold = item.alert_threshold || 10
-    return item.quantity <= threshold
-  })
-
-  // Get recent animal movements
-  const { data: recentMovements } = await supabase
-    .from('animal_movements')
-    .select(`
-      id,
-      movement_date,
-      animal:animals(animal_id),
-      from_stage:stages!from_stage_id(display_name),
-      to_stage:stages!to_stage_id(display_name),
-      from_room:rooms!from_room_id(identifier),
-      to_room:rooms!to_room_id(identifier)
-    `)
-    .order('movement_date', { ascending: false })
-    .limit(5)
-
-  // Get upcoming vaccine reminders
-  const today = new Date().toISOString().split('T')[0]
-  const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-
-  const { data: upcomingVaccines } = await supabase
-    .from('vaccine_logs')
-    .select(`
-      id,
-      vaccine_name,
-      second_dose_date,
-      animal:animals(animal_id)
-    `)
-    .gte('second_dose_date', today)
-    .lte('second_dose_date', nextWeek)
-    .order('second_dose_date', { ascending: true })
-
-  return {
-    totalAnimals,
-    aliveAnimals,
-    soldAnimals,
-    deceasedAnimals,
-    byStage,
-    byCategory,
-    recentWeights,
-    lowStockItems,
-    recentMovements,
-    upcomingVaccines,
+  // Check authentication
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    redirect('/login')
   }
-}
 
-export async function getFinancialSummary() {
-  const supabase = await createClient()
+  // Get dashboard data
+  const stats = await getDashboardStats()
+  const financials = await getFinancialSummary()
 
-  // Get total purchase costs
-  const { data: animals } = await supabase
-    .from('animals')
-    .select('purchase_price, is_alive')
+  return (
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Overview of your farm management system
+        </p>
+      </div>
 
-  const totalPurchaseCost = animals?.reduce((sum, a) => sum + (a.purchase_price || 0), 0) || 0
-  const activePurchaseCost = animals?.filter(a => a.is_alive).reduce((sum, a) => sum + (a.purchase_price || 0), 0) || 0
+      {/* Animal Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Animals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">{stats.totalAnimals}</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Alive Animals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-green-600">{stats.aliveAnimals}</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Sold Animals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-blue-600">{stats.soldAnimals}</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Deceased Animals
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-red-600">{stats.deceasedAnimals}</p>
+          </CardContent>
+        </Card>
+      </div>
 
-  // Get slaughter revenue
-  const { data: slaughterReports } = await supabase
-    .from('slaughter_reports')
-    .select('selling_price')
+      {/* Financial Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Investment
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">${financials.totalInvestment.toFixed(2)}</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Revenue
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-green-600">${financials.totalRevenue.toFixed(2)}</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Profit/Loss
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className={`text-2xl font-bold ${financials.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              ${financials.profitLoss.toFixed(2)}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-  const totalRevenue = slaughterReports?.reduce((sum, r) => sum + (r.selling_price || 0), 0) || 0
+      {/* Animals by Stage */}
+      {stats.byStage && Object.keys(stats.byStage).length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Animals by Stage</CardTitle>
+            <CardDescription>Distribution of live animals across stages</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(stats.byStage).map(([stage, count]) => (
+                <Badge key={stage} variant="outline" className="text-sm">
+                  {stage}: {count}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-  // Get death losses
-  const { data: deathReports } = await supabase
-    .from('death_reports')
-    .select('animal:animals(purchase_price)')
+      {/* Animals by Category */}
+      {stats.byCategory && Object.keys(stats.byCategory).length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Animals by Category</CardTitle>
+            <CardDescription>Distribution of live animals by category</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(stats.byCategory).map(([category, count]) => (
+                <Badge key={category} variant="secondary" className="text-sm">
+                  {category}: {count}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-  const totalDeathLoss = deathReports?.reduce(
-    (sum: number, r: { animal: { purchase_price: number | null | undefined } | null }) =>
-      sum + (r.animal?.purchase_price ?? 0),
-    0
-  ) || 0
-
-  // Calculate profit/loss
-  const profitLoss = totalRevenue - (totalPurchaseCost - activePurchaseCost)
-
-  return {
-    totalInvestment: totalPurchaseCost,
-    activeInvestment: activePurchaseCost,
-    totalRevenue,
-    totalDeathLoss,
-    profitLoss,
-  }
+      {/* Low Stock Items */}
+      {stats.lowStockItems && stats.lowStockItems.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Low Stock Items</CardTitle>
+            <CardDescription>Items that need restocking</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {stats.lowStockItems.map((item: { id: string; product_name: string; quantity: number; unit: string | null }) => (
+                <div key={item.id} className="flex justify-between items-center p-2 border rounded">
+                  <span className="font-medium">{item.product_name}</span>
+                  <Badge variant="destructive">{item.quantity} {item.unit || 'units'}</Badge>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
 }
