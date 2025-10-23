@@ -20,8 +20,9 @@ import { format } from 'date-fns'
 export default async function AnimalDetailPage({
   params,
 }: {
-  params: { animalId: string }
+  params: Promise<{ animalId: string }>
 }) {
+  const { animalId } = await params
   const supabase = await createClient()
 
   // Check authentication
@@ -55,7 +56,7 @@ export default async function AnimalDetailPage({
         room:rooms(identifier)
       )
     `)
-    .eq('animal_id', params.animalId)
+    .eq('animal_id', animalId)
     .single()
 
   if (error || !animal) {
