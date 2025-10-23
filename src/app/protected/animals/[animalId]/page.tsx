@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Edit, MoveRight } from 'lucide-react'
+import { ArrowLeft, MoveRight } from 'lucide-react'
 import Link from 'next/link'
 import { WeightHistory } from '@/components/weights/WeightHistory'
 import { WeightEntryDialog } from '@/components/weights/WeightEntryDialog'
@@ -293,7 +293,14 @@ export default async function AnimalDetailPage({
                         new Date(b.movement_date).getTime() -
                         new Date(a.movement_date).getTime()
                     )
-                    .map((movement: any) => (
+                    .map((movement: {
+                      id: string;
+                      movement_date: string;
+                      from_stage?: { display_name?: string } | null;
+                      to_stage?: { display_name?: string } | null;
+                      from_room?: { identifier?: string } | null;
+                      to_room?: { identifier?: string } | null;
+                    }) => (
                       <div
                         key={movement.id}
                         className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
@@ -311,8 +318,8 @@ export default async function AnimalDetailPage({
                                 ? `${movement.from_stage.display_name} (Room ${movement.from_room?.identifier})`
                                 : 'Entry'}
                               {' → '}
-                              {movement.to_stage.display_name} (Room{' '}
-                              {movement.to_room.identifier})
+                              {movement.to_stage?.display_name ?? 'Unknown'} (Room{' '}
+                              {movement.to_room?.identifier ?? 'Unknown'})
                             </p>
                           </div>
                         </div>
