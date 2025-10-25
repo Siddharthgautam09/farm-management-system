@@ -36,15 +36,15 @@ export function SignupForm() {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form action={handleSubmit} className="space-y-4 sm:space-y-6">
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="text-sm">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="fullName">Full Name</Label>
+        <Label htmlFor="fullName" className="text-gray-700 font-medium text-sm sm:text-base">Full Name</Label>
         <Input
           id="fullName"
           name="fullName"
@@ -52,11 +52,12 @@ export function SignupForm() {
           placeholder="John Doe"
           required
           disabled={isLoading}
+          className="h-11 sm:h-12 lg:h-14 px-3 sm:px-4 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-gray-400 text-sm sm:text-base"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="text-gray-700 font-medium text-sm sm:text-base">Email Address</Label>
         <Input
           id="email"
           name="email"
@@ -64,11 +65,12 @@ export function SignupForm() {
           placeholder="you@example.com"
           required
           disabled={isLoading}
+          className="h-11 sm:h-12 lg:h-14 px-3 sm:px-4 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-gray-400 text-sm sm:text-base"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password" className="text-gray-700 font-medium text-sm sm:text-base">Password</Label>
         <Input
           id="password"
           name="password"
@@ -77,11 +79,12 @@ export function SignupForm() {
           required
           minLength={6}
           disabled={isLoading}
+          className="h-11 sm:h-12 lg:h-14 px-3 sm:px-4 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-gray-400 text-sm sm:text-base"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Label htmlFor="confirmPassword" className="text-gray-700 font-medium text-sm sm:text-base">Confirm Password</Label>
         <Input
           id="confirmPassword"
           name="confirmPassword"
@@ -90,10 +93,15 @@ export function SignupForm() {
           required
           minLength={6}
           disabled={isLoading}
+          className="h-11 sm:h-12 lg:h-14 px-3 sm:px-4 border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent placeholder:text-gray-400 text-sm sm:text-base"
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button 
+        type="submit" 
+        className="w-full h-11 sm:h-12 lg:h-14 bg-green-400 hover:bg-green-500 text-white font-medium rounded-lg transition-colors duration-200 text-sm sm:text-base" 
+        disabled={isLoading}
+      >
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
