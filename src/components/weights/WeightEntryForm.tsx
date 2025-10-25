@@ -21,7 +21,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 
 const weightFormSchema = z.object({
-  weight: z.string().min(1, 'Weight is required'),
+  weight: z.number().positive('Weight must be positive'),
   recorded_date: z.string().min(1, 'Date is required'),
   notes: z.string().optional(),
 })
@@ -48,10 +48,10 @@ export function WeightEntryForm({
   const form = useForm<WeightFormValues>({
     resolver: zodResolver(weightFormSchema),
     defaultValues: {
-      weight: '',
-      recorded_date: new Date().toISOString().split('T')[0],
-      notes: '',
-    },
+  weight: 0, // or undefined
+  recorded_date: new Date().toISOString().split('T')[0],
+  notes: '',
+}
   })
 
   async function onSubmit(values: WeightFormValues) {
@@ -61,7 +61,7 @@ export function WeightEntryForm({
         animal_id: animalId,
         stage_id: currentStageId,
         room_id: currentRoomId,
-        weight: parseFloat(values.weight),
+        weight: values.weight,
         recorded_date: values.recorded_date,
         notes: values.notes,
       })
