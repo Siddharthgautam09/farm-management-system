@@ -225,6 +225,7 @@ export async function registerAnimal(data: AnimalRegistrationData) {
     
     return { success: true, animal }
   } catch (error) {
+    console.error('Failed to register animal:', error)
     return { error: 'Failed to register animal' }
   }
 }

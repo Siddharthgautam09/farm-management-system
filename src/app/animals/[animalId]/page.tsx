@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 
-export default function AnimalIdRedirect({ params }: { params: { animalId: string } }) {
-  redirect(`/protected/animals/${params.animalId}`)
+export default async function AnimalIdRedirect({ params }: { params: Promise<{ animalId: string }> }) {
+  const { animalId } = await params
+  redirect(`/protected/animals/${animalId}`)
   return null
 }
