@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Header } from '@/components/layout/Header'
 import { 
   Users, 
   TrendingUp, 
@@ -33,6 +34,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
+    <Header user={user} />
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
