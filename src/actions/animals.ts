@@ -155,3 +155,76 @@ export async function searchAnimals(query: string) {
 
   return { data }
 }
+
+// Add the missing type definition
+export type AnimalRegistrationData = AnimalFormData & {
+  current_stage_id: string
+  current_room_id: string
+}
+
+export async function registerAnimal(data: AnimalRegistrationData) {
+  const supabase = await createClient()
+  
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
+
+  try {
+    // Create animal
+    const { data: animal, error: animalError } = await supabase
+      .from('animals')
+      .insert({
+        animal_id: data.animal_id,
+        category: data.category,
+        incoming_company: data.incoming_company,
+        old_calf_number: data.old_calf_number,
+        entry_date: data.entry_date,
+        entry_weight: data.entry_weight,
+        age_months: data.age_months,
+        purchase_price: data.purchase_price,
+        current_stage_id: data.current_stage_id,
+        current_room_id: data.current_room_id,
+        is_alive: true,
+        is_sold: false,
+      })
+      .select()
+      .single()
+
+    if (animalError) {
+      return { error: animalError.message }
+    }
+
+    // Update room count
+    const { error: roomError } = await supabase.rpc('increment_room_count', {
+      room_id: data.current_room_id
+    })
+
+    // If RPC fails, try manual count update
+    if (roomError) {
+      // Get current count and increment manually
+      const { data: room } = await supabase
+        .from('rooms')
+        .select('current_count')
+        .eq('id', data.current_room_id)
+        .single()
+      
+      if (room) {
+        await supabase
+          .from('rooms')
+          .update({ 
+            current_count: (room.current_count || 0) + 1
+          })
+          .eq('id', data.current_room_id)
+      }
+    }
+
+    revalidatePath('/animals')
+    revalidatePath('/receiving')
+    revalidatePath('/dashboard')
+    
+    return { success: true, animal }
+  } catch (error) {
+    return { error: 'Failed to register animal' }
+  }
+}

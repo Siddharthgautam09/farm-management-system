@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 
-export default async function ReceivingPage() {
+export default async function FatteningPage() {
   const supabase = await createClient()
 
-  // Get receiving stage
+  // Get fattening stage
   const { data: stage } = await supabase
     .from('stages')
     .select('id, display_name')
-    .eq('name', 'receiving')
+    .eq('name', 'fattening')
     .single()
 
   if (!stage) {
