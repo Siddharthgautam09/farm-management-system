@@ -9,20 +9,17 @@ export type SlaughterReportData = {
   slaughter_weight: number
   carcass_weight: number
   selling_price: number
-  notes?: string
 }
 
 export async function createSlaughterReport(data: SlaughterReportData) {
   const supabase = await createClient()
   
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return { error: 'Unauthorized' }
-  }
-
   try {
-    // Calculate carcass percentage
-    const carcass_percentage = (data.carcass_weight / data.slaughter_weight) * 100
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return { error: 'Authentication failed' }
+    }
 
     // Create slaughter report
     const { data: report, error: reportError } = await supabase
@@ -32,9 +29,7 @@ export async function createSlaughterReport(data: SlaughterReportData) {
         slaughter_date: data.slaughter_date,
         slaughter_weight: data.slaughter_weight,
         carcass_weight: data.carcass_weight,
-        carcass_percentage: carcass_percentage,
         selling_price: data.selling_price,
-        notes: data.notes,
       })
       .select()
       .single()
@@ -56,12 +51,12 @@ export async function createSlaughterReport(data: SlaughterReportData) {
       return { error: 'Report created but failed to mark animal as sold' }
     }
 
-    revalidatePath('/reports/slaughter')
-    revalidatePath('/dashboard')
-    revalidatePath(`/animals/${data.animal_id}`)
+    revalidatePath('/protected/reports/slaughter')
+    revalidatePath('/protected/dashboard')
+    revalidatePath(`/protected/animals/${data.animal_id}`)
     
     return { success: true, report }
-  } catch (error) {
+  } catch {
     return { error: 'Failed to create slaughter report' }
   }
 }

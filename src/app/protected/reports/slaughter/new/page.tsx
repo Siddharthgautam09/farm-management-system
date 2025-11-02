@@ -37,7 +37,7 @@ export default async function NewSlaughterReportPage() {
               All animals are either already sold or deceased.
             </p>
             <Button asChild>
-              <Link href="/animals/new">Register New Animal</Link>
+              <Link href="/protected/animals/new">Register New Animal</Link>
             </Button>
           </CardContent>
         </Card>
@@ -49,7 +49,7 @@ export default async function NewSlaughterReportPage() {
     <div className="container mx-auto py-6 max-w-2xl">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/reports/slaughter">
+          <Link href="/protected/reports/slaughter">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
