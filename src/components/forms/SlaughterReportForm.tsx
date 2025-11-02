@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useToast } from '@/hooks/use-toast'
 
 type Animal = {
   id: string
@@ -27,6 +28,7 @@ type SlaughterReportFormProps = {
 
 export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     animal_id: '',
@@ -54,8 +56,36 @@ export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     
+    // Basic validation
     if (!formData.animal_id || !formData.slaughter_weight || !formData.carcass_weight || !formData.selling_price) {
-      alert('Please fill all required fields')
+      toast({
+        variant: 'destructive',
+        title: 'Missing Information',
+        description: 'Please fill all required fields',
+      })
+      return
+    }
+
+    // Validate numbers
+    const slaughterWeight = Number(formData.slaughter_weight)
+    const carcassWeight = Number(formData.carcass_weight)
+    const sellingPrice = Number(formData.selling_price)
+
+    if (slaughterWeight <= 0 || carcassWeight <= 0 || sellingPrice <= 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Values',
+        description: 'All numeric values must be greater than 0',
+      })
+      return
+    }
+
+    if (carcassWeight > slaughterWeight) {
+      toast({
+        variant: 'destructive',
+        title: 'Invalid Weight',
+        description: 'Carcass weight cannot be greater than slaughter weight',
+      })
       return
     }
 
@@ -64,21 +94,33 @@ export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
       const result = await createSlaughterReport({
         animal_id: formData.animal_id,
         slaughter_date: formData.slaughter_date,
-        slaughter_weight: Number(formData.slaughter_weight),
-        carcass_weight: Number(formData.carcass_weight),
-        selling_price: Number(formData.selling_price),
+        slaughter_weight: slaughterWeight,
+        carcass_weight: carcassWeight,
+        selling_price: sellingPrice,
       })
 
       if (result.error) {
-        alert('Error: ' + result.error)
+        toast({
+          variant: 'destructive',
+          title: 'Error Creating Report',
+          description: result.error,
+        })
       } else {
-        alert(`Success! Carcass: ${carcassPercentage}%, Clearance: ${clearanceRatio}`)
-        router.push('/protected/reports/slaughter')
-        router.refresh()
+        toast({
+          title: 'Success!',
+          description: `Slaughter report created successfully. Carcass: ${carcassPercentage}%, Clearance: ${clearanceRatio}`,
+        })
+        
+        // Use replace to force a fresh page load
+        window.location.href = '/protected/reports/slaughter'
       }
     } catch (error) {
       console.error('Failed to create slaughter report:', error)
-      alert('Failed to create slaughter report')
+      toast({
+        variant: 'destructive',
+        title: 'Unexpected Error',
+        description: 'Failed to create slaughter report. Please try again.',
+      })
     } finally {
       setIsSubmitting(false)
     }

@@ -17,15 +17,14 @@ type ExportData = Record<string, string | number | null | undefined>
 type ExportButtonProps = {
   data: ExportData[]
   filename: string
-  sheetName: string
   disabled?: boolean
 }
 
-export function ExportButton({ data, filename, sheetName, disabled }: ExportButtonProps) {
+export function ExportButton({ data, filename, disabled }: ExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false)
   const { toast } = useToast()
 
-  async function handleExport(format: 'excel' | 'csv') {
+  const handleExport = async (format: 'excel' | 'csv') => {
     if (data.length === 0) {
       toast({
         variant: 'destructive',
@@ -38,21 +37,25 @@ export function ExportButton({ data, filename, sheetName, disabled }: ExportButt
     setIsExporting(true)
     try {
       if (format === 'excel') {
-        await exportToExcel(data, filename, sheetName)
+        await exportToExcel(data, filename, 'Reports')
+        toast({
+          title: 'Success',
+          description: 'Excel file downloaded successfully',
+        })
       } else {
         exportToCSV(data, filename)
+        toast({
+          title: 'Success',
+          description: 'CSV file downloaded successfully',
+        })
       }
-      
-      toast({
-        title: 'Success',
-        description: `Data exported to ${format.toUpperCase()} successfully`,
-      })
-  } catch {
+    } catch (error) {
       toast({
         variant: 'destructive',
         title: 'Export Failed',
         description: 'Failed to export data. Please try again.',
       })
+      console.error('Export error:', error)
     } finally {
       setIsExporting(false)
     }

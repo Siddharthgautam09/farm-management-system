@@ -12,51 +12,67 @@ export type SlaughterReportData = {
 }
 
 export async function createSlaughterReport(data: SlaughterReportData) {
-  const supabase = await createClient()
+  console.log('Creating slaughter report with data:', data)
   
   try {
-    // Get current user
+    const supabase = await createClient()
+
+    // Get the current user
     const { data: { user }, error: userError } = await supabase.auth.getUser()
     if (userError || !user) {
-      return { error: 'Authentication failed' }
+      return { error: 'Authentication required' }
     }
 
-    // Create slaughter report
-    const { data: report, error: reportError } = await supabase
+    // Calculate carcass percentage
+    const carcass_percentage = (data.carcass_weight / data.slaughter_weight) * 100
+
+    console.log('Attempting to insert slaughter report:', {
+      animal_id: data.animal_id,
+      slaughter_date: data.slaughter_date,
+      slaughter_weight: data.slaughter_weight,
+      carcass_weight: data.carcass_weight,
+      carcass_percentage,
+      selling_price: data.selling_price,
+      created_by: user.id
+    })
+
+    // Insert the slaughter report
+    const { data: report, error } = await supabase
       .from('slaughter_reports')
       .insert({
         animal_id: data.animal_id,
         slaughter_date: data.slaughter_date,
         slaughter_weight: data.slaughter_weight,
         carcass_weight: data.carcass_weight,
+        carcass_percentage,
         selling_price: data.selling_price,
+        created_by: user.id
       })
       .select()
       .single()
 
-    if (reportError) {
-      return { error: reportError.message }
+    if (error) {
+      console.error('Database error:', error)
+      return { error: 'Failed to create slaughter report: ' + error.message }
     }
 
-    // Mark animal as sold
-    const { error: animalError } = await supabase
-      .from('animals')
-      .update({
-        is_sold: true,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', data.animal_id)
+    console.log('Slaughter report created successfully:', report)
 
-    if (animalError) {
-      return { error: 'Report created but failed to mark animal as sold' }
+    // Revalidate all related paths aggressively
+    try {
+      revalidatePath('/protected/reports/slaughter', 'page')
+      revalidatePath('/protected/reports', 'page')
+      revalidatePath('/protected', 'layout')
+      revalidatePath('/', 'layout')
+    } catch (revalidateError) {
+      console.error('Revalidation error:', revalidateError)
     }
-
-    revalidatePath('/protected/reports/slaughter')
-    revalidatePath('/protected/dashboard')
-    revalidatePath(`/protected/animals/${data.animal_id}`)
+    
+    console.log('Revalidation completed for paths')
     
     return { success: true, report }
-  } catch {
+  } catch (error) {
+    console.error('Unexpected error:', error)
     return { error: 'Failed to create slaughter report' }
   }
 }
