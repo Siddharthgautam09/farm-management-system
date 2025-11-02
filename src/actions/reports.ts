@@ -9,6 +9,7 @@ export type SlaughterReportData = {
   slaughter_weight: number
   carcass_weight: number
   selling_price: number
+  notes?: string
 }
 
 export async function createSlaughterReport(data: SlaughterReportData) {
@@ -33,6 +34,7 @@ export async function createSlaughterReport(data: SlaughterReportData) {
         carcass_weight: data.carcass_weight,
         carcass_percentage: carcass_percentage,
         selling_price: data.selling_price,
+        notes: data.notes,
       })
       .select()
       .single()
@@ -60,7 +62,6 @@ export async function createSlaughterReport(data: SlaughterReportData) {
     
     return { success: true, report }
   } catch (error) {
-    console.error('Failed to create slaughter report:', error)
     return { error: 'Failed to create slaughter report' }
   }
 }
