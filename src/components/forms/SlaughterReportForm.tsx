@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createSlaughterReport } from '@/actions/reports'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,7 +26,6 @@ type SlaughterReportFormProps = {
 }
 
 export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
-  const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
@@ -90,6 +88,15 @@ export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
     }
 
     setIsSubmitting(true)
+    console.log('=== FORM SUBMISSION ===')
+    console.log('Form data being submitted:', {
+      animal_id: formData.animal_id,
+      slaughter_date: formData.slaughter_date,
+      slaughter_weight: slaughterWeight,
+      carcass_weight: carcassWeight,
+      selling_price: sellingPrice,
+    })
+
     try {
       const result = await createSlaughterReport({
         animal_id: formData.animal_id,
@@ -99,23 +106,29 @@ export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
         selling_price: sellingPrice,
       })
 
+      console.log('Action result:', result)
+
       if (result.error) {
+        console.error('❌ Form submission error:', result.error)
         toast({
           variant: 'destructive',
           title: 'Error Creating Report',
           description: result.error,
         })
       } else {
+        console.log('✅ Form submission successful')
         toast({
           title: 'Success!',
-          description: `Slaughter report created successfully. Carcass: ${carcassPercentage}%, Clearance: ${clearanceRatio}`,
+          description: `Slaughter report created successfully! Carcass: ${carcassPercentage}%`,
         })
         
-        // Use replace to force a fresh page load
-        window.location.href = '/protected/reports/slaughter'
+        // Force a complete page refresh to ensure data is visible
+        setTimeout(() => {
+          window.location.href = '/protected/reports/slaughter'
+        }, 1000)
       }
     } catch (error) {
-      console.error('Failed to create slaughter report:', error)
+      console.error('❌ Form submission exception:', error)
       toast({
         variant: 'destructive',
         title: 'Unexpected Error',

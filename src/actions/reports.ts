@@ -1,78 +1,64 @@
-'use server'
-
-import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
-
-export type SlaughterReportData = {
+export type DeathReportData = {
   animal_id: string
-  slaughter_date: string
-  slaughter_weight: number
-  carcass_weight: number
-  selling_price: number
+  death_date: string
+  cause: string
+  notes?: string
 }
 
-export async function createSlaughterReport(data: SlaughterReportData) {
-  console.log('Creating slaughter report with data:', data)
+export async function createDeathReport(data: DeathReportData) {
+  const supabase = await createClient()
   
-  try {
-    const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
 
-    // Get the current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
-      return { error: 'Authentication required' }
+  try {
+    // Get animal info
+    const { data: animal, error: animalError } = await supabase
+      .from('animals')
+      .select('id, animal_id, purchase_price')
+      .eq('id', data.animal_id)
+      .single()
+
+    if (animalError || !animal) {
+      return { error: 'Animal not found' }
     }
 
-    // Calculate carcass percentage
-    const carcass_percentage = (data.carcass_weight / data.slaughter_weight) * 100
-
-    console.log('Attempting to insert slaughter report:', {
-      animal_id: data.animal_id,
-      slaughter_date: data.slaughter_date,
-      slaughter_weight: data.slaughter_weight,
-      carcass_weight: data.carcass_weight,
-      carcass_percentage,
-      selling_price: data.selling_price,
-      created_by: user.id
-    })
-
-    // Insert the slaughter report
-    const { data: report, error } = await supabase
-      .from('slaughter_reports')
+    // Create death report
+    const { data: report, error: reportError } = await supabase
+      .from('death_reports')
       .insert({
         animal_id: data.animal_id,
-        slaughter_date: data.slaughter_date,
-        slaughter_weight: data.slaughter_weight,
-        carcass_weight: data.carcass_weight,
-        carcass_percentage,
-        selling_price: data.selling_price,
-        created_by: user.id
+        death_date: data.death_date,
+        cause: data.cause,
+        notes: data.notes || null,
       })
       .select()
       .single()
 
-    if (error) {
-      console.error('Database error:', error)
-      return { error: 'Failed to create slaughter report: ' + error.message }
+    if (reportError) {
+      return { error: reportError.message }
     }
 
-    console.log('Slaughter report created successfully:', report)
+    // Mark animal as deceased
+    const { error: updateError } = await supabase
+      .from('animals')
+      .update({
+        is_alive: false,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', data.animal_id)
 
-    // Revalidate all related paths aggressively
-    try {
-      revalidatePath('/protected/reports/slaughter', 'page')
-      revalidatePath('/protected/reports', 'page')
-      revalidatePath('/protected', 'layout')
-      revalidatePath('/', 'layout')
-    } catch (revalidateError) {
-      console.error('Revalidation error:', revalidateError)
+    if (updateError) {
+      console.error('Failed to mark animal as deceased:', updateError)
     }
-    
-    console.log('Revalidation completed for paths')
+
+    revalidatePath('/reports/death')
+    revalidatePath('/dashboard')
     
     return { success: true, report }
   } catch (error) {
-    console.error('Unexpected error:', error)
-    return { error: 'Failed to create slaughter report' }
+    return { error: 'Failed to create death report: ' + String(error) }
   }
 }

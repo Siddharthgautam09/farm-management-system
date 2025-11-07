@@ -7,20 +7,30 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
 export default async function NewSlaughterReportPage() {
+  console.log('=== NEW SLAUGHTER REPORT PAGE ===')
+  
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    redirect('/login')
+    redirect('/auth/login')
   }
 
-  // Get alive, unsold animals
-  const { data: animals } = await supabase
+  console.log('✅ User authenticated for new report:', user.id)
+
+  // Get ALL animals (remove restrictions to test)
+  const { data: animals, error: animalsError } = await supabase
     .from('animals')
     .select('id, animal_id, category, entry_weight')
-    .eq('is_alive', true)
-    .eq('is_sold', false)
     .order('animal_id')
+
+  console.log('📋 Animals available for slaughter:')
+  console.log('- Count:', animals?.length || 0)
+  console.log('- Error:', animalsError?.message || 'none')
+  
+  if (animals && animals.length > 0) {
+    console.log('- Sample animals:', animals.slice(0, 3))
+  }
 
   if (!animals || animals.length === 0) {
     return (

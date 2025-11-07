@@ -5,240 +5,186 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { format } from 'date-fns'
-import { ExportButton } from '@/components/reports/ExportButton'
-import SlaughterTransactionsList from '@/components/reports/SlaughterTransactionsList'
+import type { Database } from '@/lib/types/database.types'
+import { ExportButton } from '@/components/reports/SlaughterExportButton'
 
-// Force dynamic rendering - no caching
+type SlaughterReport = Database['public']['Tables']['slaughter_reports']['Row']
+
+// Force dynamic rendering - absolutely no caching
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 export default async function SlaughterReportsPage() {
+  console.log('=== SLAUGHTER REPORTS PAGE RENDER ===')
+  console.log('Timestamp:', new Date().toISOString())
+  
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    redirect('/login')
+    console.log('❌ User not authenticated, redirecting to login')
+    redirect('/auth/login')
   }
 
-  // Fetch all slaughter reports with fresh data
+  console.log('✅ User authenticated:', user.id)
+
+  // Fetch slaughter reports with animal details
+  console.log('🔍 Fetching slaughter reports from database...')
+  
   const { data: reports, error: reportsError } = await supabase
     .from('slaughter_reports')
     .select(`
-      id,
-      animal_id,
-      slaughter_date,
-      slaughter_weight,
-      carcass_weight,
-      carcass_percentage,
-      selling_price,
-      created_at,
-      created_by,
-      animal:animals(animal_id, category)
+      *,
+      animals (
+        animal_id
+      )
     `)
-    .order('slaughter_date', { ascending: false })
-
-  // Also try a simple query without joins to see if that works
-  const { data: simpleReports, error: simpleError } = await supabase
-    .from('slaughter_reports')
-    .select('*')
     .order('created_at', { ascending: false })
 
-  console.log('Simple reports query (no joins):', { simpleReports, simpleError, count: simpleReports?.length })
+  console.log('📊 Query Results:')
+  console.log('- Reports count:', reports?.length || 0)
+  console.log('- Query error:', reportsError?.message || 'none')
 
-  // Debug logging
-  console.log('=== SLAUGHTER REPORTS PAGE LOAD ===')
-  console.log('Page load timestamp:', new Date().toISOString())
-  console.log('Reports query result:', { reports, reportsError, count: reports?.length })
-  console.log('User authenticated:', !!user)
-  console.log('Supabase URL configured:', !!process.env.NEXT_PUBLIC_SUPABASE_URL)
-  
-  // Log individual reports for debugging
-  if (reports && reports.length > 0) {
-    console.log('Sample report data:', reports[0])
-    reports.forEach((report, index) => {
-      console.log(`Report ${index + 1}:`, {
-        id: report.id,
-        animal_id: report.animal_id,
-        animal_data: report.animal,
-        slaughter_date: report.slaughter_date,
-        selling_price: report.selling_price
-      })
-    })
-  }
-
-  // Show error if query failed
   if (reportsError) {
     console.error('Database query error:', reportsError)
-    console.error('Error details:', {
-      message: reportsError.message,
-      details: reportsError.details,
-      hint: reportsError.hint,
-      code: reportsError.code
-    })
   }
 
-  // Use only real reports from database
   const displayReports = reports || []
 
-  // Test query to check if we can access any tables
-  const { data: animalsTest, error: animalsError } = await supabase
-    .from('animals')
-    .select('id, animal_id')
-    .limit(5)
-
-  console.log('Animals test query:', { animalsTest, animalsError })
-
   // Prepare export data
-  const exportData = displayReports?.map(report => ({
-    'Animal ID': report.animal?.animal_id || '',
+  const exportData = displayReports.map((report) => ({
+    'Animal ID': report.animals?.animal_id || report.animal_id,
     'Date': format(new Date(report.slaughter_date), 'yyyy-MM-dd'),
     'Slaughter Weight (kg)': report.slaughter_weight,
     'Carcass Weight (kg)': report.carcass_weight,
     'Carcass %': report.carcass_percentage?.toFixed(2) || '',
     'Selling Price': report.selling_price,
-  })) || []
+  }))
 
   return (
-    <div className="space-y-6">
-      {/* Debug Info (only in development) */}
-      {process.env.NODE_ENV === 'development' && (
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardHeader>
-            <CardTitle className="text-yellow-800">
-              Debug Information - {new Date().toLocaleTimeString()}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <strong>Reports from DB:</strong> {reports?.length || 0}
-              </div>
-              <div>
-                <strong>Simple Reports:</strong> {simpleReports?.length || 0}
-              </div>
-              <div>
-                <strong>Has Error:</strong> {reportsError ? 'Yes' : 'No'}
-              </div>
-              <div>
-                <strong>Simple Error:</strong> {simpleError ? 'Yes' : 'No'}
-              </div>
-              <div>
-                <strong>User ID:</strong> {user?.id?.substring(0, 8)}...
-              </div>
-              <div>
-                <strong>Display Reports:</strong> {displayReports?.length || 0}
-              </div>
-              <div>
-                <strong>Animals Test:</strong> {animalsTest?.length || 0}
-              </div>
-              <div>
-                <strong>Animals Error:</strong> {animalsError ? 'Yes' : 'No'}
-              </div>
-            </div>
-            {reportsError && (
-              <div className="mt-2 p-2 bg-red-100 rounded text-red-800">
-                <strong>Reports Error:</strong> {reportsError.message}
-              </div>
-            )}
-            {simpleError && (
-              <div className="mt-2 p-2 bg-red-100 rounded text-red-800">
-                <strong>Simple Error:</strong> {simpleError.message}
-              </div>
-            )}
-            {animalsError && (
-              <div className="mt-2 p-2 bg-red-100 rounded text-red-800">
-                <strong>Animals Error:</strong> {animalsError.message}
-              </div>
-            )}
-            {simpleReports && simpleReports.length > 0 && (
-              <div className="mt-2 p-2 bg-blue-100 rounded text-blue-800">
-                <strong>Latest Report:</strong> ID: {simpleReports[0].id}, Animal: {simpleReports[0].animal_id}, Date: {simpleReports[0].slaughter_date}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
-
+    <div className="container mx-auto py-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Slaughter House Reports</h1>
-          <p className="text-gray-600 mt-2">
-            Track animal sales and carcass information
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">Slaughter Reports</h1>
+          <p className="text-muted-foreground">Track and manage slaughter transactions</p>
         </div>
         <div className="flex gap-2">
-          <ExportButton 
-            data={exportData} 
-            filename="slaughter-reports" 
-            disabled={!displayReports || displayReports.length === 0}
-          />
+          <ExportButton data={exportData} />
           <Button asChild>
             <Link href="/protected/reports/slaughter/new">
-              <Plus className="h-4 w-4 mr-2" />
-              New Report
+              <Plus className="mr-2 h-4 w-4" />
+              New Slaughter Report
             </Link>
           </Button>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      {displayReports && displayReports.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Total Reports
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{displayReports.length}</p>
-            </CardContent>
-          </Card>
+      {/* Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{displayReports.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.selling_price || 0), 0).toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Carcass %</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {displayReports.length > 0 ? (displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.carcass_percentage || 0), 0) / displayReports.length).toFixed(1) : '0.0'}%
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Weight</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {displayReports.length > 0 ? (displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.slaughter_weight || 0), 0) / displayReports.length).toFixed(1) : '0.0'} kg
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Total Revenue
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-green-600">
-                ${displayReports.reduce((sum, r) => sum + (r.selling_price || 0), 0).toFixed(2)}
-              </p>
-            </CardContent>
-          </Card>
+      {/* Export and Actions */}
+      {/* Export button moved to header */}
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Avg Carcass %
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {displayReports.length > 0 ? (displayReports.reduce((sum, r) => sum + (r.carcass_percentage || 0), 0) / displayReports.length).toFixed(1) : '0.0'}%
-              </p>
-            </CardContent>
-          </Card>
+      {/* Reports List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Reports</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {displayReports.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No slaughter reports found</p>
+              <Button asChild>
+                <Link href="/protected/reports/slaughter/new">
+                  Create your first report
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">S.No</th>
+                    <th className="text-left p-2">Date</th>
+                    <th className="text-left p-2">Animal ID</th>
+                    <th className="text-left p-2">Slaughter Weight</th>
+                    <th className="text-left p-2">Carcass Weight</th>
+                    <th className="text-left p-2">Carcass %</th>
+                    <th className="text-left p-2">Selling Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayReports.map((report: any, index: number) => (
+                    <tr key={report.id} className="border-b hover:bg-gray-50">
+                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{format(new Date(report.slaughter_date), 'MMM dd, yyyy')}</td>
+                      <td className="p-2 font-mono text-sm">{report.animals?.animal_id || report.animal_id}</td>
+                      <td className="p-2">{report.slaughter_weight} kg</td>
+                      <td className="p-2">{report.carcass_weight} kg</td>
+                      <td className="p-2">{report.carcass_percentage?.toFixed(1)}%</td>
+                      <td className="p-2">${report.selling_price}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Avg Weight
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {displayReports.length > 0 ? (displayReports.reduce((sum, r) => sum + (r.slaughter_weight || 0), 0) / displayReports.length).toFixed(1) : '0.0'} kg
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Debug Info */}
+      {reportsError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardHeader>
+            <CardTitle className="text-red-800">Database Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-700">{reportsError.message}</p>
+          </CardContent>
+        </Card>
       )}
-
-      {/* Detailed Transactions List with Filters */}
-      <SlaughterTransactionsList reports={displayReports || []} />
     </div>
   )
 }
