@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -28,40 +29,40 @@ import { useToast } from '@/hooks/use-toast'
 
 const inventoryFormSchema = z.object({
   product_name: z.string().min(1, 'Product name is required'),
-  quantity: z.number().nonnegative('Quantity must be positive'),
-  unit: z.string().optional(),
-  purchase_date: z.string().optional(),
-  price: z.number().positive().optional(),
-  category: z.string().optional(),
-  alert_threshold: z.number().positive().optional(),
+  category: z.enum(['feed', 'medicine', 'vaccine', 'supplies', 'other']),
+  quantity: z.coerce.number().positive('Quantity must be positive'),
+  unit: z.string().min(1, 'Unit is required'),
+  price: z.coerce.number().positive('Price must be positive'),
+  alert_threshold: z.coerce.number().positive().optional(),
+  notes: z.string().optional(),
 })
 
 type InventoryFormValues = z.infer<typeof inventoryFormSchema>
 
-type InventoryFormProps = {
-  onSuccess?: () => void
-}
-
-export function InventoryForm({ onSuccess }: InventoryFormProps) {
+export function InventoryForm() {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<InventoryFormValues>({
-    resolver: zodResolver(inventoryFormSchema),
+    resolver: zodResolver(inventoryFormSchema) as any,
     defaultValues: {
       product_name: '',
-      quantity: 0,
-      unit: 'units',
-      purchase_date: new Date().toISOString().split('T')[0],
-      alert_threshold: 10,
+      category: 'feed' as const,
+      quantity: '' as any,
+      unit: '',
+      price: '' as any,
+      alert_threshold: '' as any,
+      notes: '',
     },
   })
 
   async function onSubmit(values: InventoryFormValues) {
+    console.log('Form submitted with values:', values)
     setIsSubmitting(true)
     try {
       const result = await createInventoryItem(values)
+      console.log('Create inventory result:', result)
 
       if (result.error) {
         toast({
@@ -76,9 +77,14 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
         })
         form.reset()
         router.refresh()
-        onSuccess?.()
+        // Close the dialog by triggering a click on the close button
+        const closeButton = document.querySelector('[data-dialog-close]') as HTMLElement
+        if (closeButton) {
+          closeButton.click()
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error('Error submitting form:', error)
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -99,7 +105,7 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
             <FormItem>
               <FormLabel>Product Name *</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Feed Bags, Medicine, etc." {...field} />
+                <Input placeholder="e.g., MCR Feed Bags" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -112,7 +118,7 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>Category *</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -120,12 +126,11 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Feed">Feed</SelectItem>
-                    <SelectItem value="Medicine">Medicine</SelectItem>
-                    <SelectItem value="Vaccine">Vaccine</SelectItem>
-                    <SelectItem value="Equipment">Equipment</SelectItem>
-                    <SelectItem value="Supplies">Supplies</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="feed">Feed</SelectItem>
+                    <SelectItem value="medicine">Medicine</SelectItem>
+                    <SelectItem value="vaccine">Vaccine</SelectItem>
+                    <SelectItem value="supplies">Supplies</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -138,9 +143,9 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
             name="unit"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Unit</FormLabel>
+                <FormLabel>Unit *</FormLabel>
                 <FormControl>
-                  <Input placeholder="kg, bags, bottles, etc." {...field} />
+                  <Input placeholder="e.g., bags, bottles, kg" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -156,7 +161,11 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
               <FormItem>
                 <FormLabel>Quantity *</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="100"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -168,13 +177,15 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price per Unit</FormLabel>
+                <FormLabel>Price per Unit *</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" placeholder="0.00" {...field} />
+                  <Input
+                    type="number"
+                    step="0.01"
+                    placeholder="25.00"
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>
-                  Optional
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -187,11 +198,13 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
               <FormItem>
                 <FormLabel>Alert Threshold</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    placeholder="10"
+                    {...field}
+                  />
                 </FormControl>
-                <FormDescription>
-                  Alert when below this level
-                </FormDescription>
+                <FormDescription>Alert when quantity falls below</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -200,12 +213,15 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
 
         <FormField
           control={form.control}
-          name="purchase_date"
+          name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Purchase Date</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
+                <Textarea
+                  placeholder="Additional notes about this item..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -213,7 +229,7 @@ export function InventoryForm({ onSuccess }: InventoryFormProps) {
         />
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? 'Adding...' : 'Add to Inventory'}
+          {isSubmitting ? 'Adding...' : 'Add Inventory Item'}
         </Button>
       </form>
     </Form>

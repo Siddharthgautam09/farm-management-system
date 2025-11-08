@@ -29,7 +29,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-[#2d5a2d] border-r min-h-full p-4">
+    <aside className="w-64 min-h-screen bg-[#2d5a2d] border-r p-4">
       <div className="flex items-center gap-4">
         <h1 className="text-xl text-white font-bold p-3">Farm Management</h1>
       </div>

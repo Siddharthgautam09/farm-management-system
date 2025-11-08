@@ -1,19 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getInventoryItems, getLowStockItems, getInventoryStatistics } from '@/actions/inventory'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { AlertTriangle, Plus, Package } from 'lucide-react'
+import { Plus, AlertTriangle, Package } from 'lucide-react'
 import { InventoryForm } from '@/components/inventory/InventoryForm'
 import {
   Dialog,
@@ -32,20 +23,37 @@ export default async function InventoryPage() {
     redirect('/login')
   }
 
-  const itemsResult = await getInventoryItems()
-  const lowStockResult = await getLowStockItems()
-  const statistics = await getInventoryStatistics()
+  // Fetch all inventory items
+  const { data: inventory } = await supabase
+    .from('inventory')
+    .select('*')
+    .order('product_name')
 
-  const items = itemsResult.data || []
-  const lowStock = lowStockResult.data || []
+  // Calculate statistics
+  const totalItems = inventory?.length || 0
+  const totalValue = inventory?.reduce((sum, item) => 
+    sum + (item.quantity * (item.price || 0)), 0
+  ) || 0
+  
+  const lowStockItems = inventory?.filter(item => 
+    item.quantity <= (item.alert_threshold || 10)
+  ) || []
+
+  // Group by category
+  const byCategory = inventory?.reduce((acc: Record<string, number>, item) => {
+    const category = item.category || 'Uncategorized'
+    acc[category] = (acc[category] || 0) + 1
+    return acc
+  }, {} as Record<string, number>) || {}
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Inventory Management</h1>
           <p className="text-gray-600 mt-2">
-            Track supplies and stock levels
+            Track and manage farm inventory
           </p>
         </div>
         <Dialog>
@@ -55,11 +63,11 @@ export default async function InventoryPage() {
               Add Item
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add Inventory Item</DialogTitle>
               <DialogDescription>
-                Add a new product to inventory
+                Add a new item to your inventory
               </DialogDescription>
             </DialogHeader>
             <InventoryForm />
@@ -68,17 +76,17 @@ export default async function InventoryPage() {
       </div>
 
       {/* Low Stock Alert */}
-      {lowStock.length > 0 && (
+      {lowStockItems.length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>{lowStock.length} item(s)</strong> are running low on stock!
+            <strong>{lowStockItems.length} item(s)</strong> are running low on stock
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
@@ -86,7 +94,7 @@ export default async function InventoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{statistics.totalItems}</p>
+            <p className="text-2xl font-bold">{totalItems}</p>
           </CardContent>
         </Card>
 
@@ -97,8 +105,8 @@ export default async function InventoryPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-green-600">
-              ${typeof statistics.totalValue === 'number' ? statistics.totalValue.toFixed(2) : '0.00'}
+            <p className="text-2xl font-bold text-green-600">
+              ${totalValue.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -106,12 +114,25 @@ export default async function InventoryPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
-              Low Stock Items
+              Low Stock
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-red-600">
-              {statistics.lowStockCount}
+            <p className="text-2xl font-bold text-red-600">
+              {lowStockItems.length}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Categories
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">
+              {Object.keys(byCategory).length}
             </p>
           </CardContent>
         </Card>
@@ -120,69 +141,85 @@ export default async function InventoryPage() {
       {/* Inventory Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Inventory Items</CardTitle>
+          <CardTitle>All Inventory Items</CardTitle>
+          <CardDescription>
+            Complete list of inventory with stock levels
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          {items.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Package className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <p>No inventory items yet</p>
-              <p className="text-sm mt-2">Add your first item to get started</p>
-            </div>
-          ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product Name</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Unit</TableHead>
-                    <TableHead>Price per Unit</TableHead>
-                    <TableHead>Total Value</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {items.map((item) => {
-                    const threshold = item.alert_threshold || 10
-                    const isLow = item.quantity <= threshold
+          {inventory && inventory.length > 0 ? (
+            <div className="relative overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs uppercase bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3">Product Name</th>
+                    <th className="px-6 py-3">Category</th>
+                    <th className="px-6 py-3">Quantity</th>
+                    <th className="px-6 py-3">Unit</th>
+                    <th className="px-6 py-3">Price/Unit</th>
+                    <th className="px-6 py-3">Total Value</th>
+                    <th className="px-6 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {inventory.map((item) => {
+                    const isLowStock = item.quantity <= (item.alert_threshold || 10)
+                    const totalValue = item.quantity * (item.price || 0)
                     
                     return (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-medium">
+                      <tr key={item.id} className="bg-white border-b hover:bg-gray-50">
+                        <td className="px-6 py-4 font-medium">
                           {item.product_name}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">
-                            {item.category || 'Other'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge variant="outline" className="capitalize">
+                            {item.category}
                           </Badge>
-                        </TableCell>
-                        <TableCell className={isLow ? 'text-red-600 font-medium' : ''}>
-                          {item.quantity}
-                        </TableCell>
-                        <TableCell>{item.unit || '-'}</TableCell>
-                        <TableCell>
-                          {item.price ? `$${item.price.toFixed(2)}` : '-'}
-                        </TableCell>
-                        <TableCell className="text-green-600 font-medium">
-                          {item.total_cost ? `$${item.total_cost.toFixed(2)}` : '-'}
-                        </TableCell>
-                        <TableCell>
-                          {isLow ? (
-                            <Badge variant="destructive" className="gap-1">
-                              <AlertTriangle className="h-3 w-3" />
-                              Low Stock
-                            </Badge>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={isLowStock ? 'text-red-600 font-semibold' : ''}>
+                            {item.quantity}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">{item.unit}</td>
+                        <td className="px-6 py-4">${(item.price || 0).toFixed(2)}</td>
+                        <td className="px-6 py-4 font-semibold">
+                          ${totalValue.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4">
+                          {isLowStock ? (
+                            <Badge variant="destructive">Low Stock</Badge>
                           ) : (
                             <Badge variant="default">In Stock</Badge>
                           )}
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     )
                   })}
-                </TableBody>
-              </Table>
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 mb-4">No inventory items yet</p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add First Item
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Add Inventory Item</DialogTitle>
+                    <DialogDescription>
+                      Add a new item to your inventory
+                    </DialogDescription>
+                  </DialogHeader>
+                  <InventoryForm />
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </CardContent>
