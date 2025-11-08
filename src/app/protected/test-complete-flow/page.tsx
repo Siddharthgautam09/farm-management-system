@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { createSlaughterReport } from '@/actions/reports'
+import { createSlaughterReport } from '@/actions/slaughter'
 import { revalidatePath } from 'next/cache'
 
 // Force dynamic

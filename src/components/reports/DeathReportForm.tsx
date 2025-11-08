@@ -5,12 +5,11 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createDeathReport } from '@/actions/death'
+import { createDeathReport } from '@/actions/reports'
 import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,24 +17,44 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
 
 const deathFormSchema = z.object({
-  animal_id: z.string().min(1, 'Animal ID is required'),
+  animal_id: z.string().min(1, 'Animal is required'),
   death_date: z.string().min(1, 'Date is required'),
-  last_weight: z.number().positive().optional(),
-  cause_of_death: z.string().optional(),
+  cause: z.string().min(1, 'Cause of death is required'),
   notes: z.string().optional(),
 })
 
 type DeathFormValues = z.infer<typeof deathFormSchema>
 
-type DeathReportFormProps = {
-  animalId?: string
-  onSuccess?: () => void
+type Animal = {
+  id: string
+  animal_id: string
+  category: string
 }
 
-export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
+type DeathReportFormProps = {
+  animals: Animal[]
+}
+
+const deathCauses = [
+  'Illness',
+  'Injury',
+  'Natural Causes',
+  'Complications',
+  'Unknown',
+  'Other',
+]
+
+export function DeathReportForm({ animals }: DeathReportFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -43,10 +62,9 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
   const form = useForm<DeathFormValues>({
     resolver: zodResolver(deathFormSchema),
     defaultValues: {
-      animal_id: animalId || '',
+      animal_id: '',
       death_date: new Date().toISOString().split('T')[0],
-      last_weight: undefined,
-      cause_of_death: '',
+      cause: '',
       notes: '',
     },
   })
@@ -54,24 +72,27 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
   async function onSubmit(values: DeathFormValues) {
     setIsSubmitting(true)
     try {
+      console.log('Submitting death report:', values)
       const result = await createDeathReport(values)
 
       if (result.error) {
+        console.error('Death report error:', result.error)
         toast({
           variant: 'destructive',
           title: 'Error',
           description: result.error,
         })
       } else {
+        console.log('Death report created successfully:', result)
         toast({
           title: 'Success',
           description: 'Death report created successfully',
         })
-        form.reset()
+        router.push('/protected/reports/death')
         router.refresh()
-        onSuccess?.()
       }
-  } catch {
+    } catch (error) {
+      console.error('Death report submission error:', error)
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -90,10 +111,21 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
           name="animal_id"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Animal ID *</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., A123" {...field} disabled={!!animalId} />
-              </FormControl>
+              <FormLabel>Animal *</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select animal" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {animals.map((animal) => (
+                    <SelectItem key={animal.id} value={animal.id}>
+                      {animal.animal_id} ({animal.category})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -104,7 +136,7 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
           name="death_date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date of Death *</FormLabel>
+              <FormLabel>Death Date *</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -115,30 +147,24 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
 
         <FormField
           control={form.control}
-          name="last_weight"
+          name="cause"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Last Recorded Weight (kg)</FormLabel>
-              <FormControl>
-                <Input type="number" step="0.01" placeholder="0.00" {...field} />
-              </FormControl>
-              <FormDescription>
-                Last known weight before death
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="cause_of_death"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cause of Death</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Disease, Injury, etc." {...field} />
-              </FormControl>
+              <FormLabel>Cause of Death *</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select cause" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {deathCauses.map((cause) => (
+                    <SelectItem key={cause} value={cause}>
+                      {cause}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -149,11 +175,11 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Additional Notes</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea 
-                  placeholder="Any additional information about the circumstances..."
-                  {...field} 
+                <Textarea
+                  placeholder="Additional details about the death..."
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -162,7 +188,7 @@ export function DeathReportForm({ animalId, onSuccess }: DeathReportFormProps) {
         />
 
         <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? 'Creating Report...' : 'Create Death Report'}
+          {isSubmitting ? 'Creating...' : 'Create Death Report'}
         </Button>
       </form>
     </Form>

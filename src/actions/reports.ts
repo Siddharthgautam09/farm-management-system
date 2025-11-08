@@ -1,3 +1,8 @@
+'use server'
+
+import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
+
 export type DeathReportData = {
   animal_id: string
   death_date: string
@@ -31,13 +36,15 @@ export async function createDeathReport(data: DeathReportData) {
       .insert({
         animal_id: data.animal_id,
         death_date: data.death_date,
-        cause: data.cause,
+        cause_of_death: data.cause,
         notes: data.notes || null,
+        reported_by: user.id,
       })
       .select()
       .single()
 
     if (reportError) {
+      console.error('Death report creation error:', reportError)
       return { error: reportError.message }
     }
 
@@ -55,6 +62,7 @@ export async function createDeathReport(data: DeathReportData) {
     }
 
     revalidatePath('/reports/death')
+    revalidatePath('/protected/reports/death')
     revalidatePath('/dashboard')
     
     return { success: true, report }

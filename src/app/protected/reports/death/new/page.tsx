@@ -1,166 +1,85 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getSlaughterReports, getSlaughterStatistics } from '@/actions/slaughter'
-import { format } from 'date-fns'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DeathReportForm } from '@/components/reports/DeathReportForm'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
-export default async function SlaughterReportsPage() {
+export default async function NewDeathReportPage() {
+  console.log('=== NEW DEATH REPORT PAGE ===')
+  
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    redirect('/login')
+    redirect('/auth/login')
   }
 
-  const reportsResult = await getSlaughterReports()
-  const statistics = await getSlaughterStatistics()
+  console.log('✅ User authenticated for new report:', user.id)
 
-  const reports = reportsResult.data || []
+  // Get ALL animals (remove restrictions to test)
+  const { data: animals, error: animalsError } = await supabase
+    .from('animals')
+    .select('id, animal_id, category')
+    .order('animal_id')
+
+  console.log('📋 Animals available for death report:')
+  console.log('- Count:', animals?.length || 0)
+  console.log('- Error:', animalsError?.message || 'none')
+  
+  if (animals && animals.length > 0) {
+    console.log('- Sample animals:', animals.slice(0, 3))
+  }
+
+  if (!animals || animals.length === 0) {
+    return (
+      <div className="container mx-auto py-6 max-w-2xl">
+        <Card>
+          <CardHeader>
+            <CardTitle>No Animals Available</CardTitle>
+            <CardDescription>
+              There are no animals available for death reporting
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">
+              All animals are either already sold or deceased.
+            </p>
+            <Button asChild>
+              <Link href="/protected/animals/new">Register New Animal</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold">Slaughter House Reports</h1>
-          <p className="text-gray-600 mt-2">
-            Track animals sold and carcass clearance ratios
-          </p>
-        </div>
-        <Button asChild>
-          <Link href="/reports/slaughter/new">
-            <Plus className="h-4 w-4 mr-2" />
-            New Report
+    <div className="container mx-auto py-6 max-w-2xl">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/protected/reports/death">
+            <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
+        <div>
+          <h1 className="text-3xl font-bold">New Death Report</h1>
+          <p className="text-gray-600 mt-1">
+            Record an animal death
+          </p>
+        </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total Animals Sold
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{statistics.totalAnimals}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Avg Carcass %
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-blue-600">
-              {(statistics.averageCarcassPercentage ?? 0).toFixed(1)}%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total Revenue
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-green-600">
-              ${ (statistics.totalRevenue ?? 0).toFixed(2) }
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Avg Selling Price
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">
-              ${ (statistics.averageSellingPrice ?? 0).toFixed(2) }
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Reports Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Slaughter Records</CardTitle>
+          <CardTitle>Death Report Details</CardTitle>
+          <CardDescription>
+            Fill in the death information
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          {reports.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No slaughter reports yet
-            </div>
-          ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Animal ID</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Slaughter Weight</TableHead>
-                    <TableHead>Carcass Weight</TableHead>
-                    <TableHead>Carcass %</TableHead>
-                    <TableHead>Selling Price</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {reports.map((report) => (
-                    <TableRow key={report.id}>
-                      <TableCell>
-                        {format(new Date(report.slaughter_date), 'MMM dd, yyyy')}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {report.animal?.animal_id || '-'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="capitalize">
-                          {report.animal?.category || '-'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{report.slaughter_weight} kg</TableCell>
-                      <TableCell>{report.carcass_weight} kg</TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={
-                            (report.carcass_percentage || 0) >= 55 
-                              ? 'default' 
-                              : 'secondary'
-                          }
-                        >
-                          {report.carcass_percentage?.toFixed(2)}%
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-green-600 font-medium">
-                        {report.selling_price 
-                          ? `$${report.selling_price.toFixed(2)}` 
-                          : '-'}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <DeathReportForm animals={animals} />
         </CardContent>
       </Card>
     </div>

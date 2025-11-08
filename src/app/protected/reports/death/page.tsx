@@ -1,168 +1,193 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { format } from 'date-fns'
+import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/ExportButton'
 
+type DeathReport = Database['public']['Tables']['death_reports']['Row']
+
+// Force dynamic rendering - absolutely no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
 export default async function DeathReportsPage() {
+  console.log('=== DEATH REPORTS PAGE RENDER ===')
+  console.log('Timestamp:', new Date().toISOString())
+  
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
-    redirect('/login')
+    console.log(' User not authenticated, redirecting to login')
+    redirect('/auth/login')
   }
 
-  // Fetch all death reports
-  const { data: reports } = await supabase
+  console.log(' User authenticated:', user.id)
+
+  // Fetch death reports with animal details
+  console.log(' Fetching death reports from database...')
+  
+  const { data: reports, error: reportsError } = await supabase
     .from('death_reports')
     .select(`
       *,
-      animal:animals(animal_id, category, purchase_price)
+      animals (
+        animal_id,
+        purchase_price
+      )
     `)
-    .order('death_date', { ascending: false })
+    .order('created_at', { ascending: false })
+
+  console.log(' Query Results:')
+  console.log('- Reports count:', reports?.length || 0)
+  console.log('- Query error:', reportsError?.message || 'none')
+
+  if (reportsError) {
+    console.error('Database query error:', reportsError)
+  }
+
+  const displayReports = reports || []
 
   // Calculate total loss
-  const totalLoss = reports?.reduce((sum, r) => 
-    sum + (r.animal?.purchase_price || 0), 0
-  ) || 0
+  const totalLoss = displayReports.reduce((sum: number, r: any) => 
+    sum + (r.animals?.purchase_price || 0), 0
+  )
 
   // Prepare export data
-  const exportData = reports?.map(report => ({
-    'Animal ID': report.animal?.animal_id || '',
+  const exportData = displayReports.map((report: any) => ({
+    'Animal ID': report.animals?.animal_id || report.animal_id,
     'Date': format(new Date(report.death_date), 'yyyy-MM-dd'),
-    'Cause': report.cause,
-    'Purchase Price': report.animal?.purchase_price || 0,
+    'Cause': report.cause_of_death || '',
+    'Purchase Price': report.animals?.purchase_price || 0,
     'Notes': report.notes || '',
-  })) || []
+  }))
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto py-8 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Death Reports</h1>
-          <p className="text-gray-600 mt-2">
-            Track animal mortality and causes
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight">Death Reports</h1>
+          <p className="text-muted-foreground">Track and manage animal mortality</p>
         </div>
         <div className="flex gap-2">
           <ExportButton 
             data={exportData} 
-            filename="death-reports" 
-            disabled={!reports || reports.length === 0}
+            filename="death-reports"
           />
           <Button asChild>
-            <Link href="/reports/death/new">
-              <Plus className="h-4 w-4 mr-2" />
-              New Report
+            <Link href="/protected/reports/death/new">
+              <Plus className="mr-2 h-4 w-4" />
+              New Death Report
             </Link>
           </Button>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      {reports && reports.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Total Deaths
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-red-600">{reports.length}</p>
-            </CardContent>
-          </Card>
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{displayReports.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Loss</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              ${totalLoss.toFixed(2)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Loss</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${displayReports.length > 0 ? (totalLoss / displayReports.length).toFixed(2) : '0.00'}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {displayReports.filter((r: any) => {
+                const reportDate = new Date(r.death_date)
+                const now = new Date()
+                return reportDate.getMonth() === now.getMonth() && reportDate.getFullYear() === now.getFullYear()
+              }).length}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Total Loss
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold text-red-600">
-                ${totalLoss.toFixed(2)}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Avg Loss per Animal
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                ${(totalLoss / reports.length).toFixed(2)}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Reports Table */}
       <Card>
         <CardHeader>
-          <CardTitle>All Death Reports</CardTitle>
-          <CardDescription>
-            Complete list of animal deaths
-          </CardDescription>
+          <CardTitle>Recent Reports</CardTitle>
         </CardHeader>
         <CardContent>
-          {reports && reports.length > 0 ? (
-            <div className="relative overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3">Animal ID</th>
-                    <th className="px-6 py-3">Death Date</th>
-                    <th className="px-6 py-3">Cause</th>
-                    <th className="px-6 py-3">Purchase Price</th>
-                    <th className="px-6 py-3">Notes</th>
+          {displayReports.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No death reports found</p>
+              <Button asChild>
+                <Link href="/protected/reports/death/new">Create your first report</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">S.No</th>
+                    <th className="text-left p-2">Date</th>
+                    <th className="text-left p-2">Animal ID</th>
+                    <th className="text-left p-2">Cause of Death</th>
+                    <th className="text-left p-2">Purchase Price</th>
+                    <th className="text-left p-2">Notes</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {reports.map((report) => (
-                    <tr key={report.id} className="bg-white border-b hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium">
-                        {report.animal?.animal_id}
+                  {displayReports.map((report: any, index: number) => (
+                    <tr key={report.id} className="border-b hover:bg-gray-50">
+                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{format(new Date(report.death_date), 'MMM dd, yyyy')}</td>
+                      <td className="p-2 font-mono text-sm">{report.animals?.animal_id || report.animal_id}</td>
+                      <td className="p-2">
+                        <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">{report.cause_of_death}</span>
                       </td>
-                      <td className="px-6 py-4">
-                        {format(new Date(report.death_date), 'MMM dd, yyyy')}
-                      </td>
-                      <td className="px-6 py-4">
-                        <Badge variant="destructive">{report.cause}</Badge>
-                      </td>
-                      <td className="px-6 py-4 text-red-600 font-semibold">
-                        ${report.animal?.purchase_price?.toFixed(2) || '0.00'}
-                      </td>
-                      <td className="px-6 py-4 text-gray-600 max-w-xs truncate">
-                        {report.notes || '-'}
-                      </td>
+                      <td className="p-2 text-red-600 font-semibold">${report.animals?.purchase_price?.toFixed(2) || '0.00'}</td>
+                      <td className="p-2 text-gray-600 max-w-xs truncate">{report.notes || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">No death reports yet</p>
-              <Button asChild variant="outline">
-                <Link href="/reports/death/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create First Report
-                </Link>
-              </Button>
-            </div>
           )}
         </CardContent>
       </Card>
+
+      {reportsError && (
+        <Card className="border-red-200 bg-red-50">
+          <CardHeader>
+            <CardTitle className="text-red-800">Database Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-red-700">{reportsError.message}</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
