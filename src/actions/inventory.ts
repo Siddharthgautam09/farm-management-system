@@ -23,9 +23,17 @@ export async function createInventoryItem(data: InventoryItemData) {
   }
 
   try {
+    // Get the count of existing items to generate next serial number
+    const { count } = await supabase
+      .from('inventory')
+      .select('*', { count: 'exact', head: true })
+    
+    const nextSerialNumber = ((count || 0) + 1).toString()
+    
     const { data: item, error } = await supabase
       .from('inventory')
       .insert({
+        serial_number: nextSerialNumber,
         product_name: data.product_name,
         category: data.category,
         quantity: data.quantity,

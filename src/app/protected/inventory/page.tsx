@@ -1,19 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Plus, AlertTriangle, Package } from 'lucide-react'
-import { InventoryForm } from '@/components/inventory/InventoryForm'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { AlertTriangle, Package, Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { InventoryTable } from '@/components/inventory/InventoryTable'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function InventoryPage() {
   const supabase = await createClient()
@@ -56,23 +52,12 @@ export default async function InventoryPage() {
             Track and manage farm inventory
           </p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Item
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Add Inventory Item</DialogTitle>
-              <DialogDescription>
-                Add a new item to your inventory
-              </DialogDescription>
-            </DialogHeader>
-            <InventoryForm />
-          </DialogContent>
-        </Dialog>
+        <Button asChild>
+          <Link href="/protected/inventory/new">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Item
+          </Link>
+        </Button>
       </div>
 
       {/* Low Stock Alert */}
@@ -143,83 +128,22 @@ export default async function InventoryPage() {
         <CardHeader>
           <CardTitle>All Inventory Items</CardTitle>
           <CardDescription>
-            Complete list of inventory with stock levels
+            Complete list of inventory with stock levels and filters
           </CardDescription>
         </CardHeader>
         <CardContent>
           {inventory && inventory.length > 0 ? (
-            <div className="relative overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3">Product Name</th>
-                    <th className="px-6 py-3">Category</th>
-                    <th className="px-6 py-3">Quantity</th>
-                    <th className="px-6 py-3">Unit</th>
-                    <th className="px-6 py-3">Price/Unit</th>
-                    <th className="px-6 py-3">Total Value</th>
-                    <th className="px-6 py-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {inventory.map((item) => {
-                    const isLowStock = item.quantity <= (item.alert_threshold || 10)
-                    const totalValue = item.quantity * (item.price || 0)
-                    
-                    return (
-                      <tr key={item.id} className="bg-white border-b hover:bg-gray-50">
-                        <td className="px-6 py-4 font-medium">
-                          {item.product_name}
-                        </td>
-                        <td className="px-6 py-4">
-                          <Badge variant="outline" className="capitalize">
-                            {item.category}
-                          </Badge>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={isLowStock ? 'text-red-600 font-semibold' : ''}>
-                            {item.quantity}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">{item.unit}</td>
-                        <td className="px-6 py-4">${(item.price || 0).toFixed(2)}</td>
-                        <td className="px-6 py-4 font-semibold">
-                          ${totalValue.toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4">
-                          {isLowStock ? (
-                            <Badge variant="destructive">Low Stock</Badge>
-                          ) : (
-                            <Badge variant="default">In Stock</Badge>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <InventoryTable inventory={inventory} />
           ) : (
             <div className="text-center py-12">
               <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No inventory items yet</p>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add First Item
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Add Inventory Item</DialogTitle>
-                    <DialogDescription>
-                      Add a new item to your inventory
-                    </DialogDescription>
-                  </DialogHeader>
-                  <InventoryForm />
-                </DialogContent>
-              </Dialog>
+              <Button asChild>
+                <Link href="/protected/inventory/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add First Item
+                </Link>
+              </Button>
             </div>
           )}
         </CardContent>

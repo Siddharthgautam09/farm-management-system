@@ -30,57 +30,70 @@ import { useToast } from '@/hooks/use-toast'
 const inventoryFormSchema = z.object({
   product_name: z.string().min(1, 'Product name is required'),
   category: z.enum(['feed', 'medicine', 'vaccine', 'supplies', 'other']),
-  quantity: z.coerce.number().positive('Quantity must be positive'),
+  quantity: z.number().positive('Quantity must be positive'),
   unit: z.string().min(1, 'Unit is required'),
-  price: z.coerce.number().positive('Price must be positive'),
-  alert_threshold: z.coerce.number().positive().optional(),
+  price: z.number().positive('Price must be positive'),
+  alert_threshold: z.number().positive().optional(),
   notes: z.string().optional(),
 })
 
 type InventoryFormValues = z.infer<typeof inventoryFormSchema>
 
-export function InventoryForm() {
+type InventoryFormProps = {
+  onSuccess?: () => void
+}
+
+export function InventoryForm(props?: InventoryFormProps) {
+  const { onSuccess } = props || {}
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<InventoryFormValues>({
-    resolver: zodResolver(inventoryFormSchema) as any,
+    resolver: zodResolver(inventoryFormSchema),
     defaultValues: {
       product_name: '',
-      category: 'feed' as const,
-      quantity: '' as any,
+      category: 'feed',
+      quantity: undefined as any,
       unit: '',
-      price: '' as any,
-      alert_threshold: '' as any,
+      price: undefined as any,
+      alert_threshold: undefined,
       notes: '',
     },
   })
 
   async function onSubmit(values: InventoryFormValues) {
+    console.log('=== INVENTORY FORM SUBMISSION ===')
     console.log('Form submitted with values:', values)
+    console.log('Form validation state:', form.formState.errors)
+    
     setIsSubmitting(true)
     try {
+      console.log('Calling createInventoryItem action...')
       const result = await createInventoryItem(values)
       console.log('Create inventory result:', result)
 
       if (result.error) {
+        console.error('Error from action:', result.error)
         toast({
           variant: 'destructive',
           title: 'Error',
           description: result.error,
         })
       } else {
+        console.log('Success! Item created:', result.item)
         toast({
           title: 'Success',
           description: 'Inventory item added successfully',
         })
         form.reset()
-        router.refresh()
-        // Close the dialog by triggering a click on the close button
-        const closeButton = document.querySelector('[data-dialog-close]') as HTMLElement
-        if (closeButton) {
-          closeButton.click()
+        if (onSuccess) {
+          console.log('Calling onSuccess callback')
+          onSuccess()
+        } else {
+          console.log('Redirecting to /protected/inventory')
+          router.push('/protected/inventory')
+          router.refresh()
         }
       }
     } catch (error) {
@@ -97,7 +110,15 @@ export function InventoryForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form 
+        onSubmit={(e) => {
+          console.log('Form onSubmit event triggered')
+          console.log('Form values:', form.getValues())
+          console.log('Form errors:', form.formState.errors)
+          form.handleSubmit(onSubmit)(e)
+        }} 
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="product_name"
@@ -164,7 +185,19 @@ export function InventoryForm() {
                   <Input
                     type="number"
                     placeholder="100"
-                    {...field}
+                    value={field.value ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      if (val === '' || val === null) {
+                        field.onChange(undefined)
+                      } else {
+                        const num = parseFloat(val)
+                        field.onChange(isNaN(num) ? undefined : num)
+                      }
+                    }}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
                   />
                 </FormControl>
                 <FormMessage />
@@ -183,7 +216,19 @@ export function InventoryForm() {
                     type="number"
                     step="0.01"
                     placeholder="25.00"
-                    {...field}
+                    value={field.value ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      if (val === '' || val === null) {
+                        field.onChange(undefined)
+                      } else {
+                        const num = parseFloat(val)
+                        field.onChange(isNaN(num) ? undefined : num)
+                      }
+                    }}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
                   />
                 </FormControl>
                 <FormMessage />
@@ -201,7 +246,14 @@ export function InventoryForm() {
                   <Input
                     type="number"
                     placeholder="10"
-                    {...field}
+                    value={field.value || ''}
+                    onChange={(e) => {
+                      const value = e.target.valueAsNumber
+                      field.onChange(isNaN(value) ? undefined : value)
+                    }}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
                   />
                 </FormControl>
                 <FormDescription>Alert when quantity falls below</FormDescription>

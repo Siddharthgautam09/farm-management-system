@@ -305,6 +305,7 @@ export type Database = {
       inventory: {
         Row: {
           id: string
+          serial_number: string | null
           product_name: string
           quantity: number
           unit: string | null
@@ -318,6 +319,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          serial_number?: string | null
           product_name: string
           quantity: number
           unit?: string | null
@@ -331,6 +333,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          serial_number?: string | null
           product_name?: string
           quantity?: number
           unit?: string | null
