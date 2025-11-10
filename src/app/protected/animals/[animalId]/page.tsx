@@ -10,11 +10,14 @@ import { WeightHistory } from '@/components/weights/WeightHistory'
 import { WeightEntryDialog } from '@/components/weights/WeightEntryDialog'
 import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
 import { FeedingLogsList } from '@/components/feeding/FeedingLogsList'
+import { FeedingLogDialog } from '@/components/feeding/FeedingLogDialog'
 import { MedicineHistory } from '@/components/medicine/MedicineHistory'
+import { MedicineLogDialog } from '@/components/medicine/MedicineLogDialog'
 import { VaccineHistory } from '@/components/vaccine/VaccineHistory'
-import { calculateFeedingCosts } from '@/actions/feeding'
-import { calculateMedicineCosts } from '@/actions/medicine'
-import { calculateVaccineCosts } from '@/actions/vaccine'
+import { VaccineLogDialog } from '@/components/vaccine/VaccineLogDialog'
+import { getFeedingLogsByRoom } from '@/actions/feeding'
+import { getMedicineLogsByAnimal } from '@/actions/medicine'
+import { getVaccineLogsByAnimal } from '@/actions/vaccine'
 import { format } from 'date-fns'
 
 export default async function AnimalDetailPage({
@@ -72,19 +75,20 @@ export default async function AnimalDetailPage({
     (a, b) => new Date(a.recorded_date).getTime() - new Date(b.recorded_date).getTime()
   ) || []
 
-  // Get feeding costs
-  const feedingCosts = animal.current_room_id 
-    ? await calculateFeedingCosts(animal.current_room_id)
+  // Get feeding logs for the current room
+  const feedingLogs = animal.current_room_id 
+    ? await getFeedingLogsByRoom(animal.current_room_id)
     : { data: [] }
 
-  // Get medicine costs
-  const medicineCosts = await calculateMedicineCosts(animal.id)
+  // Get medicine logs for this animal
+  const medicineLogs = await getMedicineLogsByAnimal(animal.id)
 
-  // Get vaccine costs
-  const vaccineCosts = await calculateVaccineCosts(animal.id)
+  // Get vaccine logs for this animal
+  const vaccineLogs = await getVaccineLogsByAnimal(animal.id)
 
-  const medicineData = medicineCosts.data || []
-  const vaccineData = vaccineCosts.data || []
+  const feedingData = feedingLogs.data || []
+  const medicineData = medicineLogs.data || []
+  const vaccineData = vaccineLogs.data || []
 
   return (
     <div className="container mx-auto py-6">
@@ -222,15 +226,22 @@ export default async function AnimalDetailPage({
         {/* Feeding Tab */}
         <TabsContent value="feeding">
           <Card>
-            <CardHeader>
-              <CardTitle>Feeding Records</CardTitle>
-              <CardDescription>
-                Feeding logs for Room {animal.current_room?.identifier}
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Feeding Records</CardTitle>
+                <CardDescription>
+                  Feeding logs for Room {animal.current_room?.identifier}
+                </CardDescription>
+              </div>
+              {animal.is_alive && !animal.is_sold && (
+                <FeedingLogDialog animalId={animal.id}>
+                  <Button>Add Feeding Log</Button>
+                </FeedingLogDialog>
+              )}
             </CardHeader>
             <CardContent>
-              {feedingCosts.data && feedingCosts.data.length > 0 ? (
-                <FeedingLogsList logs={feedingCosts.data} />
+              {feedingData && feedingData.length > 0 ? (
+                <FeedingLogsList logs={feedingData} />
               ) : (
                 <p className="text-center text-gray-500 py-8">
                   No feeding records for this room yet
@@ -243,16 +254,22 @@ export default async function AnimalDetailPage({
         {/* Medicine Tab */}
         <TabsContent value="medicine">
           <Card>
-            <CardHeader>
-              <CardTitle>Medicine Records</CardTitle>
-              <CardDescription>
-                Treatment history and costs
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Medicine Records</CardTitle>
+                <CardDescription>
+                  Treatment history and costs
+                </CardDescription>
+              </div>
+              {animal.is_alive && !animal.is_sold && (
+                <MedicineLogDialog animalId={animal.id}>
+                  <Button>Add Medicine Record</Button>
+                </MedicineLogDialog>
+              )}
             </CardHeader>
             <CardContent>
               <MedicineHistory 
-                logs={medicineData} 
-                totalCost={medicineCosts.totalCost}
+                logs={medicineData}
               />
             </CardContent>
           </Card>
@@ -261,16 +278,22 @@ export default async function AnimalDetailPage({
         {/* Vaccine Tab */}
         <TabsContent value="vaccine">
           <Card>
-            <CardHeader>
-              <CardTitle>Vaccine Records</CardTitle>
-              <CardDescription>
-                Vaccination history with dose schedules
-              </CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Vaccine Records</CardTitle>
+                <CardDescription>
+                  Vaccination history with dose schedules
+                </CardDescription>
+              </div>
+              {animal.is_alive && !animal.is_sold && (
+                <VaccineLogDialog animalId={animal.id}>
+                  <Button>Add Vaccine Record</Button>
+                </VaccineLogDialog>
+              )}
             </CardHeader>
             <CardContent>
               <VaccineHistory 
                 logs={vaccineData}
-                totalCost={vaccineCosts.totalCost}
               />
             </CardContent>
           </Card>
