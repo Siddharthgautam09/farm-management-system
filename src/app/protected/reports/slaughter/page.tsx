@@ -8,7 +8,11 @@ import { format } from 'date-fns'
 import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/SlaughterExportButton'
 
-type SlaughterReport = Database['public']['Tables']['slaughter_reports']['Row']
+type SlaughterReport = Database['public']['Tables']['slaughter_reports']['Row'] & {
+  animals?: {
+    animal_id: string
+  } | null
+}
 
 // Force dynamic rendering - absolutely no caching
 export const dynamic = 'force-dynamic'
@@ -156,7 +160,7 @@ export default async function SlaughterReportsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {displayReports.map((report: any, index: number) => (
+                  {displayReports.map((report: SlaughterReport, index: number) => (
                     <tr key={report.id} className="border-b hover:bg-gray-50">
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{format(new Date(report.slaughter_date), 'MMM dd, yyyy')}</td>

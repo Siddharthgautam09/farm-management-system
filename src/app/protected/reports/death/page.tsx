@@ -8,7 +8,12 @@ import { format } from 'date-fns'
 import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/ExportButton'
 
-type DeathReport = Database['public']['Tables']['death_reports']['Row']
+type DeathReport = Database['public']['Tables']['death_reports']['Row'] & {
+  animals?: {
+    animal_id: string
+    purchase_price: number | null
+  } | null
+}
 
 // Force dynamic rendering - absolutely no caching
 export const dynamic = 'force-dynamic'
@@ -54,12 +59,12 @@ export default async function DeathReportsPage() {
   const displayReports = reports || []
 
   // Calculate total loss
-  const totalLoss = displayReports.reduce((sum: number, r: any) => 
+  const totalLoss = displayReports.reduce((sum: number, r: DeathReport) => 
     sum + (r.animals?.purchase_price || 0), 0
   )
 
   // Prepare export data
-  const exportData = displayReports.map((report: any) => ({
+  const exportData = displayReports.map((report: DeathReport) => ({
     'Animal ID': report.animals?.animal_id || report.animal_id,
     'Date': format(new Date(report.death_date), 'yyyy-MM-dd'),
     'Cause': report.cause_of_death || '',
@@ -123,7 +128,7 @@ export default async function DeathReportsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {displayReports.filter((r: any) => {
+              {displayReports.filter((r: DeathReport) => {
                 const reportDate = new Date(r.death_date)
                 const now = new Date()
                 return reportDate.getMonth() === now.getMonth() && reportDate.getFullYear() === now.getFullYear()
@@ -159,7 +164,7 @@ export default async function DeathReportsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {displayReports.map((report: any, index: number) => (
+                  {displayReports.map((report: DeathReport, index: number) => (
                     <tr key={report.id} className="border-b hover:bg-gray-50">
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{format(new Date(report.death_date), 'MMM dd, yyyy')}</td>

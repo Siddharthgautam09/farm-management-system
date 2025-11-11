@@ -44,7 +44,10 @@ export default async function CostAnalysisPage() {
     .select('animal:animals(purchase_price)')
 
   const totalDeathLoss = deathReports?.reduce(
-    (sum, r: any) => sum + (r.animal?.purchase_price || 0), 0
+    (sum: number, r: { animal: { purchase_price: number | null } | null }) => {
+      return sum + (r.animal?.purchase_price || 0)
+    }, 
+    0
   ) || 0
   const totalDeaths = deathReports?.length || 0
 

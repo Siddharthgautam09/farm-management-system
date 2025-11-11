@@ -19,12 +19,51 @@ import { FeedingLogForm } from './FeedingLogForm'
 import { MedicineLogForm } from './MedicineLogForm'
 import { VaccineLogForm } from './VaccineLogForm'
 
+type WeightLog = {
+  id: string
+  recorded_date: string
+  weight: number
+  notes?: string | null
+}
+
+type FeedingLog = {
+  id: string
+  feed_type: string
+  daily_use: number | null
+  date_of_use: string
+  mcr_price?: number | null
+  concentrate_price?: number | null
+  bale_price?: number | null
+  notes?: string | null
+}
+
+type MedicineLog = {
+  id: string
+  drug_name: string
+  drug_type: string
+  drug_dose: number | null
+  drug_price?: number | null
+  treatment_days: number | null
+  treatment_start_date?: string | null
+  illness?: string | null
+}
+
+type VaccineLog = {
+  id: string
+  vaccine_name: string
+  vaccine_dose: number | null
+  vaccine_price?: number | null
+  vaccine_company?: string | null
+  first_dose_date?: string | null
+  second_dose_date?: string | null
+}
+
 type AnimalDetailTabsProps = {
   animalId: string
-  feedingLogs?: any[]
-  medicineLogs?: any[]
-  vaccineLogs?: any[]
-  weightLogs?: any[]
+  feedingLogs?: FeedingLog[]
+  medicineLogs?: MedicineLog[]
+  vaccineLogs?: VaccineLog[]
+  weightLogs?: WeightLog[]
 }
 
 export function AnimalDetailTabs({
