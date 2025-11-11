@@ -80,7 +80,7 @@ export function VaccineLogForm({ animalId, onSuccess }: VaccineLogFormProps) {
         router.refresh()
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

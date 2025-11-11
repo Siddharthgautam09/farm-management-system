@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { DollarSign, TrendingUp, TrendingDown, Package, Pill, Syringe, ShoppingBag } from 'lucide-react'
+import { TrendingUp, TrendingDown, Package, Pill, Syringe, ShoppingBag } from 'lucide-react'
 
 export default async function CostAnalysisPage() {
   const supabase = await createClient()
@@ -110,7 +110,6 @@ export default async function CostAnalysisPage() {
   // 7. TOTAL COSTS & PROFIT/LOSS
   // ==========================================
   const totalOperatingCost = totalFeedingCost + totalMedicineCost + totalVaccineCost
-  const totalCosts = totalInvestment + totalOperatingCost
   const netProfitLoss = totalRevenue - (totalInvestment - activeInvestment + totalDeathLoss)
 
   // Per-animal costs

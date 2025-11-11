@@ -54,9 +54,9 @@ export function InventoryForm(props?: InventoryFormProps) {
     defaultValues: {
       product_name: '',
       category: 'feed',
-      quantity: undefined as any,
+      quantity: undefined,
       unit: '',
-      price: undefined as any,
+      price: undefined,
       alert_threshold: undefined,
       notes: '',
     },

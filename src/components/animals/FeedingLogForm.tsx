@@ -87,7 +87,7 @@ export function FeedingLogForm({ animalId, onSuccess }: FeedingLogFormProps) {
         router.refresh()
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

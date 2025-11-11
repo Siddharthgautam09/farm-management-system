@@ -84,7 +84,7 @@ export function MedicineLogForm({ animalId, onSuccess }: MedicineLogFormProps) {
         router.refresh()
         onSuccess?.()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
