@@ -4,14 +4,14 @@ import Image from 'next/image'
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gray-50">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-6 sm:p-8 space-y-3 sm:space-y-4">
             {/* Logo */}
             <div className="flex justify-center">
-              <div className="bg-gray-900 rounded-2xl p-4">
+              <div className="bg-[#2d5a2d] rounded-lg sm:rounded-xl p-4">
                 <Image 
                   src="/image/Farm.png" 
                   alt="Farm Logo" 
@@ -23,20 +23,20 @@ export default function LoginPage() {
             </div>
 
             {/* Header */}
-            <div className="text-center space-y-2">
-              <h1 className="text-2xl font-semibold text-gray-800">Welcome Back</h1>
-              <p className="text-gray-600 text-sm">
+            <div className="text-center space-y-1">
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-800">Welcome Back</h1>
+              <p className="text-gray-600 text-xs sm:text-sm">
                 Sign in to your SmartFarm account
               </p>
             </div>
             
             <LoginForm />
             
-            <div className="text-center text-sm text-gray-600">
+            <div className="text-center text-xs sm:text-sm text-gray-600">
               Don&apos;t have an account?{' '}
               <Link 
                 href="/auth/signup" 
-                className="text-[#2d5a2d] hover:text-[#1e3a1e] font-medium"
+                className="text-[#2d5a2d] hover:text-[#1e3a1e] font-medium underline"
               >
                 Sign up
               </Link>
@@ -46,20 +46,18 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Image/Background */}
-      <div className="hidden lg:block lg:w-1/2 relative bg-gradient-to-br from-[#2d5a2d] to-[#1e3a1e]">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#2d5a2d] to-[#1e3a1e] items-center justify-center">
         <Image 
           src="/image/image_login.jpg" 
           alt="Farm Background" 
           fill
           className="object-cover opacity-40"
         />
-        <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="text-white text-center space-y-4">
-            <h2 className="text-4xl font-bold">Smart Farm Management</h2>
-            <p className="text-xl text-gray-200">
-              Manage your farm with AI-powered insights and analytics
-            </p>
-          </div>
+        <div className="relative z-10 text-white text-center space-y-4 px-8 xl:px-12">
+          <h2 className="text-3xl xl:text-4xl font-bold">Smart Farm Management</h2>
+          <p className="text-lg xl:text-xl text-gray-200 max-w-lg mx-auto">
+            Manage your farm with AI-powered insights and analytics
+          </p>
         </div>
       </div>
     </div>

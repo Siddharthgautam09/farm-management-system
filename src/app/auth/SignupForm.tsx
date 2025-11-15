@@ -36,15 +36,15 @@ export function SignupForm() {
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="space-y-3 sm:space-y-3.5">
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="text-sm py-2">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="fullName" className="text-gray-700 font-medium">Full Name</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="fullName" className="text-gray-700 font-medium text-sm">Full Name</Label>
         <Input
           id="fullName"
           name="fullName"
@@ -52,12 +52,12 @@ export function SignupForm() {
           placeholder="John Doe"
           required
           disabled={isLoading}
-          className="h-12 bg-gray-50 border-gray-200"
+          className="h-10 sm:h-11 px-3 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-gray-700 font-medium">Email</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-gray-700 font-medium text-sm">Email</Label>
         <Input
           id="email"
           name="email"
@@ -65,12 +65,12 @@ export function SignupForm() {
           placeholder="your@email.com"
           required
           disabled={isLoading}
-          className="h-12 bg-gray-50 border-gray-200"
+          className="h-10 sm:h-11 px-3 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-gray-700 font-medium text-sm">Password</Label>
         <Input
           id="password"
           name="password"
@@ -79,12 +79,12 @@ export function SignupForm() {
           required
           minLength={6}
           disabled={isLoading}
-          className="h-12 bg-gray-50 border-gray-200"
+          className="h-10 sm:h-11 px-3 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">Confirm Password</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirmPassword" className="text-gray-700 font-medium text-sm">Confirm Password</Label>
         <Input
           id="confirmPassword"
           name="confirmPassword"
@@ -93,13 +93,13 @@ export function SignupForm() {
           required
           minLength={6}
           disabled={isLoading}
-          className="h-12 bg-gray-50 border-gray-200"
+          className="h-10 sm:h-11 px-3 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
         />
       </div>
 
       <Button 
         type="submit" 
-        className="w-full h-12 bg-[#2d5a2d] hover:bg-[#1e3a1e] text-white font-medium" 
+        className="w-full h-10 sm:h-11 bg-[#2d5a2d] hover:bg-[#1e3a1e] text-white font-medium text-sm sm:text-base" 
         disabled={isLoading}
       >
         {isLoading ? (
@@ -108,9 +108,10 @@ export function SignupForm() {
             Creating account...
           </>
         ) : (
-          'Sign Up'
+          'Create Account'
         )}
       </Button>
     </form>
   )
 }
+
