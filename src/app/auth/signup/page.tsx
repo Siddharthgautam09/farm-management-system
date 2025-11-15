@@ -1,29 +1,67 @@
-import { SignupForm } from "@/app/auth/SignupForm";
-import Link from "next/link";
+import { SignupForm } from "@/app/auth/SignupForm"
+import Link from "next/link"
+import Image from 'next/image'
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 flex items-center justify-center p-4 sm:p-6 lg:p-8 ">
-      <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg ">
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 lg:p-10 space-y-6 border-2 border-slate-800 h-screen ">
-          <div className="text-center space-y-2">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">Create An Account</h1>
+    <div className="min-h-screen flex">
+      {/* Left Side - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+            {/* Logo */}
+            <div className="flex justify-center">
+              <div className="bg-gray-900 rounded-2xl p-4">
+                <Image 
+                  src="/image/Farm.png" 
+                  alt="Farm Logo" 
+                  width={48} 
+                  height={48}
+                  className="invert"
+                />
+              </div>
+            </div>
+
+            {/* Header */}
+            <div className="text-center space-y-2">
+              <h1 className="text-2xl font-semibold text-gray-800">Create Account</h1>
+              <p className="text-gray-600 text-sm">
+                Sign up for your SmartFarm account
+              </p>
+            </div>
+          
+            <SignupForm />
+          
+            <div className="text-center text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link 
+                href="/auth/login" 
+                className="text-[#2d5a2d] hover:text-[#1e3a1e] font-medium"
+              >
+                Sign in
+              </Link>
+            </div>
           </div>
-          <br />
-          
-          <SignupForm />
-          
-          <div className="text-center text-xs sm:text-sm text-gray-600">
-            Already Have An Account?{' '}
-            <Link 
-              href="/auth/login" 
-              className="text-blue-600 hover:text-blue-700 font-medium underline"
-            >
-              Sign in
-            </Link>
+        </div>
+      </div>
+
+      {/* Right Side - Image/Background */}
+      <div className="hidden lg:block lg:w-1/2 relative bg-gradient-to-br from-[#2d5a2d] to-[#1e3a1e]">
+        <Image 
+          src="/image/image_login.jpg" 
+          alt="Farm Background" 
+          fill
+          className="object-cover opacity-40"
+        />
+        <div className="absolute inset-0 flex items-center justify-center p-12">
+          <div className="text-white text-center space-y-4">
+            <h2 className="text-4xl font-bold">Smart Farm Management</h2>
+            <p className="text-xl text-gray-200">
+              Manage your farm with AI-powered insights and analytics
+            </p>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
