@@ -6,16 +6,10 @@ import { Input } from '@/components/ui/input'
 import { Search, Loader2 } from 'lucide-react'
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
 
 type Animal = {
@@ -71,32 +65,27 @@ export function AnimalSearch() {
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3 w-full-s text-gray-400" />
-          <Input
-            placeholder="Search animals..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value)
-              setOpen(true)
-            }}
-            onFocus={() => setOpen(true)}
-            className="pl-10"
-          />
-          {isSearching && (
-            <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-gray-400" />
-          )}
-        </div>
-      </PopoverTrigger>
-      <PopoverContent className="w-[400px] p-0" align="start">
-        <Command>
-          <CommandList>
-            {results.length === 0 && searchQuery.length >= 2 && !isSearching && (
-              <CommandEmpty>No animals found</CommandEmpty>
-            )}
-            {results.length > 0 && (
+    <div className="relative w-full">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none z-10" />
+      <Input
+        placeholder="Search animals..."
+        value={searchQuery}
+        onChange={(e) => {
+          setSearchQuery(e.target.value)
+          setOpen(e.target.value.length >= 2)
+        }}
+        onFocus={() => searchQuery.length >= 2 && setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 200)}
+        className="pl-10"
+      />
+      {isSearching && (
+        <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 animate-spin text-gray-400 pointer-events-none" />
+      )}
+      
+      {open && results.length > 0 && (
+        <div className="absolute w-full mt-1 bg-white border rounded-md shadow-lg z-50 max-h-[300px] overflow-auto">
+          <Command>
+            <CommandList>
               <CommandGroup heading="Animals">
                 {results.map((animal) => (
                   <CommandItem
@@ -127,10 +116,16 @@ export function AnimalSearch() {
                   </CommandItem>
                 ))}
               </CommandGroup>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+            </CommandList>
+          </Command>
+        </div>
+      )}
+      
+      {open && searchQuery.length >= 2 && results.length === 0 && !isSearching && (
+        <div className="absolute w-full mt-1 bg-white border rounded-md shadow-lg z-50 p-4 text-center text-gray-500">
+          No animals found
+        </div>
+      )}
+    </div>
   )
 }
