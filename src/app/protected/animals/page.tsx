@@ -8,6 +8,7 @@ import { Plus, Users } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { AnimalSearch } from '@/components/animals/AnimalSearch'
+import { getDashboardStats } from '@/actions/dashboard'
 
 export default async function AnimalsPage() {
   const supabase = await createClient()
@@ -16,6 +17,10 @@ export default async function AnimalsPage() {
   if (!user) {
     redirect('/login')
   }
+
+  // Get alert count
+  const stats = await getDashboardStats()
+  const alertCount = (stats.lowStockItems?.length || 0) + (stats.upcomingVaccines?.length || 0)
 
   // Fetch all animals with their current stage and room
   const { data: animals, error } = await supabase
@@ -47,7 +52,12 @@ export default async function AnimalsPage() {
 
   return (
     <div className="space-y-6">
-      <Header user={user} />
+      <Header 
+        user={user} 
+        alertCount={alertCount}
+        lowStockItems={stats.lowStockItems as any}
+        upcomingVaccines={stats.upcomingVaccines as any}
+      />
 
       {/* Header */}
       <div className="flex justify-between items-start">

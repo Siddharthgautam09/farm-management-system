@@ -32,42 +32,23 @@ export default async function DashboardPage() {
   const stats = await getDashboardStats()
   const financial = await getFinancialSummary()
 
+  // Calculate total alerts
+  const alertCount = (stats.lowStockItems?.length || 0) + (stats.upcomingVaccines?.length || 0)
+
   return (
     <div className="space-y-6">
-    <Header user={user} />
+    <Header 
+      user={user} 
+      alertCount={alertCount}
+      lowStockItems={stats.lowStockItems as any}
+      upcomingVaccines={stats.upcomingVaccines as any}
+    />
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-gray-600 mt-2">
           Overview of your farm operations
         </p>
-      </div>
-
-      {/* Alerts */}
-      <div className="space-y-3">
-        {stats.lowStockItems && stats.lowStockItems.length > 0 && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              <strong>{stats.lowStockItems.length} inventory item(s)</strong> are running low on stock.{' '}
-              <Link href="/inventory" className="underline font-medium">
-                View Inventory
-              </Link>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {stats.upcomingVaccines && stats.upcomingVaccines.length > 0 && (
-          <Alert className="border-yellow-500 bg-yellow-50">
-            <Syringe className="h-4 w-4 text-yellow-600" />
-            <AlertDescription className="text-yellow-800">
-              <strong>{stats.upcomingVaccines.length} vaccine dose(s)</strong> due in the next 7 days.{' '}
-              <Link href="/animals" className="underline font-medium">
-                View Schedule
-              </Link>
-            </AlertDescription>
-          </Alert>
-        )}
       </div>
 
       {/* Animal Statistics */}

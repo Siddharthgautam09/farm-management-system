@@ -1,33 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { signIn } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
-import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
     setError(null)
 
-    const result = await signIn(formData)
+    startTransition(async () => {
+      const result = await signIn(formData)
 
-    if (result?.error) {
-      setError(result.error)
-      setIsLoading(false)
-    }
-    // If successful, redirect happens automatically
+      if (result?.error) {
+        setError(result.error)
+        setIsLoading(false)
+      }
+      // If successful, loading state stays active until navigation completes
+    })
   }
-  const goToDashboard = () => {
-  window.location.href = "/protected/dashboard";
-};
+
+  const loading = isLoading || isPending
 
   return (
     <form action={handleSubmit} className="space-y-3 sm:space-y-4">
@@ -45,7 +46,7 @@ export function LoginForm() {
           type="email"
           placeholder="your@email.com"
           required
-          disabled={isLoading}
+          disabled={loading}
           className="h-11 sm:h-12 px-3 sm:px-4 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
         />
       </div>
@@ -58,7 +59,7 @@ export function LoginForm() {
           type="password"
           placeholder="••••••••"
           required
-          disabled={isLoading}
+          disabled={loading}
           className="h-11 sm:h-12 px-3 sm:px-4 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
         />
       </div>
@@ -66,11 +67,9 @@ export function LoginForm() {
       <Button 
         type="submit" 
         className="w-full h-11 sm:h-12 bg-[#2d5a2d] hover:bg-[#1e3a1e] text-white font-medium text-sm sm:text-base" 
-        onClick={goToDashboard}
-        
-        disabled={isLoading}
+        disabled={loading}
       >
-        {isLoading ? (
+        {loading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             Signing in...
