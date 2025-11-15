@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
@@ -24,6 +25,9 @@ export function LoginForm() {
     }
     // If successful, redirect happens automatically
   }
+  const goToDashboard = () => {
+  window.location.href = "/protected/dashboard";
+};
 
   return (
     <form action={handleSubmit} className="space-y-3 sm:space-y-4">
@@ -62,6 +66,8 @@ export function LoginForm() {
       <Button 
         type="submit" 
         className="w-full h-11 sm:h-12 bg-[#2d5a2d] hover:bg-[#1e3a1e] text-white font-medium text-sm sm:text-base" 
+        onClick={goToDashboard}
+        
         disabled={isLoading}
       >
         {isLoading ? (
