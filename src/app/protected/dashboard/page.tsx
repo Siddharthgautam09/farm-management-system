@@ -3,17 +3,14 @@ import { redirect } from 'next/navigation'
 import { getDashboardStats, getFinancialSummary } from '@/actions/dashboard'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/layout/Header'
 import { 
   Users, 
   TrendingUp, 
   DollarSign, 
-  AlertTriangle,
   Activity,
   Package,
-  Syringe,
   ArrowRight,
   Skull,
   ShoppingCart
@@ -40,8 +37,8 @@ export default async function DashboardPage() {
     <Header 
       user={user} 
       alertCount={alertCount}
-      lowStockItems={stats.lowStockItems as any}
-      upcomingVaccines={stats.upcomingVaccines as any}
+      lowStockItems={stats.lowStockItems}
+      upcomingVaccines={stats.upcomingVaccines}
     />
       {/* Header */}
       <div>

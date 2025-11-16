@@ -55,8 +55,8 @@ export default async function AnimalsPage() {
       <Header 
         user={user} 
         alertCount={alertCount}
-        lowStockItems={stats.lowStockItems as any}
-        upcomingVaccines={stats.upcomingVaccines as any}
+        lowStockItems={stats.lowStockItems}
+        upcomingVaccines={stats.upcomingVaccines}
       />
 
       {/* Header */}
