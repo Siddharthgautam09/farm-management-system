@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import {
   Home,
   Inbox,
@@ -30,8 +31,14 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-[#2d5a2d] border-r p-4">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl text-white font-bold p-3">Farm Management</h1>
+      <div className="flex items-center justify-center gap-4 mb-6 py-2">
+        <Image 
+          src="/image/Farm.png" 
+          alt="Farm Management Logo" 
+          width={150} 
+          height={60}
+          className="object-contain"
+        />
       </div>
 
       <nav className="space-y-4">

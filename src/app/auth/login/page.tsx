@@ -10,13 +10,12 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-4 sm:space-y-6">
           {/* Logo */}
           <div className="flex justify-center">
-            <div className="bg-[#1e3a1e] rounded-lg sm:rounded-xl p-4">
+            <div className="bg-white rounded-lg sm:rounded-xl p-4 shadow-md">
               <Image 
                 src="/image/Farm.png" 
                 alt="Farm Logo" 
                 width={98} 
                 height={98}
-                className="invert"
               />
             </div>
           </div>
