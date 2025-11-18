@@ -2,9 +2,9 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { SlaughterReportForm } from '@/components/forms/SlaughterReportForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { BackButton } from '@/components/ui/back-button'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 
 export default async function NewSlaughterReportPage() {
   console.log('=== NEW SLAUGHTER REPORT PAGE ===')
@@ -57,15 +57,11 @@ export default async function NewSlaughterReportPage() {
 
   return (
     <div className="container mx-auto py-6 max-w-2xl">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/protected/reports/slaughter">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">New Slaughter Report</h1>
-          <p className="text-gray-600 mt-1">
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <BackButton href="/protected/reports/slaughter" />
+        <div className="text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">New Slaughter Report</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
             Record a slaughter transaction
           </p>
         </div>

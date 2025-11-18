@@ -112,7 +112,7 @@ export default async function NewAnimalPage() {
   return (
     <div className="container mx-auto py-6 max-w-2xl">
       <div className="flex items-center justify-center gap-4 mb-6">
-        <BackButton href="/dashboard" />
+        <BackButton href="/protected/animals  " />
         <h1 className="text-2xl sm:text-3xl font-bold">Register New Animal</h1>
       </div>
 
