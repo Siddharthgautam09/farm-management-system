@@ -28,15 +28,18 @@ export function RoomCard({ room }: RoomCardProps) {
   
   return (
     <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+      <CardHeader className="pb-3 sm:pb-4">
+        <CardTitle className="flex items-center justify-between text-base sm:text-lg">
           <span>Room {room.identifier}</span>
-          <Badge variant={occupancyRate > 90 ? 'destructive' : 'default'}>
+          <Badge 
+            variant={occupancyRate > 90 ? 'destructive' : 'default'}
+            className="text-xs sm:text-sm"
+          >
             {room.current_count}/{room.capacity}
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
@@ -48,7 +51,7 @@ export function RoomCard({ room }: RoomCardProps) {
               style={{ width: `${occupancyRate}%` }}
             />
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-xs sm:text-sm text-gray-600">
             {occupancyRate.toFixed(0)}% Occupied
           </p>
         </div>
@@ -57,20 +60,20 @@ export function RoomCard({ room }: RoomCardProps) {
           <Button
             variant="outline"
             size="sm"
-            className="flex-1"
+            className="flex-1 h-9 text-xs sm:text-sm"
             onClick={() => router.push(`/rooms/${room.id}`)}
           >
-            <Eye className="h-3 w-3 mr-1" />
+            <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
             View
           </Button>
           <Button
             variant="default"
             size="sm"
-            className="flex-1"
+            className="flex-1 h-9 text-xs sm:text-sm"
             asChild
           >
             <Link href="/animals/new">
-              <Plus className="h-3 w-3 mr-1" />
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               Add
             </Link>
           </Button>
