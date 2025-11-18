@@ -22,14 +22,14 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Receiving", href: "/receiving", icon: Inbox },
-  { name: "Weaning", href: "/weaning", icon: Waves },
-  { name: "Fattening", href: "/fattening", icon: TrendingUp },
-  { name: "Finishing", href: "/finishing", icon: CheckCircle },
-  { name: "Animals", href: "/animals", icon: Users },
-  { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Inventory", href: "/inventory", icon: Package },
+  { name: "Dashboard", href: "/protected/dashboard", icon: Home },
+  { name: "Receiving", href: "/protected/receiving", icon: Inbox },
+  { name: "Weaning", href: "/protected/weaning", icon: Waves },
+  { name: "Fattening", href: "/protected/fattening", icon: TrendingUp },
+  { name: "Finishing", href: "/protected/finishing", icon: CheckCircle },
+  { name: "Animals", href: "/protected/animals", icon: Users },
+  { name: "Reports", href: "/protected/reports", icon: FileText },
+  { name: "Inventory", href: "/protected/inventory", icon: Package },
 ];
 
 export function Sidebar() {
@@ -123,7 +123,7 @@ export function Sidebar() {
                   className={cn(
                     "flex items-center gap-3 rounded-lg font-medium transition-all duration-200",
                     isActive
-                      ? "bg-blue-50 text-blue-700"
+                      ? "bg-blue-50 text-gray-500"
                       : "text-white hover:bg-[#4a7c4a]",
                     isCollapsed && !isMobile
                       ? "justify-center px-4 py-4 text-base"
@@ -160,7 +160,7 @@ export function Sidebar() {
               ) : (
                 <>
                   <ChevronLeft className="h-5 w-5 mr-2" />
-                  <span className="text-base">Collapse</span>
+                  <span className="text-base">Click</span>
                 </>
               )}
             </Button>

@@ -117,39 +117,37 @@ export default async function CostAnalysisPage() {
   const avgInvestmentPerAnimal = activeAnimals > 0 ? activeInvestment / activeAnimals : 0
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold">Cost Analysis</h1>
-        <p className="text-gray-600 mt-2">
-          Complete financial breakdown of farm operations
-        </p>
+      <div className="text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold">Cost Analysis</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Comprehensive financial overview of your farm</p>
       </div>
 
       {/* Overall Financial Summary */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Financial Summary</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Financial Summary</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
                 Total Investment
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">${totalInvestment.toFixed(2)}</p>
+              <p className="text-xl sm:text-2xl font-bold break-words">${totalInvestment.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">{totalAnimals} animals</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
                 Active Investment
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-xl sm:text-2xl font-bold text-blue-600 break-words">
                 ${activeInvestment.toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-1">{activeAnimals} animals</p>
@@ -158,12 +156,12 @@ export default async function CostAnalysisPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
                 Total Revenue
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-green-600">
+              <p className="text-xl sm:text-2xl font-bold text-green-600 break-words">
                 ${totalRevenue.toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-1">{totalAnimalsSold} sold</p>
@@ -172,12 +170,12 @@ export default async function CostAnalysisPage() {
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
                 Death Losses
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-red-600">
+              <p className="text-xl sm:text-2xl font-bold text-red-600 break-words">
                 ${totalDeathLoss.toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-1">{totalDeaths} deaths</p>
@@ -186,17 +184,17 @@ export default async function CostAnalysisPage() {
 
           <Card className={netProfitLoss >= 0 ? 'bg-green-50' : 'bg-red-50'}>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-1 sm:gap-2">
                 {netProfitLoss >= 0 ? (
-                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600 shrink-0" />
                 ) : (
-                  <TrendingDown className="h-4 w-4 text-red-600" />
+                  <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-600 shrink-0" />
                 )}
-                Net {netProfitLoss >= 0 ? 'Profit' : 'Loss'}
+                <span className="truncate">Net {netProfitLoss >= 0 ? 'Profit' : 'Loss'}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className={`text-2xl font-bold ${netProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <p className={`text-xl sm:text-2xl font-bold break-words ${netProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 ${Math.abs(netProfitLoss).toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-1">
@@ -209,56 +207,56 @@ export default async function CostAnalysisPage() {
 
       {/* Operating Costs Breakdown */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Operating Costs</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Operating Costs</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4" />
-                Feeding Costs
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
+                <ShoppingBag className="h-4 w-4 shrink-0" />
+                <span className="truncate">Feeding Costs</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">${totalFeedingCost.toFixed(2)}</p>
+              <p className="text-xl sm:text-2xl font-bold break-words">${totalFeedingCost.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">All feed types</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Pill className="h-4 w-4" />
-                Medicine Costs
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Pill className="h-4 w-4 shrink-0" />
+                <span className="truncate">Medicine Costs</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">${totalMedicineCost.toFixed(2)}</p>
+              <p className="text-xl sm:text-2xl font-bold break-words">${totalMedicineCost.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">All treatments</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Syringe className="h-4 w-4" />
-                Vaccine Costs
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Syringe className="h-4 w-4 shrink-0" />
+                <span className="truncate">Vaccine Costs</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">${totalVaccineCost.toFixed(2)}</p>
+              <p className="text-xl sm:text-2xl font-bold break-words">${totalVaccineCost.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">All vaccinations</p>
             </CardContent>
           </Card>
 
           <Card className="bg-orange-50">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Total Operating
+              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Package className="h-4 w-4 shrink-0" />
+                <span className="truncate">Total Operating</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-orange-600">
+              <p className="text-xl sm:text-2xl font-bold text-orange-600 break-words">
                 ${totalOperatingCost.toFixed(2)}
               </p>
               <p className="text-xs text-gray-500 mt-1">All expenses</p>
@@ -271,19 +269,19 @@ export default async function CostAnalysisPage() {
       {Object.keys(feedingCostsByType).length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Feeding Costs by Type</CardTitle>
-            <CardDescription>Breakdown of feed expenses</CardDescription>
+            <CardTitle className="text-base sm:text-lg">Feeding Costs by Type</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Breakdown of feed expenses</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {Object.entries(feedingCostsByType).map(([type, cost]) => (
-                <div key={type} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="capitalize">
+                <div key={type} className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <Badge variant="outline" className="capitalize text-xs shrink-0">
                       {type.replace('_', ' ')}
                     </Badge>
                   </div>
-                  <p className="font-semibold">${cost.toFixed(2)}</p>
+                  <p className="font-semibold text-sm sm:text-base shrink-0">${cost.toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -294,24 +292,24 @@ export default async function CostAnalysisPage() {
       {/* Per-Animal Costs */}
       <Card>
         <CardHeader>
-          <CardTitle>Per-Animal Analysis</CardTitle>
-          <CardDescription>Average costs per active animal</CardDescription>
+          <CardTitle className="text-base sm:text-lg">Per-Animal Analysis</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Average costs per active animal</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 border rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Avg Investment</p>
-              <p className="text-2xl font-bold">${avgInvestmentPerAnimal.toFixed(2)}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="p-3 sm:p-4 border rounded-lg">
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Avg Investment</p>
+              <p className="text-xl sm:text-2xl font-bold break-words">${avgInvestmentPerAnimal.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">per animal</p>
             </div>
-            <div className="p-4 border rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Avg Operating Cost</p>
-              <p className="text-2xl font-bold">${avgCostPerAnimal.toFixed(2)}</p>
+            <div className="p-3 sm:p-4 border rounded-lg">
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Avg Operating Cost</p>
+              <p className="text-xl sm:text-2xl font-bold break-words">${avgCostPerAnimal.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">per animal</p>
             </div>
-            <div className="p-4 border rounded-lg">
-              <p className="text-sm text-gray-600 mb-1">Avg Revenue</p>
-              <p className="text-2xl font-bold text-green-600">${avgRevenuePerAnimal.toFixed(2)}</p>
+            <div className="p-3 sm:p-4 border rounded-lg">
+              <p className="text-xs sm:text-sm text-gray-600 mb-1">Avg Revenue</p>
+              <p className="text-xl sm:text-2xl font-bold text-green-600 break-words">${avgRevenuePerAnimal.toFixed(2)}</p>
               <p className="text-xs text-gray-500 mt-1">per sold animal</p>
             </div>
           </div>

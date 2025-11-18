@@ -117,172 +117,205 @@ export function InventoryForm(props?: InventoryFormProps) {
           console.log('Form errors:', form.formState.errors)
           form.handleSubmit(onSubmit)(e)
         }} 
-        className="space-y-4"
+        className="space-y-6 sm:space-y-8"
       >
-        <FormField
-          control={form.control}
-          name="product_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Name *</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., MCR Feed Bags" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="category"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+        {/* Basic Information Section */}
+        <div className="space-y-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">Basic Information</h3>
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="product_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm sm:text-base">Product Name *</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
+                    <Input 
+                      placeholder="e.g., MCR Feed Bags" 
+                      {...field} 
+                      className="h-10 sm:h-11 text-sm sm:text-base"
+                    />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="feed">Feed</SelectItem>
-                    <SelectItem value="medicine">Medicine</SelectItem>
-                    <SelectItem value="vaccine">Vaccine</SelectItem>
-                    <SelectItem value="supplies">Supplies</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem className="sm:col-span-1">
+                    <FormLabel className="text-sm sm:text-base">Category *</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="feed">Feed</SelectItem>
+                        <SelectItem value="medicine">Medicine</SelectItem>
+                        <SelectItem value="vaccine">Vaccine</SelectItem>
+                        <SelectItem value="supplies">Supplies</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs sm:text-sm" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem className="sm:col-span-1">
+                    <FormLabel className="text-sm sm:text-base">Unit *</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="e.g., bags, bottles, kg" 
+                        {...field} 
+                        className="h-10 sm:h-11 text-sm sm:text-base"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs sm:text-sm" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Quantity & Pricing Section */}
+        <div className="space-y-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">Quantity & Pricing</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-1">
+                  <FormLabel className="text-sm sm:text-base">Quantity *</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="100"
+                      value={field.value ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        if (val === '' || val === null) {
+                          field.onChange(undefined)
+                        } else {
+                          const num = parseFloat(val)
+                          field.onChange(isNaN(num) ? undefined : num)
+                        }
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      className="h-10 sm:h-11 text-sm sm:text-base"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-1">
+                  <FormLabel className="text-sm sm:text-base">Price per Unit *</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="25.00"
+                      value={field.value ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        if (val === '' || val === null) {
+                          field.onChange(undefined)
+                        } else {
+                          const num = parseFloat(val)
+                          field.onChange(isNaN(num) ? undefined : num)
+                        }
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      className="h-10 sm:h-11 text-sm sm:text-base"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="alert_threshold"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-1">
+                  <FormLabel className="text-sm sm:text-base">Alert Threshold</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="10"
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        const value = e.target.valueAsNumber
+                        field.onChange(isNaN(value) ? undefined : value)
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      ref={field.ref}
+                      className="h-10 sm:h-11 text-sm sm:text-base"
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs sm:text-sm">Alert when quantity falls below</FormDescription>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Additional Notes Section */}
+        <div className="space-y-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">Additional Information</h3>
           <FormField
             control={form.control}
-            name="unit"
+            name="notes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Unit *</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Notes</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., bags, bottles, kg" {...field} />
+                  <Textarea
+                    placeholder="Additional notes about this item..."
+                    {...field}
+                    className="min-h-[100px] text-sm sm:text-base resize-none"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs sm:text-sm" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="quantity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Quantity *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="100"
-                    value={field.value ?? ''}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      if (val === '' || val === null) {
-                        field.onChange(undefined)
-                      } else {
-                        const num = parseFloat(val)
-                        field.onChange(isNaN(num) ? undefined : num)
-                      }
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price per Unit *</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="25.00"
-                    value={field.value ?? ''}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      if (val === '' || val === null) {
-                        field.onChange(undefined)
-                      } else {
-                        const num = parseFloat(val)
-                        field.onChange(isNaN(num) ? undefined : num)
-                      }
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="alert_threshold"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Alert Threshold</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="10"
-                    value={field.value || ''}
-                    onChange={(e) => {
-                      const value = e.target.valueAsNumber
-                      field.onChange(isNaN(value) ? undefined : value)
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                  />
-                </FormControl>
-                <FormDescription>Alert when quantity falls below</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Action Button */}
+        <div className="pt-4 border-t">
+          <Button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className="w-full h-10 sm:h-11 text-sm sm:text-base"
+          >
+            {isSubmitting ? 'Adding...' : 'Add Inventory Item'}
+          </Button>
         </div>
-
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Additional notes about this item..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? 'Adding...' : 'Add Inventory Item'}
-        </Button>
       </form>
     </Form>
   )

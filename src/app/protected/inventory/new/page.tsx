@@ -2,9 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { InventoryForm } from '@/components/inventory/InventoryForm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { BackButton } from '@/components/ui/back-button'
 
 export default async function NewInventoryPage() {
   const supabase = await createClient()
@@ -16,15 +14,11 @@ export default async function NewInventoryPage() {
 
   return (
     <div className="container mx-auto py-6 max-w-2xl">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/protected/inventory">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold">Add Inventory Item</h1>
-          <p className="text-gray-600 mt-1">
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <BackButton href="/protected/inventory" />
+        <div className="text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">Add Inventory Item</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">
             Add a new item to your inventory
           </p>
         </div>
