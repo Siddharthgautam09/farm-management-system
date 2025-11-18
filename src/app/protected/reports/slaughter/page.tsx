@@ -162,7 +162,7 @@ export default async function SlaughterReportsPage() {
                 <tbody>
                   {displayReports.map((report: SlaughterReport, index: number) => (
                     <tr key={report.id} className="border-b hover:bg-gray-50">
-                      <td className="p-2">{index + 1}</td>
+                      <td className="p-2">{displayReports.length - index}</td>
                       <td className="p-2">{format(new Date(report.slaughter_date), 'MMM dd, yyyy')}</td>
                       <td className="p-2 font-mono text-sm">{report.animals?.animal_id || report.animal_id}</td>
                       <td className="p-2">{report.slaughter_weight} kg</td>

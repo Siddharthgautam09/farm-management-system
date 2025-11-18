@@ -183,9 +183,8 @@ export default async function InventoryPage() {
       {/* Inventory Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">All Inventory Items</CardTitle>
+          <CardTitle className="text-lg sm:text-xl flex justify-centerß">All Inventory Items</CardTitle>
           <CardDescription className="text-xs sm:text-sm">
-            Complete list of inventory with stock levels and filters
           </CardDescription>
         </CardHeader>
         <CardContent className="p-3 sm:p-6">
