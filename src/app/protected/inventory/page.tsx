@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertTriangle, Package, Plus, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { BackButton } from '@/components/ui/back-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,7 +53,13 @@ export default async function InventoryPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 sm:gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <BackButton 
+          href="/protected/dashboard"
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+        />
         <div className="flex-1 text-center">
           <h1 className="text-2xl sm:text-3xl font-bold">Inventory Management</h1>
         </div>

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { BackButton } from '@/components/ui/back-button'
 import Link from 'next/link'
 import { FileText, Skull, ShoppingCart, DollarSign, TrendingUp } from 'lucide-react'
 
@@ -72,8 +73,17 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2 justify-center">Reports</h1>
+      <div className="flex items-center gap-3 sm:gap-4">
+        <BackButton 
+          href="/protected/dashboard"
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+        />
+        <div className="flex-1 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">Reports</h1>
+        </div>
+        <div className="w-9 sm:w-10 shrink-0" />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
