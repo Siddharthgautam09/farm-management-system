@@ -30,15 +30,15 @@ export default async function FinishingPage() {
     .order('identifier')
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">{stage.display_name}</h1>
-          <p className="text-gray-600 mt-1">Rooms A-E</p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold flex justify-center items-center gap-2  " >{stage.display_name}</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1">Rooms 13-28</p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base">
           <Link href="/animals/new">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 mr-1 sm:mr-2" />
             Add Animal
           </Link>
         </Button>

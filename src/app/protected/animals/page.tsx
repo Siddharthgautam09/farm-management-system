@@ -61,26 +61,25 @@ export default async function AnimalsPage() {
 
       {/* Header */}
       <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+        <div className="flex-1 text-center">
+          <h1 className="text-3xl font-bold inline-flex items-center gap-2">
             <Users className="h-8 w-8" />
             All Animals
           </h1>
-          <p className="text-gray-600 mt-2">
-            Manage and track all animals in your farm
-          </p>
         </div>
-        <Button asChild>
+      </div>
+
+      {/* Search Bar */}
+      <div className="flex justify-between items-end gap-4">
+        <div className="max-w-md flex-1">
+          <AnimalSearch />
+        </div>
+        <Button asChild className="shrink-0">
           <Link href="/animals/new">
             <Plus className="h-4 w-4 mr-2" />
             Add Animal
           </Link>
         </Button>
-      </div>
-
-      {/* Search Bar */}
-      <div className="max-w-md">
-        <AnimalSearch />
       </div>
 
       {/* Statistics Cards */}

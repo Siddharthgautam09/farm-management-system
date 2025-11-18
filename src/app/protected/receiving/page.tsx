@@ -31,10 +31,10 @@ export default async function ReceivingPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4 ">
         <div className="flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold">{stage.display_name}</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">Rooms A-E</p>
+          <h1 className="text-2xl sm:text-3xl font-bold flex justify-center items-center gap-2">{stage.display_name}</h1>
+          <p className="text-lg sm:text-base text-gray-600 mt-1">Rooms A-E</p>
         </div>
         <Button asChild className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base">
           <Link href="/animals/new">

@@ -4,8 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, MoveRight } from 'lucide-react'
-import Link from 'next/link'
+import { BackButton } from '@/components/ui/back-button'
+import { MoveRight } from 'lucide-react'
 import { WeightHistory } from '@/components/weights/WeightHistory'
 import { WeightEntryDialog } from '@/components/weights/WeightEntryDialog'
 import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
@@ -93,13 +93,14 @@ export default async function AnimalDetailPage({
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-normal  gap-3 sm:gap-4">
         <div className="flex items-center gap-2 sm:gap-4">
-          <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10 shrink-0" asChild>
-            <Link href="/animals">
-              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-            </Link>
-          </Button>
+          <BackButton 
+            href="/protected/animals"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+          />
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate">{animal.animal_id}</h1>
             <p className="text-xs sm:text-sm text-gray-600 truncate">
