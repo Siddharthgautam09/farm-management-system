@@ -2,10 +2,13 @@
   "name": "farm-management-electron",
   "version": "1.0.0",
   "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "desktop": "electron ./electron/main.js"
+}
+,
   "devDependencies": {
     "electron": "^latest",
     "electron-builder": "^latest"

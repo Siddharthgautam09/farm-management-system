@@ -7,6 +7,7 @@
     "build": "next build",
     "build:electron": "ELECTRON_BUILD=true next build && cd electron && npm run build",
     "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cd electron && npm start\"",
+    "desktop": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cd electron && npm start\"",
     "start": "next start",
     "lint": "eslint"
   },
