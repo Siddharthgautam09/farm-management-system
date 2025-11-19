@@ -13,8 +13,14 @@ async function createWindow() {
     width: 1400,
     height: 900,
   });
+  const isDev = !app.isPackaged;
 
+if (isDev) {
   win.loadURL("http://localhost:3000");
+} else {
+  win.loadURL("https://farm-management-system-taupe.vercel.app");
+}
+
 }
 
 app.whenReady().then(createWindow);
