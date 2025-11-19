@@ -1,9 +1,10 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { BackButton } from '@/components/ui/back-button'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, Skull, DollarSign, TrendingDown, Calendar, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/ExportButton'
@@ -73,111 +74,159 @@ export default async function DeathReportsPage() {
   }))
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Death Reports</h1>
-          <p className="text-muted-foreground">Track and manage animal mortality</p>
-        </div>
-        <div className="flex gap-2">
-          <ExportButton 
-            data={exportData} 
-            filename="death-reports"
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <BackButton 
+            href="/protected/reports"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
           />
-          <Button asChild>
-            <Link href="/protected/reports/death/new">
-              <Plus className="mr-2 h-4 w-4" />
-              New Death Report
-            </Link>
-          </Button>
+          <div className="flex-1 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Death Reports</h1>
+          </div>
+          <div className="w-9 sm:w-10 shrink-0" />
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-xs sm:text-sm text-muted-foreground">Track and manage animal mortality</p>
+          <div className="flex gap-2 shrink-0">
+            <ExportButton 
+              data={exportData} 
+              filename="death-reports"
+            />
+            <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
+              <Link href="/protected/reports/death/new">
+                <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">New Report</span>
+                <span className="sm:hidden">New</span>
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reports</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Reports</CardTitle>
+            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{displayReports.length}</div>
+            <div className="text-xl sm:text-2xl font-bold">{displayReports.length}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">All time</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Loss</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Loss</CardTitle>
+            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-xl sm:text-2xl font-bold text-red-600">
               ${totalLoss.toFixed(2)}
             </div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Financial impact</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Loss</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Avg Loss</CardTitle>
+            <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold text-orange-600">
               ${displayReports.length > 0 ? (totalLoss / displayReports.length).toFixed(2) : '0.00'}
             </div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Per incident</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">This Month</CardTitle>
+            <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-xl sm:text-2xl font-bold text-purple-600">
               {displayReports.filter((r: DeathReport) => {
                 const reportDate = new Date(r.death_date)
                 const now = new Date()
                 return reportDate.getMonth() === now.getMonth() && reportDate.getFullYear() === now.getFullYear()
               }).length}
             </div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Recent cases</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Reports</CardTitle>
+      {/* Reports List */}
+      <Card className="shadow-sm">
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="text-lg sm:text-xl">Recent Reports</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
+            Complete history of all mortality incidents
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-3 sm:p-6">
           {displayReports.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground mb-4">No death reports found</p>
-              <Button asChild>
-                <Link href="/protected/reports/death/new">Create your first report</Link>
+            <div className="text-center py-8 sm:py-12">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Skull className="h-8 w-8 sm:h-10 sm:w-10 text-red-400" />
+              </div>
+              <p className="text-sm sm:text-base text-muted-foreground mb-4">No death reports found</p>
+              <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
+                <Link href="/protected/reports/death/new">
+                  <Plus className="h-4 w-4 mr-1 sm:mr-2" />
+                  Create your first report
+                </Link>
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-2">S.No</th>
-                    <th className="text-left p-2">Date</th>
-                    <th className="text-left p-2">Animal ID</th>
-                    <th className="text-left p-2">Cause of Death</th>
-                    <th className="text-left p-2">Purchase Price</th>
-                    <th className="text-left p-2">Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayReports.map((report: DeathReport, index: number) => (
-                    <tr key={report.id} className="border-b hover:bg-gray-50">
-                      <td className="p-2">{displayReports.length - index}</td>
-                      <td className="p-2">{format(new Date(report.death_date), 'MMM dd, yyyy')}</td>
-                      <td className="p-2 font-mono text-sm">{report.animals?.animal_id || report.animal_id}</td>
-                      <td className="p-2">
-                        <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs">{report.cause_of_death}</span>
-                      </td>
-                      <td className="p-2 text-red-600 font-semibold">${report.animals?.purchase_price?.toFixed(2) || '0.00'}</td>
-                      <td className="p-2 text-gray-600 max-w-xs truncate">{report.notes || '-'}</td>
+            <div className="overflow-x-auto -mx-3 sm:mx-0">
+              <div className="inline-block min-w-full align-middle">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">S.No</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Animal ID</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Cause</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Loss</th>
+                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Notes</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {displayReports.map((report: DeathReport, index: number) => (
+                      <tr key={report.id} className="hover:bg-red-50 transition-colors">
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-700 font-medium">
+                          {displayReports.length - index}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">
+                          {format(new Date(report.death_date), 'MMM dd, yyyy')}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+                          <span className="font-mono text-xs sm:text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                            {report.animals?.animal_id || report.animal_id}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            {report.cause_of_death}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm font-semibold text-red-600">
+                          ${report.animals?.purchase_price?.toFixed(2) || '0.00'}
+                        </td>
+                        <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600 max-w-xs truncate">
+                          {report.notes || '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </CardContent>

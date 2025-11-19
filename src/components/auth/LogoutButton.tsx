@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
-import { LogOut } from "lucide-react";
+import { LogOut, Loader2 } from "lucide-react";
 
 interface LogoutButtonProps {
   variant?: "default" | "ghost" | "outline" | "secondary" | "destructive" | "link";
@@ -35,7 +35,10 @@ export function LogoutButton({
       className={className || "hover:border hover:border-gray-300 hover:bg-gray-100 rounded-md transition-all h-9 sm:h-10 px-2 sm:px-3 min-w-[80px] sm:min-w-[96px]"}
     >
       {loading ? (
-        <span className="text-xs sm:text-sm">Logging out...</span>
+        <span className="flex items-center gap-1 sm:gap-2">
+          <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+          {showText && <span className="text-sm sm:text-base">Logging out...</span>}
+        </span>
       ) : (
         <span className="flex items-center gap-1 sm:gap-2">
           <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
