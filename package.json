@@ -51,7 +51,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "concurrently": "^9.1.2",
-    "electon": "^0.0.1-security",
     "electron": "^39.2.2",
     "electron-builder": "^26.0.12",
     "eslint": "^9",
