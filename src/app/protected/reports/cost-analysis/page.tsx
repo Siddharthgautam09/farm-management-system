@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { TrendingUp, TrendingDown, Package, Pill, Syringe, ShoppingBag } from 'lucide-react'
-
+import { BackButton } from '@/components/ui/back-button'  
 export default async function CostAnalysisPage() {
   const supabase = await createClient()
 
@@ -119,9 +119,19 @@ export default async function CostAnalysisPage() {
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold">Cost Analysis</h1>
-        <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Comprehensive financial overview of your farm</p>
+          <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <BackButton 
+          href="/protected/dashboard"
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+        />
+        <div className="flex-1 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold">Cost Analysis</h1>
+        </div>
+        <div className="w-9 sm:w-10 shrink-0" />
+      </div>
       </div>
 
       {/* Overall Financial Summary */}
