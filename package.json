@@ -15,7 +15,6 @@
     "lint": "eslint",
     "desktop-dev": "concurrently \"next dev\" \"electron .\"",
     "desktop-build": "electron-builder"
-
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -65,21 +64,21 @@
     "wait-port": "^1.1.0"
   },
   "build": {
-  "appId": "com.siddharth.desktopapp",
-  "productName": "SiddharthDesktopApp",
-  "files": [
-    "electron.js",
-    "preload.js",
-    "dist/**/*"
-  ],
-  "mac": {
-    "target": "dmg"
-  },
-  "win": {
-    "target": "nsis"
-  },
-  "linux": {
-    "target": "AppImage"
+    "appId": "com.siddharth.desktopapp",
+    "productName": "SiddharthDesktopApp",
+    "files": [
+      "electron.js",
+      "preload.js",
+      "dist/**/*"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
-}
 }
