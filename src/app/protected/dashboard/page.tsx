@@ -33,7 +33,7 @@ export default async function DashboardPage() {
   const alertCount = (stats.lowStockItems?.length || 0) + (stats.upcomingVaccines?.length || 0)
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4">
     <Header 
       user={user} 
       alertCount={alertCount}
@@ -42,81 +42,73 @@ export default async function DashboardPage() {
     />
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold flex justify-center">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
       </div>
 
       {/* Animal Statistics */}
       <div>
-        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Animal Overview</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Total Animals
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl sm:text-3xl font-bold">{stats.totalAnimals}</p>
-              <p className="text-xs text-gray-500 mt-1">All time</p>
+        <h2 className="text-lg font-bold mb-3">Animal Overview</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Card className="border border-gray-100">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="h-4 w-4 text-gray-500" />
+                <span className="text-xs font-medium text-gray-600">Total Animals</span>
+              </div>
+              <p className="text-3xl font-bold mb-0.5">{stats.totalAnimals}</p>
+              <p className="text-xs text-gray-500">All time</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                Active Animals
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl sm:text-3xl font-bold text-green-600">{stats.aliveAnimals}</p>
-              <p className="text-xs text-gray-500 mt-1">Currently on farm</p>
+          <Card className="border border-gray-100">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Activity className="h-4 w-4 text-gray-500" />
+                <span className="text-xs font-medium text-gray-600">Active Animals</span>
+              </div>
+              <p className="text-3xl font-bold text-green-600 mb-0.5">{stats.aliveAnimals}</p>
+              <p className="text-xs text-gray-500">Currently on farm</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                Animals Sold
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl sm:text-3xl font-bold text-blue-600">{stats.soldAnimals}</p>
-              <p className="text-xs text-gray-500 mt-1">Completed</p>
+          <Card className="border border-gray-100">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <ShoppingCart className="h-4 w-4 text-gray-500" />
+                <span className="text-xs font-medium text-gray-600">Animals Sold</span>
+              </div>
+              <p className="text-3xl font-bold text-blue-600 mb-0.5">{stats.soldAnimals}</p>
+              <p className="text-xs text-gray-500">Completed</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Skull className="h-4 w-4" />
-                Deaths
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl sm:text-3xl font-bold text-red-600">{stats.deceasedAnimals}</p>
-              <p className="text-xs text-gray-500 mt-1">Mortality</p>
+          <Card className="border border-gray-100">
+            <CardContent className="p-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Skull className="h-4 w-4 text-gray-500" />
+                <span className="text-xs font-medium text-gray-600">Deaths</span>
+              </div>
+              <p className="text-3xl font-bold text-red-600 mb-0.5">{stats.deceasedAnimals}</p>
+              <p className="text-xs text-gray-500">Mortality</p>
             </CardContent>
           </Card>
         </div>
       </div>
 
       {/* Animals by Stage & Category */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Animals by Stage</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Current distribution across stages</CardDescription>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <Card className="border border-gray-100">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold">Animals by Stage</CardTitle>
+            <CardDescription className="text-xs text-gray-500">Current distribution across stages</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {stats.byStage && Object.keys(stats.byStage).length > 0 ? (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2">
                 {Object.entries(stats.byStage).map(([stage, count]) => (
-                  <div key={stage} className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base font-medium truncate">{stage}</span>
-                    <Badge variant="secondary" className="text-xs sm:text-sm shrink-0 ml-2">{count as number} animals</Badge>
+                  <div key={stage} className="flex justify-between items-center py-1.5">
+                    <span className="text-sm font-medium">{stage}</span>
+                    <span className="text-sm font-bold">{count as number} animals</span>
                   </div>
                 ))}
               </div>
@@ -126,18 +118,18 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Animals by Category</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Breakdown by animal type</CardDescription>
+        <Card className="border border-gray-100">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-bold">Animals by Category</CardTitle>
+            <CardDescription className="text-xs text-gray-500">Breakdown by animal type</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {stats.byCategory && Object.keys(stats.byCategory).length > 0 ? (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2">
                 {Object.entries(stats.byCategory).map(([category, count]) => (
-                  <div key={category} className="flex justify-between items-center">
-                    <span className="text-sm sm:text-base font-medium capitalize truncate">{category}</span>
-                    <Badge variant="outline" className="text-xs sm:text-sm shrink-0 ml-2">{count as number} animals</Badge>
+                  <div key={category} className="flex justify-between items-center py-1.5">
+                    <span className="text-sm font-medium capitalize">{category}</span>
+                    <span className="text-sm font-bold">{count as number} animals</span>
                   </div>
                 ))}
               </div>
@@ -150,59 +142,37 @@ export default async function DashboardPage() {
 
       {/* Financial Overview */}
       <div>
-        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Financial Overview</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Total Investment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold break-words">${financial.totalInvestment.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">All purchases</p>
+        <h2 className="text-lg sm:text-xl font-bold mb-4">Financial Overview</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <Card className="border border-gray-100">
+            <CardContent className="p-4">
+              <p className="text-sm font-medium text-gray-600 mb-2">Total Investment</p>
+              <p className="text-2xl font-bold mb-1">${financial.totalInvestment.toFixed(2)}</p>
+              <p className="text-xs text-gray-500">All purchases</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Active Investment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-blue-600 break-words">
-                ${financial.activeInvestment.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Current animals</p>
+          <Card className="border border-gray-100">
+            <CardContent className="p-4">
+              <p className="text-sm font-medium text-gray-600 mb-2">Active Investment</p>
+              <p className="text-2xl font-bold text-blue-600 mb-1">${financial.activeInvestment.toFixed(2)}</p>
+              <p className="text-xs text-gray-500">Current animals</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Total Revenue
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-green-600 break-words">
-                ${financial.totalRevenue.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">From sales</p>
+          <Card className="border border-gray-100">
+            <CardContent className="p-4">
+              <p className="text-sm font-medium text-gray-600 mb-2">Total Revenue</p>
+              <p className="text-2xl font-bold text-green-600 mb-1">${financial.totalRevenue.toFixed(2)}</p>
+              <p className="text-xs text-gray-500">From sales</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Death Losses
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-red-600 break-words">
-                ${financial.totalDeathLoss.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">Lost value</p>
+          <Card className="border border-gray-100">
+            <CardContent className="p-4">
+              <p className="text-sm font-medium text-gray-600 mb-2">Death Losses</p>
+              <p className="text-2xl font-bold text-red-600 mb-1">${financial.totalDeathLoss.toFixed(2)}</p>
+              <p className="text-xs text-gray-500">Lost value</p>
             </CardContent>
           </Card>
 
@@ -225,28 +195,30 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* Recent Weight Records */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-base sm:text-lg">Recent Weight Records</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Latest weight measurements</CardDescription>
+        <Card className="border border-gray-100">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-bold">Recent Weight Records</CardTitle>
+                <CardDescription className="text-xs text-gray-500">Latest weight measurements</CardDescription>
+              </div>
+              <TrendingUp className="h-4 w-4 text-gray-400" />
             </div>
-            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {stats.recentWeights && stats.recentWeights.length > 0 ? (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2">
                 {stats.recentWeights.map((record: { id: string; weight: number; recorded_date: string; animal?: { animal_id: string } | null }) => (
-                  <div key={record.id} className="flex justify-between items-center pb-2 sm:pb-3 border-b last:border-0">
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm sm:text-base font-medium truncate">{record.animal?.animal_id}</p>
+                  <div key={record.id} className="flex justify-between items-center py-1.5 border-b last:border-0">
+                    <div>
+                      <p className="text-sm font-medium">{record.animal?.animal_id}</p>
                       <p className="text-xs text-gray-500">
                         {format(new Date(record.recorded_date), 'MMM dd, yyyy')}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-xs sm:text-sm shrink-0 ml-2">{record.weight} kg</Badge>
+                    <span className="text-sm font-bold">{record.weight} kg</span>
                   </div>
                 ))}
               </div>
@@ -257,17 +229,19 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Recent Movements */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-base sm:text-lg">Recent Movements</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Latest animal transfers</CardDescription>
+        <Card className="border border-gray-100">
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-bold">Recent Movements</CardTitle>
+                <CardDescription className="text-xs text-gray-500">Latest animal transfers</CardDescription>
+              </div>
+              <ArrowRight className="h-4 w-4 text-gray-400" />
             </div>
-            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {stats.recentMovements && stats.recentMovements.length > 0 ? (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2">
                 {stats.recentMovements.map((movement: {
                   id: string;
                   movement_date: string;
@@ -277,18 +251,17 @@ export default async function DashboardPage() {
                   from_room?: { identifier?: string } | null;
                   to_room?: { identifier?: string } | null;
                 }) => (
-                  <div key={movement.id} className="pb-2 sm:pb-3 border-b last:border-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm sm:text-base font-medium truncate">{movement.animal?.animal_id}</p>
-                      <p className="text-xs text-gray-500 shrink-0 ml-2">
+                  <div key={movement.id} className="py-1.5 border-b last:border-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-medium">{movement.animal?.animal_id}</p>
+                      <p className="text-xs text-gray-500">
                         {format(new Date(movement.movement_date), 'MMM dd')}
                       </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600 mt-1">
-                      <span className="truncate">{movement.from_stage?.display_name} (Room {movement.from_room?.identifier})</span>
-                      <ArrowRight className="h-3 w-3 hidden sm:block shrink-0" />
-                      <span className="sm:hidden">↓</span>
-                      <span className="truncate">{movement.to_stage?.display_name} (Room {movement.to_room?.identifier})</span>
+                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                      <span>{movement.from_stage?.display_name} (R{movement.from_room?.identifier})</span>
+                      <ArrowRight className="h-3 w-3" />
+                      <span>{movement.to_stage?.display_name} (R{movement.to_room?.identifier})</span>
                     </div>
                   </div>
                 ))}
@@ -301,35 +274,35 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
-          <CardDescription className="text-xs sm:text-sm">Common tasks</CardDescription>
+      <Card className="border border-gray-100">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-bold">Quick Actions</CardTitle>
+          <CardDescription className="text-xs text-gray-500">Common tasks</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <Button asChild variant="outline" className="h-20 sm:h-24 flex-col text-xs sm:text-sm">
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+            <Button asChild variant="outline" className="h-14 flex-col">
               <Link href="/animals/new">
-                <Users className="h-5 w-5 sm:h-6 sm:w-6 mb-1 sm:mb-2" />
-                Register Animal
+                <Users className="h-4 w-4 mb-1" />
+                <span className="text-xs">Register Animal</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" className="h-20 sm:h-24 flex-col text-xs sm:text-sm">
+            <Button asChild variant="outline" className="h-14 flex-col">
               <Link href="/reports/slaughter/new">
-                <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6 mb-1 sm:mb-2" />
-                Slaughter Report
+                <ShoppingCart className="h-4 w-4 mb-1" />
+                <span className="text-xs">Slaughter Report</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" className="h-20 sm:h-24 flex-col text-xs sm:text-sm">
+            <Button asChild variant="outline" className="h-14 flex-col">
               <Link href="/inventory">
-                <Package className="h-5 w-5 sm:h-6 sm:w-6 mb-1 sm:mb-2" />
-                Manage Inventory
+                <Package className="h-4 w-4 mb-1" />
+                <span className="text-xs">Manage Inventory</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" className="h-20 sm:h-24 flex-col text-xs sm:text-sm">
+            <Button asChild variant="outline" className="h-14 flex-col">
               <Link href="/reports/cost-analysis">
-                <DollarSign className="h-5 w-5 sm:h-6 sm:w-6 mb-1 sm:mb-2" />
-                Cost Analysis
+                <DollarSign className="h-4 w-4 mb-1" />
+                <span className="text-xs">Cost Analysis</span>
               </Link>
             </Button>
           </div>
