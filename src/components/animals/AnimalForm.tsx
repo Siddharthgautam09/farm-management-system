@@ -246,6 +246,110 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           </div>
         </div>
 
+        {/* Location Assignment Section - MOVED BEFORE PHYSICAL DETAILS */}
+        <div className="space-y-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
+            Location Assignment
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Stage */}
+            <FormField
+              control={form.control}
+              name="initial_stage_id"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-1">
+                  <FormLabel className="text-sm sm:text-base">
+                    Initial Stage *
+                  </FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      // Reset room selection when stage changes
+                      form.setValue("initial_room_id", "");
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
+                        <SelectValue placeholder="Select stage" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent 
+                      className="max-h-[200px] z-50"
+                      position="popper"
+                      side="bottom"
+                      align="start"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                    >
+                      {stages.map((stage) => (
+                        <SelectItem 
+                          key={stage.id} 
+                          value={stage.id}
+                        >
+                          {stage.display_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+
+            {/* Room */}
+            <FormField
+              control={form.control}
+              name="initial_room_id"
+              render={({ field }) => (
+                <FormItem className="sm:col-span-1">
+                  <FormLabel className="text-sm sm:text-base">
+                    Initial Room *
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={!selectedStageId}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
+                        <SelectValue placeholder="Select room" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent 
+                      className="max-h-[200px] z-50"
+                      position="popper"
+                      side="bottom"
+                      align="start"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                    >
+                      {availableRooms.length > 0 ? (
+                        availableRooms.map((room) => (
+                          <SelectItem 
+                            key={room.id} 
+                            value={room.id}
+                          >
+                            Room {room.identifier}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-2 py-1.5 text-sm text-gray-500">
+                          No rooms available for this stage
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription className="text-xs sm:text-sm">
+                    Select a stage first to see available rooms
+                  </FormDescription>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
         {/* Physical & Financial Details Section */}
         <div className="space-y-4">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
@@ -349,79 +453,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           </div>
         </div>
 
-        {/* Location Assignment Section */}
-        <div className="space-y-4">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
-            Location Assignment
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {/* Stage */}
-            <FormField
-              control={form.control}
-              name="initial_stage_id"
-              render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
-                    Initial Stage *
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
-                        <SelectValue placeholder="Select stage" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {stages.map((stage) => (
-                        <SelectItem key={stage.id} value={stage.id}>
-                          {stage.display_name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage className="text-xs sm:text-sm" />
-                </FormItem>
-              )}
-            />
 
-            {/* Room */}
-            <FormField
-              control={form.control}
-              name="initial_room_id"
-              render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
-                    Initial Room *
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={!selectedStageId}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
-                        <SelectValue placeholder="Select room" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {availableRooms.map((room) => (
-                        <SelectItem key={room.id} value={room.id}>
-                          Room {room.identifier}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription className="text-xs sm:text-sm">
-                    Select a stage first to see available rooms
-                  </FormDescription>
-                  <FormMessage className="text-xs sm:text-sm" />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t">
