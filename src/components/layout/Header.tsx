@@ -51,7 +51,7 @@ export function Header({ user, alertCount = 0, lowStockItems = [], upcomingVacci
   const vaccines = upcomingVaccines || []
   
   return (
-    <header className="bg-white border-b sticky top-0 z-10 shadow-sm">
+    <header className="bg-white border-r-2 sticky top-0 z-10 shadow-sm">
       <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-3 md:gap-4">
         {/* Search Bar - Hidden on mobile, visible from sm up */}
         <div className="hidden sm:flex flex-1 max-w-xs md:max-w-sm lg:max-w-md">
