@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/layout/Header'
-import { Plus, Users } from 'lucide-react'
+import { Plus, Users, MoveRight } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { AnimalSearch } from '@/components/animals/AnimalSearch'
+import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
 import { getDashboardStats } from '@/actions/dashboard'
 
 export default async function AnimalsPage() {
@@ -35,6 +36,13 @@ export default async function AnimalsPage() {
   if (error) {
     console.error('Error fetching animals:', error)
   }
+
+  // Fetch stages and rooms for move functionality
+  const { data: stages } = await supabase.from('stages').select('*')
+  const { data: rooms } = await supabase
+    .from('rooms')
+    .select('id, identifier, stage_id, current_count, capacity')
+    .eq('is_active', true)
 
   const displayAnimals = animals || []
 
@@ -205,11 +213,25 @@ export default async function AnimalsPage() {
                         </Badge>
                       </td>
                       <td className="p-3">
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={`/protected/animals/${animal.animal_id}`}>
-                            View Details
-                          </Link>
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/protected/animals/${animal.animal_id}`}>
+                              View Details
+                            </Link>
+                          </Button>
+                          {animal.is_alive && !animal.is_sold && (
+                            <MoveAnimalDialog
+                              animalId={animal.id}
+                              currentStageId={animal.current_stage_id!}
+                              stages={stages || []}
+                              rooms={rooms || []}
+                            >
+                              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
+                                <MoveRight className="h-4 w-4" />
+                              </Button>
+                            </MoveAnimalDialog>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

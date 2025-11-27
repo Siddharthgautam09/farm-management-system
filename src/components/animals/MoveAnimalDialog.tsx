@@ -21,7 +21,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
+import { Info, Users, MoveRight } from 'lucide-react'
 
 type Stage = {
   id: string
@@ -33,6 +36,8 @@ type Room = {
   id: string
   identifier: string
   stage_id: string
+  current_count: number
+  capacity: number
 }
 
 type MoveAnimalDialogProps = {
@@ -58,13 +63,19 @@ export function MoveAnimalDialog({
   const { toast } = useToast()
 
   const availableRooms = rooms.filter(room => room.stage_id === selectedStageId)
+  const selectedRoom = availableRooms.find(room => room.id === selectedRoomId)
+  const selectedStage = stages.find(stage => stage.id === selectedStageId)
+  
+  // Check if selected room is at capacity
+  const isRoomFull = selectedRoom && selectedRoom.current_count >= selectedRoom.capacity
+  const canMove = selectedStageId && selectedRoomId && !isRoomFull
 
   async function handleMove() {
-    if (!selectedStageId || !selectedRoomId) {
+    if (!canMove) {
       toast({
         variant: 'destructive',
-        title: 'Error',
-        description: 'Please select both stage and room',
+        title: 'Cannot Move Animal',
+        description: isRoomFull ? 'Selected room is at full capacity' : 'Please select both stage and room',
       })
       return
     }
@@ -82,9 +93,11 @@ export function MoveAnimalDialog({
       } else {
         toast({
           title: 'Success',
-          description: 'Animal moved successfully',
+          description: `Animal moved to ${selectedStage?.display_name} - Room ${selectedRoom?.identifier}`,
         })
         setOpen(false)
+        setSelectedStageId('')
+        setSelectedRoomId('')
         router.refresh()
       }
     } catch {
@@ -98,16 +111,25 @@ export function MoveAnimalDialog({
     }
   }
 
+  function handleClose() {
+    setOpen(false)
+    setSelectedStageId('')
+    setSelectedRoomId('')
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Move Animal</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <MoveRight className="h-5 w-5" />
+            Move Animal
+          </DialogTitle>
           <DialogDescription>
-            Select the destination stage and room for this animal
+            Select the destination stage and room for this animal. Room capacities are shown to help you choose.
           </DialogDescription>
         </DialogHeader>
 
@@ -132,6 +154,7 @@ export function MoveAnimalDialog({
                     disabled={stage.id === currentStageId}
                   >
                     {stage.display_name}
+                    {stage.id === currentStageId && ' (Current)'}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -146,24 +169,106 @@ export function MoveAnimalDialog({
               disabled={!selectedStageId}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select room" />
+                <SelectValue placeholder={!selectedStageId ? "Select stage first" : "Select room"} />
               </SelectTrigger>
               <SelectContent>
-                {availableRooms.map((room) => (
-                  <SelectItem key={room.id} value={room.id}>
-                    Room {room.identifier}
-                  </SelectItem>
-                ))}
+                {availableRooms.length === 0 ? (
+                  <div className="px-2 py-1.5 text-sm text-gray-500">
+                    No rooms available for this stage
+                  </div>
+                ) : (
+                  availableRooms.map((room) => {
+                    const isFull = room.current_count >= room.capacity
+                    const occupancyRate = room.capacity > 0 ? (room.current_count / room.capacity) * 100 : 0
+                    
+                    return (
+                      <SelectItem 
+                        key={room.id} 
+                        value={room.id}
+                        disabled={isFull}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span>Room {room.identifier}</span>
+                          <div className="flex items-center gap-2 ml-2">
+                            <Badge 
+                              variant={isFull ? "destructive" : occupancyRate > 80 ? "secondary" : "outline"}
+                              className="text-xs"
+                            >
+                              <Users className="h-3 w-3 mr-1" />
+                              {room.current_count}/{room.capacity}
+                            </Badge>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    )
+                  })
+                )}
               </SelectContent>
             </Select>
+            
+            {selectedStageId && availableRooms.length === 0 && (
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  No rooms available in the selected stage. Please contact your administrator to set up rooms.
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
+
+          {selectedRoom && (
+            <div className="space-y-3">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-sm">Room Details</h4>
+                  <Badge variant={isRoomFull ? "destructive" : "outline"}>
+                    {isRoomFull ? "Full" : "Available"}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Room:</span>
+                    <p className="font-medium">{selectedRoom.identifier}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Occupancy:</span>
+                    <p className="font-medium">{selectedRoom.current_count}/{selectedRoom.capacity}</p>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${
+                        isRoomFull ? 'bg-red-500' : 
+                        (selectedRoom.current_count / selectedRoom.capacity) > 0.8 ? 'bg-yellow-500' : 
+                        'bg-green-500'
+                      }`}
+                      style={{ 
+                        width: `${Math.min((selectedRoom.current_count / selectedRoom.capacity) * 100, 100)}%` 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              {isRoomFull && (
+                <Alert variant="destructive">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    This room is at full capacity. Please select a different room.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+          )}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleMove} disabled={isMoving}>
+          <Button onClick={handleMove} disabled={!canMove || isMoving}>
             {isMoving ? 'Moving...' : 'Move Animal'}
           </Button>
         </DialogFooter>

@@ -68,7 +68,10 @@ export default async function AnimalDetailPage({
 
   // Fetch stages and rooms for movement dialog
   const { data: stages } = await supabase.from('stages').select('*')
-  const { data: rooms } = await supabase.from('rooms').select('*').eq('is_active', true)
+  const { data: rooms } = await supabase
+    .from('rooms')
+    .select('id, identifier, stage_id, current_count, capacity')
+    .eq('is_active', true)
 
   // Sort weights by date
   const sortedWeights = animal.weights?.sort(
