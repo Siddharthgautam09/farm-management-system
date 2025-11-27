@@ -49,8 +49,8 @@ export async function signIn(formData: FormData) {
     return { error: error.message }
   }
 
-  revalidatePath('/protected/dashboard')
-  redirect('/protected/dashboard')
+  revalidatePath('/')
+  redirect('/')
 }
 
 export async function signOut() {

@@ -6,13 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [showPassword, setShowPassword] = useState(false)
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
@@ -54,29 +53,15 @@ export function LoginForm() {
 
       <div className="space-y-1.5">
         <Label htmlFor="password" className="text-gray-700 font-medium text-sm">Password</Label>
-        <div className="relative">
-          <Input
-            id="password"
-            name="password"
-            type={showPassword ? "text" : "password"}
-            placeholder="••••••••"
-            required
-            disabled={loading}
-            className="h-11 sm:h-12 px-3 sm:px-4 pr-12 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            disabled={loading}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 disabled:opacity-50"
-          >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-          </button>
-        </div>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          required
+          disabled={loading}
+          className="h-11 sm:h-12 px-3 sm:px-4 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a2d] focus:border-transparent text-sm sm:text-base"
+        />
       </div>
 
       <Button 
