@@ -59,45 +59,49 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Card className="border border-gray-100">
             <CardContent className="p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="h-4 w-4 text-gray-500" />
-                <span className="text-xs font-medium text-gray-600">Total Animals</span>
+              <div className="flex items-center justify-between px-6">
+                <div>
+                  <p className="text-xl font-medium text-gray-600">Total Animals</p>
+                  <p className="text-3xl font-bold">{stats.totalAnimals}</p>
+                </div>
+                <Users className="h-10 w-10 text-gray-500" />
               </div>
-              <p className="text-3xl font-bold mb-0.5">{stats.totalAnimals}</p>
-              <p className="text-xs text-gray-500">All time</p>
             </CardContent>
           </Card>
 
           <Card className="border border-gray-100">
             <CardContent className="p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Activity className="h-4 w-4 text-gray-500" />
-                <span className="text-xs font-medium text-gray-600">Active Animals</span>
+              <div className="flex items-center justify-between px-6">
+                <div>
+                  <p className="text-xl font-medium text-gray-600">Active Animals</p>
+                  <p className="text-3xl font-bold text-green-600">{stats.aliveAnimals}</p>
+                </div>
+                <Activity className="h-10 w-10 text-green-500" />
               </div>
-              <p className="text-3xl font-bold text-green-600 mb-0.5">{stats.aliveAnimals}</p>
-              <p className="text-xs text-gray-500">Currently on farm</p>
             </CardContent>
           </Card>
 
           <Card className="border border-gray-100">
             <CardContent className="p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <ShoppingCart className="h-4 w-4 text-gray-500" />
-                <span className="text-xs font-medium text-gray-600">Animals Sold</span>
+              <div className="flex items-center justify-between px-6">
+                <div>
+                  <p className="text-xl font-medium text-gray-600">Animals Sold</p>
+                  <p className="text-3xl font-bold text-blue-600">{stats.soldAnimals}</p>
+                </div>
+                <ShoppingCart className="h-10 w-10 text-blue-500" />
               </div>
-              <p className="text-3xl font-bold text-blue-600 mb-0.5">{stats.soldAnimals}</p>
-              <p className="text-xs text-gray-500">Completed</p>
             </CardContent>
           </Card>
 
           <Card className="border border-gray-100">
             <CardContent className="p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Skull className="h-4 w-4 text-gray-500" />
-                <span className="text-xs font-medium text-gray-600">Deaths</span>
+              <div className="flex items-center justify-between px-6">
+                <div>
+                  <p className="text-xl font-medium text-gray-600">Deaths</p>
+                  <p className="text-3xl font-bold text-red-600">{stats.deceasedAnimals}</p>
+                </div>
+                <Skull className="h-10 w-10 text-red-500" />
               </div>
-              <p className="text-3xl font-bold text-red-600 mb-0.5">{stats.deceasedAnimals}</p>
-              <p className="text-xs text-gray-500">Mortality</p>
             </CardContent>
           </Card>
         </div>
