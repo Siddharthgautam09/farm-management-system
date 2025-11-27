@@ -42,12 +42,20 @@ export default async function DashboardPage() {
     />
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl  flex justify-center font-bold">Dashboard</h1>
       </div>
 
       {/* Animal Statistics */}
       <div>
-        <h2 className="text-lg font-bold mb-3">Animal Overview</h2>
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-bold">Animal Overview</h2>
+          <Button asChild size="sm">
+            <Link href="/animals/new">
+              <Users className="h-4 w-4 mr-2" />
+              Add Animal
+            </Link>
+          </Button>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Card className="border border-gray-100">
             <CardContent className="p-3">

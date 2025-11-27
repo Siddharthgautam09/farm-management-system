@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import {
-  Home,
-  Inbox,
-  Waves,
+  LayoutGrid,
+  MapPin,
+  Wheat,
+  Heart,
   TrendingUp,
   CheckCircle,
-  FileText,
+  BarChart3,
   Package,
-  Users,
   ChevronLeft,
   ChevronRight,
   Menu,
@@ -56,14 +56,14 @@ type SidebarProps = {
 }
 
 const navigation = [
-  { name: "Dashboard", href: "/protected/dashboard", icon: Home },
-  { name: "Receiving", href: "/protected/receiving", icon: Inbox },
-  { name: "Weaning", href: "/protected/weaning", icon: Waves },
-  { name: "Fattening", href: "/protected/fattening", icon: TrendingUp },
-  { name: "Finishing", href: "/protected/finishing", icon: CheckCircle },
-  { name: "Animals", href: "/protected/animals", icon: Users },
-  { name: "Reports", href: "/protected/reports", icon: FileText },
-  { name: "Inventory", href: "/protected/inventory", icon: Package },
+  { name: "Dashboard", href: "/protected/dashboard", icon: LayoutGrid, color: "text-blue-500" },
+  { name: "Receiving", href: "/protected/receiving", icon: MapPin, color: "text-green-500" },
+  { name: "Weaning", href: "/protected/weaning", icon: Wheat, color: "text-yellow-600" },
+  { name: "Fattening", href: "/protected/fattening", icon: TrendingUp, color: "text-orange-500" },
+  { name: "Finishing", href: "/protected/finishing", icon: CheckCircle, color: "text-purple-500" },
+  { name: "Animals", href: "/protected/animals", icon: Heart, color: "text-red-500" },
+  { name: "Reports", href: "/protected/reports", icon: BarChart3, color: "text-indigo-500" },
+  { name: "Inventory", href: "/protected/inventory", icon: Package, color: "text-teal-500" },
 ];
 
 export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines = [] }: SidebarProps) {
@@ -99,7 +99,7 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
       <Button
         variant="ghost"
         size="icon"
-        className="fixed top-4 left-4 z-30 lg:hidden bg-[#2d5a2d] text-white hover:bg-[#1e3a1e] hover:text-white shadow-lg"
+        className="fixed top-4 left-4 z-30 lg:hidden bg-white text-gray-700 hover:bg-gray-100 shadow-lg border border-gray-200"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
       >
         {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -116,7 +116,7 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:sticky top-0 left-0 h-screen bg-[#2d5a2d] border-r border-[#1e3a1e] transition-all duration-300 z-40 flex flex-col",
+          "fixed lg:sticky top-0 left-0 h-screen bg-white border-r border-gray-200 transition-all duration-300 z-40 flex flex-col shadow-sm",
           // Mobile styles
           isMobile && !isMobileOpen && "-translate-x-full",
           isMobile && isMobileOpen && "translate-x-0 w-64",
@@ -125,30 +125,56 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
           !isMobile && !isCollapsed && "w-64"
         )}
       >
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-0 ">
           {/* Logo Section */}
           <div className={cn(
-            "flex items-center justify-center mb-6 py-2 transition-all duration-300",
-            isCollapsed && !isMobile && "px-0"
+            "mb-4 p-4 transition-all duration-300 relative flex justify-center-safe items-center",
+            isCollapsed && !isMobile && "px-2"
           )}>
             {(!isCollapsed || isMobile) ? (
-              <Image 
-                src="/image/Farm.png" 
-                alt="Farm Management Logo" 
-                width={150} 
-                height={60}
-                className="object-contain"
-                priority
-              />
+              <div className="flex items-center justify-between">
+                <Image 
+                  src="/image/Farm.png" 
+                  alt="Farm Management Logo" 
+                  width={120} 
+                  height={40}
+                  className="object-contain"
+                  priority
+                />
+                {/* Collapse Button - Next to Logo when expanded */}
+                {!isMobile && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all h-8 w-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             ) : (
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-[#2d5a2d] font-bold text-xl">F</span>
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">F</span>
+                </div>
+                {/* Collapse Button - Below logo when collapsed */}
+                {!isMobile && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all h-6 w-6"
+                  >
+                    <ChevronRight className="h-3 w-3" />
+                  </Button>
+                )}
               </div>
             )}
           </div>
 
           {/* Navigation */}
-          <nav className="space-y-2">
+          <nav className="space-y-1 px-3">
             {navigation.map((item) => {
               const isActive = pathname.startsWith(item.href);
               return (
@@ -156,59 +182,57 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg font-medium transition-all duration-200",
+                    "flex items-center gap-4 rounded-lg font-light transition-all duration-200 group ",
                     isActive
-                      ? "bg-blue-50 text-gray-500"
-                      : "text-white hover:bg-[#4a7c4a]",
+                      ? "bg-blue-50 text-blue-600 border-l-4 border-blue-500"
+                      : "text-gray-700 hover:bg-gray-200",
                     isCollapsed && !isMobile
-                      ? "justify-center px-4 py-4 text-base"
-                      : "px-5 py-4 text-base"
+                      ? "justify-center px-2 py-2.5"
+                      : "px-3 py-2.5"
                   )}
                   title={isCollapsed && !isMobile ? item.name : undefined}
                 >
                   <item.icon className={cn(
-                    "flex-shrink-0",
-                    isCollapsed && !isMobile ? "h-6 w-6" : "h-5 w-5"
+                    "flex-shrink-0 transition-colors",
+                    isActive ? "text-blue-500" : item.color,
+                    isCollapsed && !isMobile ? "h-5 w-5" : "h-4 w-4"
                   )} />
                   {(!isCollapsed || isMobile) && (
-                    <span className="truncate">{item.name}</span>
+                    <span className="truncate text-lg font-medium">{item.name}</span>
                   )}
                 </Link>
               );
             })}
-          </nav>
-        </div>
-
-        {/* Alert Bell and Logout Section */}
-        <div className={cn(
-          "p-4 border-t border-[#1e3a1e] space-y-2",
-          !isMobile && "border-b border-[#1e3a1e]"
-        )}>
-          {/* Alert Bell */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className={cn(
-                  "w-full text-white hover:bg-[#4a7c4a] hover:text-white transition-all h-12 relative",
-                  isCollapsed && !isMobile ? "justify-center px-2" : "justify-start px-4"
-                )}
-              >
-                <Bell className={cn(
-                  "flex-shrink-0",
-                  isCollapsed && !isMobile ? "h-6 w-6" : "h-5 w-5"
-                )} />
-                {alertCount > 0 && (
-                  <span className="absolute top-2 left-7 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                    {alertCount > 9 ? '9+' : alertCount}
-                  </span>
-                )}
-                {(!isCollapsed || isMobile) && (
-                  <span className="ml-3 truncate">Alerts</span>
-                )}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-80 max-w-sm ml-4">
+            
+            {/* Alerts Menu Item */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className={cn(
+                    "flex items-center gap-4 rounded-lg font-light transition-all duration-200 group w-full text-left",
+                    "text-gray-700 hover:bg-gray-200",
+                    isCollapsed && !isMobile
+                      ? "justify-center px-2 py-2.5"
+                      : "px-3 py-2.5"
+                  )}
+                >
+                  <div className="relative">
+                    <Bell className={cn(
+                      "flex-shrink-0 transition-colors text-yellow-500",
+                      isCollapsed && !isMobile ? "h-5 w-5" : "h-4 w-4"
+                    )} />
+                    {alertCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-3 w-3 flex items-center justify-center">
+                        {alertCount > 9 ? '9' : alertCount}
+                      </span>
+                    )}
+                  </div>
+                  {(!isCollapsed || isMobile) && (
+                    <span className="truncate text-lg font-medium">Alerts</span>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-80 max-w-sm ml-4">
               <DropdownMenuLabel className="text-sm">Notifications</DropdownMenuLabel>
               <DropdownMenuSeparator />
               
@@ -290,42 +314,25 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
                   )}
                 </div>
               )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          {/* Logout Button */}
-          <LogoutButton 
-            variant="ghost" 
-            className={cn(
-              "w-full text-white hover:bg-red-600 hover:text-white transition-all h-12",
-              isCollapsed && !isMobile ? "justify-center px-2" : "justify-start px-4"
-            )}
-            showText={!isCollapsed || isMobile}
-          />
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {/* Logout Menu Item */}
+            <LogoutButton 
+              variant="ghost" 
+              className={cn(
+                "flex items-center gap-4 rounded-lg font-light transition-all duration-200 group w-full text-left justify-start mt-2",
+                "text-gray-700 hover:bg-red-50 hover:text-red-600 ",
+                isCollapsed && !isMobile
+                  ? "justify-center px-2 py-2.5"
+                  : "px-3 py-2.5"
+              )}
+              showText={!isCollapsed || isMobile}
+            />
+          </nav>
         </div>
 
-        {/* Toggle Button - Desktop Only */}
-        {!isMobile && (
-          <div className="p-4">
-            <Button
-              variant="ghost"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className={cn(
-                "w-full text-white hover:bg-[#4a7c4a] hover:text-white transition-all h-12",
-                isCollapsed ? "justify-center px-2" : "justify-start px-4"
-              )}
-            >
-              {isCollapsed ? (
-                <ChevronRight className="h-6 w-6" />
-              ) : (
-                <>
-                  <ChevronLeft className="h-5 w-5 mr-2" />
-                  <span className="text-base">Click</span>
-                </>
-              )}
-            </Button>
-          </div>
-        )}
+
       </aside>
     </>
   );
