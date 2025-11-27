@@ -1,5 +1,5 @@
 // Performance monitoring for Electron app
-if (typeof window !== 'undefined' && window.electronAPI) {
+if (typeof window !== 'undefined' && 'electronAPI' in window) {
   // Monitor performance metrics
   const observer = new PerformanceObserver((list) => {
     const entries = list.getEntries();
@@ -24,15 +24,22 @@ if (typeof window !== 'undefined' && window.electronAPI) {
 
     try {
       longTaskObserver.observe({ entryTypes: ['longtask'] });
-    } catch (e) {
+    } catch {
       // longtask might not be supported in Electron
     }
   }
 
-  // Memory usage monitoring
-  if (performance.memory) {
+  // Memory usage monitoring (Chrome/Electron specific)
+  const perfWithMemory = performance as Performance & {
+    memory?: {
+      usedJSHeapSize: number;
+      jsHeapSizeLimit: number;
+    };
+  };
+  
+  if (perfWithMemory.memory) {
     setInterval(() => {
-      const memory = performance.memory;
+      const memory = perfWithMemory.memory!;
       if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.9) {
         console.warn('Memory usage is high:', {
           used: Math.round(memory.usedJSHeapSize / 1024 / 1024) + 'MB',

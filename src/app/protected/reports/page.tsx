@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { BackButton } from '@/components/ui/back-button'
 import Link from 'next/link'
 import { FileText, Skull, ShoppingCart, DollarSign, TrendingUp, ArrowRight, BarChart3 } from 'lucide-react'
