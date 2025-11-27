@@ -23,10 +23,25 @@ function createWindow() {
       contextIsolation: true,
       enableRemoteModule: false,
       preload: path.join(__dirname, 'preload.js'),
-      webSecurity: !isDev
+      webSecurity: !isDev,
+      // Performance optimizations
+      experimentalFeatures: true,
+      enableBlinkFeatures: 'CSSColorSchemeUARendering',
+      backgroundThrottling: false,
+      // Hardware acceleration
+      hardwareAcceleration: true,
+      // Memory optimization
+      v8CacheOptions: 'bypassHeatCheck',
+      // Smooth scrolling
+      enableWebSQL: false,
+      allowRunningInsecureContent: false
     },
     titleBarStyle: isMac ? 'hiddenInset' : 'default',
     frame: !isMac, // Hide frame on macOS for native look
+    // Performance settings
+    transparent: false,
+    vibrancy: isMac ? 'under-window' : undefined,
+    visualEffectState: isMac ? 'active' : undefined,
   });
 
   // Load the appropriate URL
@@ -53,6 +68,27 @@ function createWindow() {
     });
   }
 
+  // Optimize window loading
+  mainWindow.webContents.once('dom-ready', () => {
+    // Inject performance CSS
+    mainWindow.webContents.insertCSS(`
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      body {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        will-change: transform;
+      }
+    `);
+  });
+
   // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
@@ -61,6 +97,15 @@ function createWindow() {
     if (isDev) {
       mainWindow.focus();
     }
+    
+    // Enable smooth animations
+    mainWindow.webContents.executeJavaScript(`
+      // Enable hardware acceleration for animations
+      document.documentElement.style.cssText += '
+        -webkit-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+      ';
+    `);
   });
 
   // Handle window closed
@@ -194,6 +239,18 @@ function createMenu() {
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
 }
+
+// Performance optimizations
+app.commandLine.appendSwitch('enable-features', 'VaapiVideoDecoder');
+app.commandLine.appendSwitch('disable-features', 'VizDisplayCompositor');
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('disable-dev-shm-usage');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-web-security');
+app.commandLine.appendSwitch('enable-unsafe-webgpu');
 
 // App event handlers
 app.whenReady().then(() => {

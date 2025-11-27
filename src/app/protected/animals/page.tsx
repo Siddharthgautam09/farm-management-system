@@ -52,12 +52,6 @@ export default async function AnimalsPage() {
 
   return (
     <div className="space-y-6">
-      <Header 
-        user={user} 
-        alertCount={alertCount}
-        lowStockItems={stats.lowStockItems}
-        upcomingVaccines={stats.upcomingVaccines}
-      />
 
       {/* Header */}
       <div className="flex justify-between items-start">
