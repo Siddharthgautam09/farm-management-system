@@ -47,14 +47,11 @@ export default async function DashboardPage() {
       />
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold "> Farm Dashboard</h1>
+        <h1 className="text-3xl font-bold flex justify-center "> Farm Dashboard</h1>
       </div>
       {/* Animal Statistics */}
       <div>
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-light">
-            Welcome back! Here&apos;s what&apos;s happening on your farm today.{" "}
-          </h2>
+        <div className="flex justify-end mb-3 px-10">
           <Button asChild size="sm">
             <Link href="/animals/new">
               <Users className="h-4 w-4 mr-2" />
@@ -126,51 +123,51 @@ export default async function DashboardPage() {
       </div>
 
       {/* Animals by Stage & Category */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <Card className="border border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-2xl font-medium">
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold">
               Animals by Stage
             </CardTitle>
-            <CardDescription className="text-md text-gray-500">
+            <CardDescription className="text-xs text-gray-500">
               Current distribution across stages
             </CardDescription>
           </CardHeader>
-          <CardContent className=" pb-4 px-4">
+          <CardContent className="pt-0">
             {stats.byStage && Object.keys(stats.byStage).length > 0 ? (
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {Object.entries(stats.byStage).map(([stage, count]) => (
                   <div
                     key={stage}
-                    className="flex justify-between items-center"
+                    className="flex justify-between items-center py-1"
                   >
-                    <span className="text-lg text-gray-700">{stage}</span>
-                    <span className="text-lg font-medium">
+                    <span className="text-sm text-gray-700">{stage}</span>
+                    <span className="text-sm font-semibold">
                       {count as number} animals
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-500 py-3 text-sm">
+              <p className="text-center text-gray-500 py-3 text-xs">
                 No active animals
               </p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border border-gray-200">
-          <CardHeader className="pb-3 pt-4 px-4">
-            <CardTitle className="text-sm font-semibold">
+        <Card className="border border-gray-200 transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold">
               Animals by Category
             </CardTitle>
             <CardDescription className="text-xs text-gray-500">
               Breakdown by animal type
             </CardDescription>
           </CardHeader>
-          <CardContent className="pt-0 pb-4 px-4">
+          <CardContent className="pt-0">
             {stats.byCategory && Object.keys(stats.byCategory).length > 0 ? (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {Object.entries(stats.byCategory).map(([category, count]) => (
                   <div
                     key={category}
@@ -186,14 +183,13 @@ export default async function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-500 py-3 text-sm">
+              <p className="text-center text-gray-500 py-3 text-xs">
                 No active animals
               </p>
             )}
           </CardContent>
         </Card>
       </div>
-
       {/* Financial Overview */}
       <div>
         <h2 className="text-lg sm:text-xl font-bold mb-4">
@@ -249,22 +245,20 @@ export default async function DashboardPage() {
           </Card>
 
           <Card
-            className={financial.profitLoss >= 0 ? "bg-green-50" : "bg-red-50"}
+            className={`border border-gray-100 ${financial.profitLoss >= 0 ? "bg-green-50" : "bg-red-50"}`}
           >
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
+            <CardContent className="p-4">
+              <p className="text-sm font-medium text-gray-600 mb-2">
                 Profit/Loss
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+              </p>
               <p
-                className={`text-xl sm:text-2xl font-bold break-words ${
+                className={`text-2xl font-bold mb-1 ${
                   financial.profitLoss >= 0 ? "text-green-600" : "text-red-600"
                 }`}
               >
                 ${Math.abs(financial.profitLoss).toFixed(2)}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500">
                 {financial.profitLoss >= 0 ? "Profit" : "Loss"}
               </p>
             </CardContent>
