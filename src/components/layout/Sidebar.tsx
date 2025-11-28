@@ -130,7 +130,7 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
           <div className={cn(
             "mb-4 p-4 transition-all duration-300 relative flex items-center",
             isCollapsed && !isMobile && "px-2 justify-center",
-            !isCollapsed && "justify-between"
+            !isCollapsed && "flex justify-center"
           )}>
             {(!isCollapsed || isMobile) ? (
               <>
