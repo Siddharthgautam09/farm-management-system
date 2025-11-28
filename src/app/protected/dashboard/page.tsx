@@ -47,93 +47,95 @@ export default async function DashboardPage() {
       />
       {/* Header */}
       <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Farm Dashboard</h1>
-          <Button asChild size="sm">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">Farm Dashboard</h1>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">Welcome back! Here&apos;s what&apos;s happening on your farm today.</p>
+          </div>
+          <Button asChild size="sm" className="w-fit">
             <Link href="/animals/new">
               <Users className="h-4 w-4 mr-2" />
               Add Animal
             </Link>
           </Button>
         </div>
-        <p className="text-gray-600 mt-2">Welcome back! Here&apos;s what&apos;s happening on your farm today.</p>
       </div>
       
       {/* Animal Statistics */}
       <div className="mb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          <Card className="border border-gray-200 h-24">
-            <CardContent className="p-4 h-full">
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
-                <div>
-                  <p className="text-xs font-medium text-gray-600 mb-1">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
                     Total Animals
                   </p>
-                  <p className="text-2xl font-bold">{stats.totalAnimals}</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.totalAnimals}</p>
                 </div>
-                <Users className="h-8 w-8 text-gray-400" />
+                <Users className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 h-24">
-            <CardContent className="p-4 h-full">
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
-                <div>
-                  <p className="text-xs font-medium text-gray-600 mb-1">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
                     Active Animals
                   </p>
-                  <p className="text-2xl font-bold text-green-600">
+                  <p className="text-xl sm:text-2xl font-bold text-green-600">
                     {stats.aliveAnimals}
                   </p>
                 </div>
-                <Activity className="h-8 w-8 text-green-400" />
+                <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-green-400 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 h-24">
-            <CardContent className="p-4 h-full">
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
-                <div>
-                  <p className="text-xs font-medium text-gray-600 mb-1">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
                     Animals Sold
                   </p>
-                  <p className="text-2xl font-bold text-blue-600">
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600">
                     {stats.soldAnimals}
                   </p>
                 </div>
-                <ShoppingCart className="h-8 w-8 text-blue-400" />
+                <ShoppingCart className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200 h-24">
-            <CardContent className="p-4 h-full">
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
-                <div>
-                  <p className="text-xs font-medium text-gray-600 mb-1">Deaths</p>
-                  <p className="text-2xl font-bold text-red-600">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">Deaths</p>
+                  <p className="text-xl sm:text-2xl font-bold text-red-600">
                     {stats.deceasedAnimals}
                   </p>
                 </div>
-                <Skull className="h-8 w-8 text-red-400" />
+                <Skull className="h-6 w-6 sm:h-8 sm:w-8 text-red-400 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className={`border border-gray-200 h-24 ${financial.profitLoss >= 0 ? "bg-green-50" : "bg-red-50"}`}>
-            <CardContent className="p-4 h-full">
+          <Card className={`border border-gray-200 h-20 sm:h-24 ${financial.profitLoss >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+            <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
-                <div>
-                  <p className="text-xs font-medium text-gray-600 mb-1">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
                     Profit/Loss
                   </p>
-                  <p className={`text-2xl font-bold ${financial.profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
+                  <p className={`text-lg sm:text-2xl font-bold ${financial.profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
                     ${Math.abs(financial.profitLoss).toFixed(2)}
                   </p>
                 </div>
-                <DollarSign className={`h-8 w-8 ${financial.profitLoss >= 0 ? "text-green-400" : "text-red-400"}`} />
+                <DollarSign className={`h-6 w-6 sm:h-8 sm:w-8 ${financial.profitLoss >= 0 ? "text-green-400" : "text-red-400"} flex-shrink-0`} />
               </div>
             </CardContent>
           </Card>
@@ -142,8 +144,8 @@ export default async function DashboardPage() {
 
       {/* Animals by Stage & Category */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">Animal Distribution</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <h2 className="text-lg sm:text-xl font-bold mb-4">Animal Distribution</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <Card className="border border-gray-200">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold">
@@ -214,77 +216,97 @@ export default async function DashboardPage() {
       
       {/* Financial Overview */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">
+        <h2 className="text-lg sm:text-xl font-bold mb-4">
           Financial Overview
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          <Card className="border border-gray-200">
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-gray-600 mb-3">
-                Total Investment
-              </p>
-              <p className="text-2xl font-bold mb-2">
-                ${financial.totalInvestment.toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">All purchases</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Total Investment
+                  </p>
+                  <p className="text-lg sm:text-xl font-bold">
+                    ${financial.totalInvestment.toFixed(2)}
+                  </p>
+                </div>
+                <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200">
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-gray-600 mb-3">
-                Active Investment
-              </p>
-              <p className="text-2xl font-bold text-blue-600 mb-2">
-                ${financial.activeInvestment.toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">Current animals</p>
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Active Investment
+                  </p>
+                  <p className="text-lg sm:text-xl font-bold text-blue-600">
+                    ${financial.activeInvestment.toFixed(2)}
+                  </p>
+                </div>
+                <Activity className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200">
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-gray-600 mb-3">
-                Total Revenue
-              </p>
-              <p className="text-2xl font-bold text-green-600 mb-2">
-                ${financial.totalRevenue.toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">From sales</p>
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Total Revenue
+                  </p>
+                  <p className="text-lg sm:text-xl font-bold text-green-600">
+                    ${financial.totalRevenue.toFixed(2)}
+                  </p>
+                </div>
+                <ShoppingCart className="h-6 w-6 sm:h-8 sm:w-8 text-green-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="border border-gray-200">
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-gray-600 mb-3">
-                Death Losses
-              </p>
-              <p className="text-2xl font-bold text-red-600 mb-2">
-                ${financial.totalDeathLoss.toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">Lost value</p>
+          <Card className="border border-gray-200 h-20 sm:h-24">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Death Losses
+                  </p>
+                  <p className="text-lg sm:text-xl font-bold text-red-600">
+                    ${financial.totalDeathLoss.toFixed(2)}
+                  </p>
+                </div>
+                <Skull className="h-6 w-6 sm:h-8 sm:w-8 text-red-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
           <Card
-            className={`border border-gray-200 ${
+            className={`border border-gray-200 h-20 sm:h-24 ${
               financial.profitLoss >= 0 ? "bg-green-50" : "bg-red-50"
             }`}
           >
-            <CardContent className="p-6">
-              <p className="text-sm font-medium text-gray-600 mb-3">
-                Profit/Loss
-              </p>
-              <p
-                className={`text-2xl font-bold mb-2 ${
-                  financial.profitLoss >= 0 ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                ${Math.abs(financial.profitLoss).toFixed(2)}
-              </p>
-              <p className="text-sm text-gray-500">
-                {financial.profitLoss >= 0 ? "Profit" : "Loss"}
-              </p>
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Net Profit/Loss
+                  </p>
+                  <p
+                    className={`text-lg sm:text-xl font-bold ${
+                      financial.profitLoss >= 0 ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    ${Math.abs(financial.profitLoss).toFixed(2)}
+                  </p>
+                </div>
+                <DollarSign className={`h-6 w-6 sm:h-8 sm:w-8 ${
+                  financial.profitLoss >= 0 ? "text-green-400" : "text-red-400"
+                } flex-shrink-0`} />
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -292,32 +314,32 @@ export default async function DashboardPage() {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-bold mb-4">Quick Actions</h2>
+        <h2 className="text-lg sm:text-xl font-bold mb-4">Quick Actions</h2>
         <Card className="border border-gray-200">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button asChild variant="outline" className="h-16 flex-col">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
                 <Link href="/animals/new">
-                  <Users className="h-5 w-5 mb-2" />
-                  <span className="text-sm">Register Animal</span>
+                  <Users className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm text-center">Register Animal</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-16 flex-col">
+              <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
                 <Link href="/reports/slaughter/new">
-                  <ShoppingCart className="h-5 w-5 mb-2" />
-                  <span className="text-sm">Slaughter Report</span>
+                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm text-center">Slaughter Report</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-16 flex-col">
+              <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
                 <Link href="/inventory">
-                  <Package className="h-5 w-5 mb-2" />
-                  <span className="text-sm">Manage Inventory</span>
+                  <Package className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm text-center">Manage Inventory</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-16 flex-col">
+              <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
                 <Link href="/reports/cost-analysis">
-                  <DollarSign className="h-5 w-5 mb-2" />
-                  <span className="text-sm">Cost Analysis</span>
+                  <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
+                  <span className="text-xs sm:text-sm text-center">Cost Analysis</span>
                 </Link>
               </Button>
             </div>

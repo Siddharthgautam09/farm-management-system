@@ -128,17 +128,18 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
         <div className="flex-1 overflow-y-auto p-0 ">
           {/* Logo Section */}
           <div className={cn(
-            "mb-4 p-4 transition-all duration-300 relative flex justify-center-safe items-center",
-            isCollapsed && !isMobile && "px-2"
+            "mb-4 p-4 transition-all duration-300 relative flex items-center",
+            isCollapsed && !isMobile && "px-2 justify-center",
+            !isCollapsed && "justify-between"
           )}>
             {(!isCollapsed || isMobile) ? (
-              <div className="flex items-center justify-between">
+              <>
                 <Image 
                   src="/image/Farm.png" 
                   alt="Farm Management Logo" 
                   width={120} 
                   height={40}
-                  className="object-contain"
+                  className="object-contain max-w-full h-auto"
                   priority
                 />
                 {/* Collapse Button - Next to Logo when expanded */}
@@ -147,12 +148,12 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all h-8 w-8"
+                    className="text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all h-8 w-8 flex-shrink-0"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
                 )}
-              </div>
+              </>
             ) : (
               <div className="flex flex-col items-center space-y-3">
                 <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
