@@ -3,11 +3,14 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { BackButton } from '@/components/ui/back-button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import Link from 'next/link'
-import { Plus, TrendingUp, DollarSign, Scale, Package } from 'lucide-react'
+import { Plus, TrendingUp, DollarSign, Scale, Package, Search, Filter, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/SlaughterExportButton'
+import { SlaughterReportsClient } from '@/components/reports/SlaughterReportsClient'
 
 type SlaughterReport = Database['public']['Tables']['slaughter_reports']['Row'] & {
   animals?: {
@@ -42,7 +45,8 @@ export default async function SlaughterReportsPage() {
     .select(`
       *,
       animals (
-        animal_id
+        animal_id,
+        category
       )
     `)
     .order('created_at', { ascending: false })
@@ -98,133 +102,68 @@ export default async function SlaughterReportsPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Reports</CardTitle>
-            <Package className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold">{displayReports.length}</div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">All time</p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-green-600">
-              ${displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.selling_price || 0), 0).toFixed(2)}
+      {/* Quick Stats - Dashboard Style */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Reports</p>
+              <p className="text-2xl font-bold text-gray-900">{displayReports.length}</p>
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Total earnings</p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Avg Carcass %</CardTitle>
-            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-blue-600">
-              {displayReports.length > 0 ? (displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.carcass_percentage || 0), 0) / displayReports.length).toFixed(1) : '0.0'}%
+            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Package className="h-6 w-6 text-blue-600" />
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Average yield</p>
-          </CardContent>
-        </Card>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Avg Weight</CardTitle>
-            <Scale className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-purple-600">
-              {displayReports.length > 0 ? (displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.slaughter_weight || 0), 0) / displayReports.length).toFixed(1) : '0.0'} kg
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.selling_price || 0), 0).toFixed(2)}
+              </p>
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Per animal</p>
-          </CardContent>
-        </Card>
+            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <DollarSign className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Avg Yield</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {displayReports.length > 0 ? (displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.carcass_percentage || 0), 0) / displayReports.length).toFixed(1) : '0.0'}%
+              </p>
+            </div>
+            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Avg Weight</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {displayReports.length > 0 ? (displayReports.reduce((sum: number, r: SlaughterReport) => sum + (r.slaughter_weight || 0), 0) / displayReports.length).toFixed(1) : '0.0'}kg
+              </p>
+            </div>
+            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Scale className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Export and Actions */}
       {/* Export button moved to header */}
 
-      {/* Reports List */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3 sm:pb-4">
-          <CardTitle className="text-lg sm:text-xl">Recent Reports</CardTitle>
-          <CardDescription className="text-xs sm:text-sm">
-            Complete history of all slaughter transactions
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-3 sm:p-6">
-          {displayReports.length === 0 ? (
-            <div className="text-center py-8 sm:py-12">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Package className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
-              </div>
-              <p className="text-sm sm:text-base text-muted-foreground mb-4">No slaughter reports found</p>
-              <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
-                <Link href="/protected/reports/slaughter/new">
-                  <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-                  Create your first report
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="overflow-x-auto -mx-3 sm:mx-0">
-              <div className="inline-block min-w-full align-middle">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">S.No</th>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Animal ID</th>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Slaughter Wt.</th>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Carcass Wt.</th>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Carcass %</th>
-                      <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {displayReports.map((report: SlaughterReport, index: number) => (
-                      <tr key={report.id} className="hover:bg-blue-50 transition-colors">
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-700 font-medium">
-                          {displayReports.length - index}
-                        </td>
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-600">
-                          {format(new Date(report.slaughter_date), 'MMM dd, yyyy')}
-                        </td>
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
-                          <span className="font-mono text-xs sm:text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                            {report.animals?.animal_id || report.animal_id}
-                          </span>
-                        </td>
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-700">
-                          <span className="font-semibold">{report.slaughter_weight}</span> kg
-                        </td>
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-700">
-                          <span className="font-semibold">{report.carcass_weight}</span> kg
-                        </td>
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            {report.carcass_percentage?.toFixed(1)}%
-                          </span>
-                        </td>
-                        <td className="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm font-semibold text-green-600">
-                          ${report.selling_price}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Reports List with Filters */}
+      <SlaughterReportsClient reports={displayReports} />
 
       {/* Debug Info */}
       {reportsError && (
