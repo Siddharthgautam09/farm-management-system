@@ -8,20 +8,16 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/layout/Header";
 import {
   Users,
-  TrendingUp,
   DollarSign,
   Activity,
   Package,
-  ArrowRight,
   Skull,
   ShoppingCart,
 } from "lucide-react";
-import { format } from "date-fns";
 import Link from "next/link";
 
 export default async function DashboardPage() {
@@ -57,7 +53,7 @@ export default async function DashboardPage() {
       <div>
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-light">
-            Welcome back! Here's what's happening on your farm today.{" "}
+            Welcome back! Here&apos;s what&apos;s happening on your farm today.{" "}
           </h2>
           <Button asChild size="sm">
             <Link href="/animals/new">
