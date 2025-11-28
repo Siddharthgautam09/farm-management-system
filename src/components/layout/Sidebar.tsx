@@ -321,7 +321,7 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
             <LogoutButton 
               variant="ghost" 
               className={cn(
-                "flex items-center gap-4 rounded-lg font-light transition-all duration-200 group w-full text-left justify-start mt-2",
+                "flex items-center gap-4rounded-lg font-medium transition-all duration-200 group w-full text-left justify-start mt-2",
                 "text-gray-700 hover:bg-red-50 hover:text-red-600 ",
                 isCollapsed && !isMobile
                   ? "justify-center px-2 py-2.5"
