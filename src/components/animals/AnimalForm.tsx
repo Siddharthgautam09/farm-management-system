@@ -115,27 +115,24 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
             Basic Information
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
             {/* Animal ID */}
             <FormField
               control={form.control}
               name="animal_id"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
                     Animal ID *
                   </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="A123"
                       {...field}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 text-sm"
                     />
                   </FormControl>
-                  <FormDescription className="text-xs sm:text-sm">
-                    Unique identifier for this animal
-                  </FormDescription>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -145,8 +142,8 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="category"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
                     Category *
                   </FormLabel>
                   <Select
@@ -154,7 +151,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                     </FormControl>
@@ -165,60 +162,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                       <SelectItem value="goat">Goat</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-xs sm:text-sm" />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-
-        {/* Origin Information Section */}
-        <div className="space-y-4">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
-            Origin Information
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {/* Incoming Company */}
-            <FormField
-              control={form.control}
-              name="incoming_company"
-              render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
-                    Incoming Company
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Company name"
-                      {...field}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
-                </FormItem>
-              )}
-            />
-
-            {/* Old Calf Number */}
-            <FormField
-              control={form.control}
-              name="old_calf_number"
-              render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
-                    Old Calf Number
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Origin company ID"
-                      {...field}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs sm:text-sm">
-                    ID from the origin company
-                  </FormDescription>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -228,37 +172,150 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="entry_date"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
                     Entry Date *
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="date"
                       {...field}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 text-sm"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            {/* Age */}
+            <FormField
+              control={form.control}
+              name="age_months"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Age (months)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : parseFloat(e.target.value)
+                        )
+                      }
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      className="h-10 text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
           </div>
         </div>
 
-        {/* Location Assignment Section - MOVED BEFORE PHYSICAL DETAILS */}
+        {/* Origin & Financial Information Section */}
         <div className="space-y-4">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
-            Location Assignment
+            Origin & Financial Information
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {/* Incoming Company */}
+            <FormField
+              control={form.control}
+              name="incoming_company"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Incoming Company
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Company name"
+                      {...field}
+                      className="h-10 text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            {/* Old Calf Number */}
+            <FormField
+              control={form.control}
+              name="old_calf_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Origin ID
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Origin company ID"
+                      {...field}
+                      className="h-10 text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            {/* Purchase Price */}
+            <FormField
+              control={form.control}
+              name="purchase_price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
+                    Purchase Price
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={field.value ?? ""}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === ""
+                            ? undefined
+                            : parseFloat(e.target.value)
+                        )
+                      }
+                      onBlur={field.onBlur}
+                      name={field.name}
+                      className="h-10 text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Location & Physical Details Section */}
+        <div className="space-y-4">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
+            Location & Physical Details
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* Stage */}
             <FormField
               control={form.control}
               name="initial_stage_id"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
                     Initial Stage *
                   </FormLabel>
                   <Select
@@ -270,7 +327,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue placeholder="Select stage" />
                       </SelectTrigger>
                     </FormControl>
@@ -292,7 +349,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -302,8 +359,8 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="initial_room_id"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
                     Initial Room *
                   </FormLabel>
                   <Select
@@ -312,7 +369,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                     disabled={!selectedStageId}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue placeholder="Select room" />
                       </SelectTrigger>
                     </FormControl>
@@ -340,29 +397,18 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                       )}
                     </SelectContent>
                   </Select>
-                  <FormDescription className="text-xs sm:text-sm">
-                    Select a stage first to see available rooms
-                  </FormDescription>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
-          </div>
-        </div>
 
-        {/* Physical & Financial Details Section */}
-        <div className="space-y-4">
-          <h3 className="text-base sm:text-lg font-semibold text-gray-900 border-b pb-2">
-            Physical & Financial Details
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Entry Weight */}
             <FormField
               control={form.control}
               name="entry_weight"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">
                     Entry Weight (kg)
                   </FormLabel>
                   <FormControl>
@@ -380,73 +426,10 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
                       }
                       onBlur={field.onBlur}
                       name={field.name}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
+                      className="h-10 text-sm"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
-                </FormItem>
-              )}
-            />
-
-            {/* Age */}
-            <FormField
-              control={form.control}
-              name="age_months"
-              render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
-                    Age (months)
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value)
-                        )
-                      }
-                      onBlur={field.onBlur}
-                      name={field.name}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
-                </FormItem>
-              )}
-            />
-
-            {/* Purchase Price */}
-            <FormField
-              control={form.control}
-              name="purchase_price"
-              render={({ field }) => (
-                <FormItem className="sm:col-span-1">
-                  <FormLabel className="text-sm sm:text-base">
-                    Purchase Price
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      placeholder="0.00"
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ""
-                            ? undefined
-                            : parseFloat(e.target.value)
-                        )
-                      }
-                      onBlur={field.onBlur}
-                      name={field.name}
-                      className="h-10 sm:h-11 text-sm sm:text-base"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs sm:text-sm" />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
@@ -455,22 +438,24 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
 
 
 
+
+
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 border-t">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base"
-          >
-            {isSubmitting ? "Registering..." : "Register Animal"}
-          </Button>
+        <div className="flex justify-end gap-4 pt-6 border-t">
           <Button
             type="button"
             variant="outline"
             onClick={() => router.back()}
-            className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base"
+            className="px-6 h-10 text-sm"
           >
             Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 h-10 text-sm"
+          >
+            {isSubmitting ? "Registering..." : "Register Animal"}
           </Button>
         </div>
       </form>
