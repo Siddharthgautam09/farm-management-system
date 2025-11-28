@@ -32,14 +32,33 @@ export async function createSlaughterReport(data: SlaughterReportData) {
     return { error: animalError.message }
   }
 
-  // Create slaughter report (carcass_percentage calculated automatically by database)
+  // Calculate carcass percentage manually to avoid potential policy issues
+  const carcass_percentage = data.carcass_weight && data.slaughter_weight 
+    ? Math.round((data.carcass_weight / data.slaughter_weight) * 100 * 100) / 100
+    : 0
+
+  // Create slaughter report
   const { data: report, error } = await supabase
     .from('slaughter_reports')
     .insert({
-      ...data,
+      animal_id: data.animal_id,
+      slaughter_date: data.slaughter_date,
+      slaughter_weight: data.slaughter_weight,
+      carcass_weight: data.carcass_weight,
+      selling_price: data.selling_price,
+      carcass_percentage,
       created_by: user.id,
     })
-    .select()
+    .select(`
+      id,
+      animal_id,
+      slaughter_date,
+      slaughter_weight,
+      carcass_weight,
+      selling_price,
+      carcass_percentage,
+      created_at
+    `)
     .single()
 
   if (error) {
@@ -61,8 +80,15 @@ export async function getSlaughterReports(filters?: {
   let query = supabase
     .from('slaughter_reports')
     .select(`
-      *,
-      animal:animals(animal_id, category, entry_date, purchase_price)
+      id,
+      animal_id,
+      slaughter_date,
+      slaughter_weight,
+      carcass_weight,
+      selling_price,
+      carcass_percentage,
+      created_at,
+      animal:animals!inner(animal_id, category, entry_date, purchase_price)
     `)
     .order('slaughter_date', { ascending: false })
 
