@@ -63,13 +63,6 @@ export default async function AnimalsPage() {
 
   return (
     <div className="space-y-6">
-      <Header 
-        user={user} 
-        alertCount={alertCount}
-        lowStockItems={stats.lowStockItems}
-        upcomingVaccines={stats.upcomingVaccines}
-      />
-
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="flex-1 text-center">
@@ -83,54 +76,54 @@ export default async function AnimalsPage() {
       {/* Statistics Cards - Dashboard Style */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Animals</p>
-              <p className="text-2xl font-bold text-gray-900">{totalAnimals}</p>
+          <div className="flex items-center justify-between gap-3 px-4">
+            <div className="min-w-0 ">
+              <p className="text-md font-medium text-gray-600">Total Animals</p>
+              <p className="text-xl font-bold text-gray-900">{totalAnimals}</p>
             </div>
-            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Active (Alive)</p>
-              <p className="text-2xl font-bold text-green-600">{aliveAnimals}</p>
-            </div>
-            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <Activity className="h-6 w-6 text-green-600" />
+            <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
+              <Users className="h-5 w-5 text-blue-600" />
             </div>
           </div>
         </div>
         
         <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">By Category</p>
-              <div className="text-xs mt-1 space-y-0.5">
+          <div className="flex items-center justify-between gap-3 px-4">
+            <div className="min-w-0">
+              <p className="text-md font-medium text-gray-600">Active (Alive)</p>
+              <p className="text-xl font-bold text-green-600">{aliveAnimals}</p>
+            </div>
+            <div className="h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
+              <Activity className="h-5 w-5 text-green-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between gap-3 px-4">
+            <div className="min-w-0">
+              <p className="text-md font-medium text-gray-600 mb-1">By Category</p>
+              <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px]">
                 <div>Beef: <span className="font-bold">{beefAnimals}</span></div>
                 <div>Camel: <span className="font-bold">{camelAnimals}</span></div>
                 <div>Sheep: <span className="font-bold">{sheepAnimals}</span></div>
                 <div>Goat: <span className="font-bold">{goatAnimals}</span></div>
               </div>
             </div>
-            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Package className="h-6 w-6 text-purple-600" />
+            <div className="h-10 w-10 bg-purple-100 rounded-lg flex items-center justify-center shrink-0">
+              <Package className="h-5 w-5 text-purple-600" />
             </div>
           </div>
         </div>
         
         <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Sold / Deceased</p>
-              <p className="text-2xl font-bold text-orange-600">{soldAnimals} / {deceasedAnimals}</p>
+          <div className="flex items-center justify-between gap-3 px-4">
+            <div className="min-w-0">
+              <p className="text-md font-medium text-gray-600">Sold / Deceased</p>
+              <p className="text-xl font-bold text-orange-600">{soldAnimals} / {deceasedAnimals}</p>
             </div>
-            <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="h-6 w-6 text-orange-600" />
+            <div className="h-10 w-10 bg-orange-100 rounded-lg flex items-center justify-center shrink-0">
+              <AlertCircle className="h-5 w-5 text-orange-600" />
             </div>
           </div>
         </div>
