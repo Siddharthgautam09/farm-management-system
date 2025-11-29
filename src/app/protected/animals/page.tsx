@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { AnimalSearch } from '@/components/animals/AnimalSearch'
 import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
+import { AddAnimalModal } from '@/components/animals/AddAnimalModal'
 import { getDashboardStats } from '@/actions/dashboard'
 
 export default async function AnimalsPage() {
@@ -60,13 +61,6 @@ export default async function AnimalsPage() {
 
   return (
     <div className="space-y-6">
-      <Header 
-        user={user} 
-        alertCount={alertCount}
-        lowStockItems={stats.lowStockItems}
-        upcomingVaccines={stats.upcomingVaccines}
-      />
-
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="flex-1 text-center">
@@ -82,12 +76,7 @@ export default async function AnimalsPage() {
         <div className="max-w-md flex-1">
           <AnimalSearch />
         </div>
-        <Button asChild className="shrink-0">
-          <Link href="/animals/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Animal
-          </Link>
-        </Button>
+        <AddAnimalModal rooms={rooms || []} stages={stages || []} />
       </div>
 
       {/* Statistics Cards */}

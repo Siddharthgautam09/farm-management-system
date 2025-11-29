@@ -44,9 +44,11 @@ type Stage = {
 type AnimalFormProps = {
   rooms: Room[];
   stages: Stage[];
+  onSuccessCallback?: () => void;
+  onCancelCallback?: () => void;
 };
 
-export function AnimalForm({ rooms, stages }: AnimalFormProps) {
+export function AnimalForm({ rooms, stages, onSuccessCallback, onCancelCallback }: AnimalFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,8 +92,14 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           description: `Animal ${data.animal_id} registered successfully!`,
         });
         form.reset();
-        router.push(`/animals/${data.animal_id}`);
-        router.refresh();
+        
+        // Call success callback if provided (for modal), otherwise navigate
+        if (onSuccessCallback) {
+          onSuccessCallback();
+        } else {
+          router.push(`/animals/${data.animal_id}`);
+          router.refresh();
+        }
       }
     } catch {
       toast({
@@ -115,7 +123,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 border-b pb-2">
             Basic Information
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {/* Animal ID */}
             <FormField
               control={form.control}
@@ -226,13 +234,13 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 border-b pb-2">
             Origin & Financial Information
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {/* Incoming Company */}
             <FormField
               control={form.control}
               name="incoming_company"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1 lg:col-span-1">
+                <FormItem>
                   <FormLabel className="text-xs sm:text-sm font-medium">
                     Incoming Company
                   </FormLabel>
@@ -253,7 +261,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="old_calf_number"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1 lg:col-span-1">
+                <FormItem>
                   <FormLabel className="text-xs sm:text-sm font-medium">
                     Origin ID
                   </FormLabel>
@@ -274,7 +282,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="purchase_price"
               render={({ field }) => (
-                <FormItem className="sm:col-span-2 lg:col-span-1">
+                <FormItem>
                   <FormLabel className="text-xs sm:text-sm font-medium">
                     Purchase Price
                   </FormLabel>
@@ -308,13 +316,13 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 border-b pb-2">
             Location & Physical Details
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {/* Stage */}
             <FormField
               control={form.control}
               name="initial_stage_id"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1 lg:col-span-1">
+                <FormItem>
                   <FormLabel className="text-xs sm:text-sm font-medium">
                     Initial Stage *
                   </FormLabel>
@@ -359,7 +367,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="initial_room_id"
               render={({ field }) => (
-                <FormItem className="sm:col-span-1 lg:col-span-1">
+                <FormItem>
                   <FormLabel className="text-xs sm:text-sm font-medium">
                     Initial Room *
                   </FormLabel>
@@ -407,7 +415,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
               control={form.control}
               name="entry_weight"
               render={({ field }) => (
-                <FormItem className="sm:col-span-2 lg:col-span-1">
+                <FormItem>
                   <FormLabel className="text-xs sm:text-sm font-medium">
                     Entry Weight (kg)
                   </FormLabel>
@@ -445,7 +453,7 @@ export function AnimalForm({ rooms, stages }: AnimalFormProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.back()}
+            onClick={() => onCancelCallback ? onCancelCallback() : router.back()}
             className="w-full sm:w-auto px-4 sm:px-6 h-9 sm:h-10 text-xs sm:text-sm order-2 sm:order-1"
           >
             Cancel

@@ -319,7 +319,7 @@ export default async function DashboardPage() {
           <CardContent className="p-4 sm:p-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
-                <Link href="/animals/new">
+                <Link href="/protected/animals ">
                   <Users className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
                   <span className="text-xs sm:text-sm text-center">Register Animal</span>
                 </Link>
