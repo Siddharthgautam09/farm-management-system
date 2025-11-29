@@ -17,7 +17,7 @@ type SlaughterReport = {
   slaughter_weight: number
   carcass_weight: number
   carcass_percentage?: number
-  selling_price: number
+  selling_price?: number
   created_at: string
   animals?: {
     animal_id: string
@@ -115,15 +115,15 @@ export function SlaughterReportsClient({ reports }: SlaughterReportsClientProps)
     if (priceRange !== 'all') {
       switch (priceRange) {
         case 'low':
-          filtered = filtered.filter(report => report.selling_price < 500)
+          filtered = filtered.filter(report => (report.selling_price ?? 0) < 500)
           break
         case 'medium':
           filtered = filtered.filter(report => 
-            report.selling_price >= 500 && report.selling_price <= 1000
+            (report.selling_price ?? 0) >= 500 && (report.selling_price ?? 0) <= 1000
           )
           break
         case 'high':
-          filtered = filtered.filter(report => report.selling_price > 1000)
+          filtered = filtered.filter(report => (report.selling_price ?? 0) > 1000)
           break
       }
     }
@@ -150,10 +150,10 @@ export function SlaughterReportsClient({ reports }: SlaughterReportsClientProps)
         filtered.sort((a, b) => a.slaughter_weight - b.slaughter_weight)
         break
       case 'price-desc':
-        filtered.sort((a, b) => b.selling_price - a.selling_price)
+        filtered.sort((a, b) => (b.selling_price ?? 0) - (a.selling_price ?? 0))
         break
       case 'price-asc':
-        filtered.sort((a, b) => a.selling_price - b.selling_price)
+        filtered.sort((a, b) => (a.selling_price ?? 0) - (b.selling_price ?? 0))
         break
       case 'yield-desc':
         filtered.sort((a, b) => (b.carcass_percentage || 0) - (a.carcass_percentage || 0))
