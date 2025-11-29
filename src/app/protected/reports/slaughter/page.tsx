@@ -61,6 +61,13 @@ export default async function SlaughterReportsPage() {
 
   const displayReports = reports || []
 
+  // Transform reports to match expected types (convert null to undefined)
+  const transformedReports = displayReports.map(report => ({
+    ...report,
+    carcass_percentage: report.carcass_percentage ?? undefined,
+    selling_price: report.selling_price ?? undefined,
+  }))
+
   // Prepare export data
   const exportData = displayReports.map((report) => ({
     'Animal ID': report.animals?.animal_id || report.animal_id,
@@ -163,7 +170,7 @@ export default async function SlaughterReportsPage() {
       {/* Export button moved to header */}
 
       {/* Reports List with Filters */}
-      <SlaughterReportsClient reports={displayReports} />
+      <SlaughterReportsClient reports={transformedReports} />
 
       {/* Debug Info */}
       {reportsError && (

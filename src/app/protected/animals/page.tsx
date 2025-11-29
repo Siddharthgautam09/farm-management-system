@@ -4,12 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/layout/Header'
-import { Plus, Users, MoveRight } from 'lucide-react'
+import { Plus, Users, MoveRight, TrendingUp, Activity, Package, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { AnimalSearch } from '@/components/animals/AnimalSearch'
 import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
 import { AddAnimalModal } from '@/components/animals/AddAnimalModal'
+import { DeleteAnimalButton } from '@/components/animals/DeleteAnimalButton'
+import { AnimalsPageClient } from '@/components/animals/AnimalsPageClient'
 import { getDashboardStats } from '@/actions/dashboard'
 
 export default async function AnimalsPage() {
@@ -61,6 +63,13 @@ export default async function AnimalsPage() {
 
   return (
     <div className="space-y-6">
+      <Header 
+        user={user} 
+        alertCount={alertCount}
+        lowStockItems={stats.lowStockItems}
+        upcomingVaccines={stats.upcomingVaccines}
+      />
+
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="flex-1 text-center">
@@ -71,165 +80,68 @@ export default async function AnimalsPage() {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex justify-between items-end gap-4">
-        <div className="max-w-md flex-1">
-          <AnimalSearch />
+      {/* Statistics Cards - Dashboard Style */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Total Animals</p>
+              <p className="text-2xl font-bold text-gray-900">{totalAnimals}</p>
+            </div>
+            <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Users className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
         </div>
-        <AddAnimalModal rooms={rooms || []} stages={stages || []} />
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Active (Alive)</p>
+              <p className="text-2xl font-bold text-green-600">{aliveAnimals}</p>
+            </div>
+            <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <Activity className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">By Category</p>
+              <div className="text-xs mt-1 space-y-0.5">
+                <div>Beef: <span className="font-bold">{beefAnimals}</span></div>
+                <div>Camel: <span className="font-bold">{camelAnimals}</span></div>
+                <div>Sheep: <span className="font-bold">{sheepAnimals}</span></div>
+                <div>Goat: <span className="font-bold">{goatAnimals}</span></div>
+              </div>
+            </div>
+            <div className="h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Package className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Sold / Deceased</p>
+              <p className="text-2xl font-bold text-orange-600">{soldAnimals} / {deceasedAnimals}</p>
+            </div>
+            <div className="h-12 w-12 bg-orange-100 rounded-lg flex items-center justify-center">
+              <AlertCircle className="h-6 w-6 text-orange-600" />
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Total Animals
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalAnimals}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Active (Alive)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{aliveAnimals}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              By Category
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm space-y-1">
-              <div>Beef: <span className="font-bold">{beefAnimals}</span></div>
-              <div>Camel: <span className="font-bold">{camelAnimals}</span></div>
-              <div>Sheep: <span className="font-bold">{sheepAnimals}</span></div>
-              <div>Goat: <span className="font-bold">{goatAnimals}</span></div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Sold / Deceased
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{soldAnimals} / {deceasedAnimals}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Animals List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Animals</CardTitle>
-          <CardDescription>
-            Click on any animal to view detailed information
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {displayAnimals.length === 0 ? (
-            <div className="text-center py-12">
-              <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 mb-4">No animals found</p>
-              <Button asChild>
-                <Link href="/animals/new">Add Your First Animal</Link>
-              </Button>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-medium text-gray-600">Animal ID</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Category</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Current Stage</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Room</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Entry Date</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Status</th>
-                    <th className="text-left p-3 font-medium text-gray-600">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayAnimals.map((animal) => (
-                    <tr key={animal.id} className="border-b hover:bg-gray-50">
-                      <td className="p-3">
-                        <Link 
-                          href={`/protected/animals/${animal.animal_id}`}
-                          className="font-mono text-blue-600 hover:underline"
-                        >
-                          {animal.animal_id}
-                        </Link>
-                      </td>
-                      <td className="p-3">
-                        <Badge variant="outline" className="capitalize">
-                          {animal.category}
-                        </Badge>
-                      </td>
-                      <td className="p-3">
-                        {animal.current_stage?.display_name || '-'}
-                      </td>
-                      <td className="p-3">
-                        {animal.current_room ? (
-                          <Link 
-                            href={`/protected/rooms/${animal.current_room_id}`}
-                            className="text-blue-600 hover:underline"
-                          >
-                            Room {animal.current_room.identifier}
-                          </Link>
-                        ) : '-'}
-                      </td>
-                      <td className="p-3">
-                        {format(new Date(animal.entry_date), 'MMM dd, yyyy')}
-                      </td>
-                      <td className="p-3">
-                        <Badge 
-                          variant={animal.is_alive ? (animal.is_sold ? 'secondary' : 'default') : 'destructive'}
-                        >
-                          {animal.is_alive ? (animal.is_sold ? 'Sold' : 'Alive') : 'Deceased'}
-                        </Badge>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href={`/protected/animals/${animal.animal_id}`}>
-                              View Details
-                            </Link>
-                          </Button>
-                          {animal.is_alive && !animal.is_sold && (
-                            <MoveAnimalDialog
-                              animalId={animal.id}
-                              currentStageId={animal.current_stage_id!}
-                              stages={stages || []}
-                              rooms={rooms || []}
-                            >
-                              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
-                                <MoveRight className="h-4 w-4" />
-                              </Button>
-                            </MoveAnimalDialog>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Animals List with Filters */}
+      <AnimalsPageClient 
+        animals={displayAnimals}
+        rooms={rooms || []}
+        stages={stages || []}
+      />
     </div>
   )
 }

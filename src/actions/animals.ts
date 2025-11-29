@@ -229,3 +229,69 @@ export async function registerAnimal(data: AnimalRegistrationData) {
     return { error: 'Failed to register animal' }
   }
 }
+
+export async function deleteAnimal(animalId: string) {
+  const supabase = await createClient()
+  
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return { error: 'Unauthorized' }
+  }
+
+  try {
+    // Get animal details before deleting (for room count update)
+    const { data: animal } = await supabase
+      .from('animals')
+      .select('id, current_room_id')
+      .eq('id', animalId)
+      .single()
+
+    if (!animal) {
+      return { error: 'Animal not found' }
+    }
+
+    // Delete animal (cascading deletes will handle related records)
+    const { error: deleteError } = await supabase
+      .from('animals')
+      .delete()
+      .eq('id', animalId)
+
+    if (deleteError) {
+      return { error: deleteError.message }
+    }
+
+    // Update room count if animal was in a room
+    if (animal.current_room_id) {
+      const { error: roomError } = await supabase.rpc('decrement_room_count', {
+        room_id: animal.current_room_id
+      })
+
+      // If RPC fails, try manual count update
+      if (roomError) {
+        const { data: room } = await supabase
+          .from('rooms')
+          .select('current_count')
+          .eq('id', animal.current_room_id)
+          .single()
+        
+        if (room && room.current_count > 0) {
+          await supabase
+            .from('rooms')
+            .update({ 
+              current_count: room.current_count - 1
+            })
+            .eq('id', animal.current_room_id)
+        }
+      }
+    }
+
+    revalidatePath('/animals')
+    revalidatePath('/protected/animals')
+    revalidatePath('/dashboard')
+    
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to delete animal:', error)
+    return { error: 'Failed to delete animal' }
+  }
+}
