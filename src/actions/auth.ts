@@ -49,15 +49,15 @@ export async function signIn(formData: FormData) {
     return { error: error.message }
   }
 
-  revalidatePath('/')
-  redirect('/')
+  revalidatePath('/protected/dashboard')
+  redirect('/protected/dashboard')
 }
 
 export async function signOut() {
   const supabase = await createClient()
   await supabase.auth.signOut()
-  revalidatePath('/')
-  redirect('/login')
+  revalidatePath('/auth/login')
+  redirect('/auth/login')
 }
 
 export async function getUser() {

@@ -156,9 +156,6 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
               </>
             ) : (
               <div className="flex flex-col items-center space-y-3">
-                <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">F</span>
-                </div>
                 {/* Collapse Button - Below logo when collapsed */}
                 {!isMobile && (
                   <Button
@@ -182,6 +179,7 @@ export function Sidebar({ alertCount = 0, lowStockItems = [], upcomingVaccines =
                 <Link
                   key={item.name}
                   href={item.href}
+                  prefetch={true}
                   className={cn(
                     "flex items-center gap-4 rounded-lg font-light transition-all duration-200 group ",
                     isActive
