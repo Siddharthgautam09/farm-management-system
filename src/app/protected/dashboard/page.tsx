@@ -53,7 +53,7 @@ export default async function DashboardPage() {
             <p className="text-gray-600 mt-1 text-sm sm:text-base">Welcome back! Here&apos;s what&apos;s happening on your farm today.</p>
           </div>
           <Button asChild size="sm" className="w-fit">
-            <Link href="/animals/new">
+            <Link href="/protected/animals">
               <Users className="h-4 w-4 mr-2" />
               Add Animal
             </Link>
@@ -325,19 +325,19 @@ export default async function DashboardPage() {
                 </Link>
               </Button>
               <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
-                <Link href="/reports/slaughter/new">
+                <Link href="/protected/reports/slaughter/new">
                   <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
                   <span className="text-xs sm:text-sm text-center">Slaughter Report</span>
                 </Link>
               </Button>
               <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
-                <Link href="/inventory">
+                <Link href="/protected/inventory">
                   <Package className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
                   <span className="text-xs sm:text-sm text-center">Manage Inventory</span>
                 </Link>
               </Button>
               <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
-                <Link href="/reports/cost-analysis">
+                <Link href="/protected/reports/cost-analysis">
                   <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
                   <span className="text-xs sm:text-sm text-center">Cost Analysis</span>
                 </Link>
