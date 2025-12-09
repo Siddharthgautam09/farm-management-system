@@ -325,7 +325,7 @@ export default async function DashboardPage() {
                 </Link>
               </Button>
               <Button asChild variant="outline" className="h-14 sm:h-16 flex-col">
-                <Link href="/protected/reports/slaughter/new">
+                <Link href="/protected/reports/slaughter">
                   <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mb-1 sm:mb-2" />
                   <span className="text-xs sm:text-sm text-center">Slaughter Report</span>
                 </Link>

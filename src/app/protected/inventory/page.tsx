@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertTriangle, Package, Plus, Bell } from 'lucide-react'
+import { AlertTriangle, Package, Bell, DollarSign, TrendingDown, Grid3x3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { BackButton } from '@/components/ui/back-button'
 import {
@@ -11,8 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import Link from 'next/link'
 import { InventoryTable } from '@/components/inventory/InventoryTable'
+import { AddInventoryModal } from '@/components/inventory/AddInventoryModal'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -122,65 +122,71 @@ export default async function InventoryPage() {
             </DropdownMenu>
           )}
           
-          <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
-            <Link href="/protected/inventory/new">
-              <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Add Item</span>
-              <span className="sm:hidden">Add</span>
-            </Link>
-          </Button>
+          <AddInventoryModal />
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-              Total Items
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl sm:text-2xl font-bold">{totalItems}</p>
+        <Card className="border border-gray-200 h-20 sm:h-24">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Total Items
+                </p>
+                <p className="text-xl sm:text-2xl font-bold">{totalItems}</p>
+              </div>
+              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-              Total Value
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl sm:text-2xl font-bold text-green-600 break-words">
-              ${totalValue.toFixed(2)}
-            </p>
+        <Card className="border border-gray-200 h-20 sm:h-24">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Total Value
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-green-600">
+                  ${totalValue.toFixed(2)}
+                </p>
+              </div>
+              <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-400 flex-shrink-0" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-              Low Stock
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl sm:text-2xl font-bold text-red-600">
-              {lowStockItems.length}
-            </p>
+        <Card className="border border-gray-200 h-20 sm:h-24">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Low Stock
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">
+                  {lowStockItems.length}
+                </p>
+              </div>
+              <TrendingDown className="h-6 w-6 sm:h-8 sm:w-8 text-red-400 flex-shrink-0" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-              Categories
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xl sm:text-2xl font-bold">
-              {Object.keys(byCategory).length}
-            </p>
+        <Card className="border border-gray-200 h-20 sm:h-24">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Categories
+                </p>
+                <p className="text-xl sm:text-2xl font-bold">
+                  {Object.keys(byCategory).length}
+                </p>
+              </div>
+              <Grid3x3 className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -199,12 +205,7 @@ export default async function InventoryPage() {
             <div className="text-center py-8 sm:py-12">
               <Package className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
               <p className="text-sm sm:text-base text-gray-500 mb-3 sm:mb-4">No inventory items yet</p>
-              <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
-                <Link href="/protected/inventory/new">
-                  <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-                  Add First Item
-                </Link>
-              </Button>
+              <AddInventoryModal />
             </div>
           )}
         </CardContent>

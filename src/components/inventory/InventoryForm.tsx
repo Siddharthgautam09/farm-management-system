@@ -41,10 +41,11 @@ type InventoryFormValues = z.infer<typeof inventoryFormSchema>
 
 type InventoryFormProps = {
   onSuccess?: () => void
+  onCancel?: () => void
 }
 
 export function InventoryForm(props?: InventoryFormProps) {
-  const { onSuccess } = props || {}
+  const { onSuccess, onCancel } = props || {}
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -276,8 +277,6 @@ export function InventoryForm(props?: InventoryFormProps) {
                       className="h-10 sm:h-11 text-sm sm:text-base"
                     />
                   </FormControl>
-                  <FormDescription className="text-xs sm:text-sm">Alert when quantity falls below</FormDescription>
-                  <FormMessage className="text-xs sm:text-sm" />
                 </FormItem>
               )}
             />
@@ -306,12 +305,23 @@ export function InventoryForm(props?: InventoryFormProps) {
           />
         </div>
 
-        {/* Action Button */}
-        <div className="pt-4 border-t">
+        {/* Action Buttons */}
+        <div className="pt-4 border-t flex gap-3">
+          {onCancel && (
+            <Button 
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="flex-1 h-10 sm:h-11 text-sm sm:text-base"
+            >
+              Cancel
+            </Button>
+          )}
           <Button 
             type="submit" 
             disabled={isSubmitting} 
-            className="w-full h-10 sm:h-11 text-sm sm:text-base"
+            className="flex-1 h-10 sm:h-11 text-sm sm:text-base"
           >
             {isSubmitting ? 'Adding...' : 'Add Inventory Item'}
           </Button>

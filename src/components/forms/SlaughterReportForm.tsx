@@ -26,9 +26,11 @@ type Animal = {
 
 type SlaughterReportFormProps = {
   animals: Animal[]
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
-export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
+export function SlaughterReportForm({ animals, onSuccess, onCancel }: SlaughterReportFormProps) {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -190,10 +192,14 @@ export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
           description: `Slaughter report created successfully! Carcass: ${carcassPercentage}%`,
         })
         
-        // Force a complete page refresh to ensure data is visible
-        setTimeout(() => {
-          window.location.href = '/protected/reports/slaughter'
-        }, 1000)
+        if (onSuccess) {
+          onSuccess()
+        } else {
+          // Force a complete page refresh to ensure data is visible
+          setTimeout(() => {
+            window.location.href = '/protected/reports/slaughter'
+          }, 1000)
+        }
       }
     } catch (error) {
       console.error('❌ Form submission exception:', error)
@@ -398,20 +404,33 @@ export function SlaughterReportForm({ animals }: SlaughterReportFormProps) {
 
       {selectedAnimal && (
         <div className="pt-4 border-t">
-          <Button 
-            type="submit" 
-            disabled={isSubmitting} 
-            className="w-full h-12 text-base font-medium"
-          >
-            {isSubmitting ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                Creating Report...
-              </>
-            ) : (
-              'Create Slaughter Report'
+          <div className="flex gap-3">
+            {onCancel && (
+              <Button 
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+                disabled={isSubmitting}
+                className="flex-1 h-12 text-base font-medium"
+              >
+                Cancel
+              </Button>
             )}
-          </Button>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting} 
+              className={`${onCancel ? 'flex-1' : 'w-full'} h-12 text-base font-medium`}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Creating Report...
+                </>
+              ) : (
+                'Create Slaughter Report'
+              )}
+            </Button>
+          </div>
           
           {/* Debug info - remove in production */}
           <div className="mt-2 text-xs text-gray-500">

@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button'
 import { BackButton } from '@/components/ui/back-button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import Link from 'next/link'
-import { Plus, TrendingUp, DollarSign, Scale, Package, Search, Filter, Calendar } from 'lucide-react'
+import { TrendingUp, DollarSign, Scale, Package, Search, Filter, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/SlaughterExportButton'
 import { SlaughterReportsClient } from '@/components/reports/SlaughterReportsClient'
+import { AddSlaughterReportModal } from '@/components/reports/AddSlaughterReportModal'
 
 type SlaughterReport = Database['public']['Tables']['slaughter_reports']['Row'] & {
   animals?: {
@@ -61,6 +61,12 @@ export default async function SlaughterReportsPage() {
 
   const displayReports = reports || []
 
+  // Fetch animals for the modal
+  const { data: animals } = await supabase
+    .from('animals')
+    .select('id, animal_id, category, entry_weight')
+    .order('animal_id')
+
   // Transform reports to match expected types (convert null to undefined)
   const transformedReports = displayReports.map(report => ({
     ...report,
@@ -98,13 +104,7 @@ export default async function SlaughterReportsPage() {
           <p className="text-xs sm:text-sm text-muted-foreground">Track and manage slaughter transactions</p>
           <div className="flex gap-2 shrink-0">
             <ExportButton data={exportData} />
-            <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
-              <Link href="/protected/reports/slaughter/new">
-                <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">New Report</span>
-                <span className="sm:hidden">New</span>
-              </Link>
-            </Button>
+            <AddSlaughterReportModal animals={animals || []} />
           </div>
         </div>
       </div>

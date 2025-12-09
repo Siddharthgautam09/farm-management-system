@@ -4,7 +4,11 @@ import { useState, useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Search, Trash2 } from 'lucide-react'
+import { deleteInventoryItem } from '@/actions/inventory'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/use-toast'
 
 type InventoryItem = {
   id: string
@@ -27,6 +31,41 @@ export function InventoryTable({ inventory }: InventoryTableProps) {
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('product_name')
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const router = useRouter()
+  const { toast } = useToast()
+
+  const handleDelete = async (id: string, productName: string) => {
+    if (!confirm(`Are you sure you want to delete "${productName}"?`)) {
+      return
+    }
+
+    setDeletingId(id)
+    try {
+      const result = await deleteInventoryItem(id)
+      if (result.error) {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: result.error,
+        })
+      } else {
+        toast({
+          title: 'Success',
+          description: 'Item deleted successfully',
+        })
+        router.refresh()
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete item',
+      })
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   // Filter and sort inventory
   const filteredInventory = useMemo(() => {
@@ -143,7 +182,7 @@ export function InventoryTable({ inventory }: InventoryTableProps) {
         <table className="w-full text-sm text-left">
           <thead className="text-xs uppercase bg-gray-50">
             <tr>
-              <th className="px-6 py-3">Serial Number</th>
+              <th className="px-3 py-3 w-12">#</th>
               <th className="px-6 py-3">Product Name</th>
               <th className="px-6 py-3">Category</th>
               <th className="px-6 py-3">Quantity</th>
@@ -151,18 +190,19 @@ export function InventoryTable({ inventory }: InventoryTableProps) {
               <th className="px-6 py-3">Price/Unit</th>
               <th className="px-6 py-3">Total Value</th>
               <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3 w-24">Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredInventory.length > 0 ? (
-              filteredInventory.map((item) => {
+              filteredInventory.map((item, index) => {
                 const isLowStock = item.quantity <= (item.alert_threshold || 10)
                 const totalValue = item.quantity * (item.price || 0)
 
                 return (
                   <tr key={item.id} className="bg-white border-b hover:bg-gray-50">
-                    <td className="px-6 py-4 font-mono text-xs">
-                      {item.serial_number || 'N/A'}
+                    <td className="px-3 py-4 text-gray-600 font-medium">
+                      {index + 1}
                     </td>
                     <td className="px-6 py-4 font-medium">
                       {item.product_name}
@@ -189,12 +229,23 @@ export function InventoryTable({ inventory }: InventoryTableProps) {
                         <Badge variant="default">In Stock</Badge>
                       )}
                     </td>
+                    <td className="px-6 py-4">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(item.id, item.product_name)}
+                        disabled={deletingId === item.id}
+                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </td>
                   </tr>
                 )
               })
             ) : (
               <tr>
-                <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
                   No items found matching your filters
                 </td>
               </tr>
