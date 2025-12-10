@@ -23,12 +23,29 @@ export default async function WeaningPage() {
   const { data: rooms } = await supabase
     .from('rooms')
     .select(`
-      *,
+      id,
+      identifier,
+      capacity,
+      current_count,
+      stage_id,
       stage:stages(name, display_name)
     `)
     .eq('stage_id', stage.id)
     .eq('is_active', true)
     .order('identifier')
+
+  // Get all rooms for the modal
+  const { data: allRooms } = await supabase
+    .from('rooms')
+    .select('*')
+    .eq('is_active', true)
+    .order('identifier')
+
+  // Get all stages for the modal
+  const { data: stages } = await supabase
+    .from('stages')
+    .select('*')
+    .order('name')
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -52,7 +69,12 @@ export default async function WeaningPage() {
         </Button>
       </div>
 
-      <RoomGrid rooms={rooms || []} stageName="weaning" />
+      <RoomGrid 
+        rooms={rooms || []} 
+        stageName="weaning" 
+        allRooms={allRooms || []}
+        stages={stages || []}
+      />
     </div>
   )
 }
