@@ -46,9 +46,11 @@ type AnimalFormProps = {
   stages: Stage[];
   onSuccessCallback?: () => void;
   onCancelCallback?: () => void;
+  initialStageId?: string;
+  initialRoomId?: string;
 };
 
-export function AnimalForm({ rooms, stages, onSuccessCallback, onCancelCallback }: AnimalFormProps) {
+export function AnimalForm({ rooms, stages, onSuccessCallback, onCancelCallback, initialStageId, initialRoomId }: AnimalFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,8 +66,8 @@ export function AnimalForm({ rooms, stages, onSuccessCallback, onCancelCallback 
       entry_weight: undefined,
       age_months: undefined,
       purchase_price: undefined,
-      initial_room_id: "",
-      initial_stage_id: "",
+      initial_room_id: initialRoomId || "",
+      initial_stage_id: initialStageId || "",
     },
   });
 
