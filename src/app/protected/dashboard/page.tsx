@@ -38,15 +38,8 @@ export default async function DashboardPage() {
     (stats.lowStockItems?.length || 0) + (stats.upcomingVaccines?.length || 0);
 
   return (
-    <div className="space-y-4">
-      <Header
-        user={user}
-        alertCount={alertCount}
-        lowStockItems={stats.lowStockItems}
-        upcomingVaccines={stats.upcomingVaccines}
-      />
-      {/* Header */}
-      <div className="mb-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="mb-6 px-3">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Farm Dashboard</h1>
@@ -62,18 +55,18 @@ export default async function DashboardPage() {
       </div>
       
       {/* Animal Statistics */}
-      <div className="mb-8">
+      <div className="mb-8 px-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           <Card className="border border-gray-200 h-20 sm:h-24">
             <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  <p className="text-xs sm:text-sm font-medium mb-1 truncate text-black ">
                     Total Animals
                   </p>
                   <p className="text-xl sm:text-2xl font-bold">{stats.totalAnimals}</p>
                 </div>
-                <Users className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+                <Users className="h-6 w-6 sm:h-8 sm:w-8 text-green-400 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
@@ -82,10 +75,10 @@ export default async function DashboardPage() {
             <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  <p className="text-xs sm:text-sm font-medium mb-1 truncate text-black">
                     Active Animals
                   </p>
-                  <p className="text-xl sm:text-2xl font-bold text-green-600">
+                  <p className="text-xl sm:text-2xl font-bold text-black">
                     {stats.aliveAnimals}
                   </p>
                 </div>
@@ -98,10 +91,10 @@ export default async function DashboardPage() {
             <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  <p className="text-xs sm:text-sm font-medium text-black mb-1 truncate">
                     Animals Sold
                   </p>
-                  <p className="text-xl sm:text-2xl font-bold text-blue-600">
+                  <p className="text-xl sm:text-2xl font-bold text-black">
                     {stats.soldAnimals}
                   </p>
                 </div>
@@ -114,8 +107,8 @@ export default async function DashboardPage() {
             <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">Deaths</p>
-                  <p className="text-xl sm:text-2xl font-bold text-red-600">
+                  <p className="text-xs sm:text-sm font-medium text-black mb-1 truncate">Deaths</p>
+                  <p className="text-xl sm:text-2xl font-bold text-black">
                     {stats.deceasedAnimals}
                   </p>
                 </div>
@@ -124,18 +117,18 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className={`border border-gray-200 h-20 sm:h-24 ${financial.profitLoss >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+          <Card className={`border border-gray-200 h-20 sm:h-24 ${financial.profitLoss >= 0 ? "bg-white" : "bg-white"}`}>
             <CardContent className="p-3 sm:p-4 h-full">
               <div className="flex items-center justify-between h-full">
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  <p className="text-xs sm:text-sm font-medium text-black mb-1 truncate">
                     Profit/Loss
                   </p>
-                  <p className={`text-lg sm:text-2xl font-bold ${financial.profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
+                  <p className={`text-lg sm:text-2xl font-bold ${financial.profitLoss >= 0 ? "text-black" : "text-black"}`}>
                     ${Math.abs(financial.profitLoss).toFixed(2)}
                   </p>
                 </div>
-                <DollarSign className={`h-6 w-6 sm:h-8 sm:w-8 ${financial.profitLoss >= 0 ? "text-green-400" : "text-red-400"} flex-shrink-0`} />
+                <DollarSign className={`h-6 w-6 sm:h-8 sm:w-8 ${financial.profitLoss >= 0 ? "text-green-400" : "text-red-500"} flex-shrink-0`} />
               </div>
             </CardContent>
           </Card>
@@ -143,7 +136,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Animals by Stage & Category */}
-      <div className="mb-8">
+      <div className="mb-8 px-3">
         <h2 className="text-lg sm:text-xl font-bold mb-4">Animal Distribution</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <Card className="border border-gray-200">
