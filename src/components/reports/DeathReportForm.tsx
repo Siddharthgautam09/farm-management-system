@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createDeathReport } from '@/actions/reports'
 import { Button } from '@/components/ui/button'
@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
+import { Search, Filter } from 'lucide-react'
 
 const deathFormSchema = z.object({
   animal_id: z.string().min(1, 'Animal is required'),
@@ -43,6 +44,8 @@ type Animal = {
 
 type DeathReportFormProps = {
   animals: Animal[]
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
 const deathCauses = [
@@ -54,10 +57,27 @@ const deathCauses = [
   'Other',
 ]
 
-export function DeathReportForm({ animals }: DeathReportFormProps) {
+export function DeathReportForm({ animals, onSuccess, onCancel }: DeathReportFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('all')
+
+  // Get unique categories
+  const categories = useMemo(() => {
+    return Array.from(new Set(animals.map(animal => animal.category)))
+  }, [animals])
+
+  // Filter animals based on search and category
+  const filteredAnimals = useMemo(() => {
+    return animals.filter(animal => {
+      const matchesSearch = searchQuery === '' || 
+        animal.animal_id.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesCategory = categoryFilter === 'all' || animal.category === categoryFilter
+      return matchesSearch && matchesCategory
+    })
+  }, [animals, searchQuery, categoryFilter])
 
   const form = useForm<DeathFormValues>({
     resolver: zodResolver(deathFormSchema),
@@ -88,8 +108,12 @@ export function DeathReportForm({ animals }: DeathReportFormProps) {
           title: 'Success',
           description: 'Death report created successfully',
         })
-        router.push('/protected/reports/death')
-        router.refresh()
+        if (onSuccess) {
+          onSuccess()
+        } else {
+          router.push('/protected/reports/death')
+          router.refresh()
+        }
       }
     } catch (error) {
       console.error('Death report submission error:', error)
@@ -112,6 +136,34 @@ export function DeathReportForm({ animals }: DeathReportFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Animal *</FormLabel>
+              
+              {/* Search and Filter */}
+              <div className="flex gap-2 mb-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Search by Animal ID..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 h-9"
+                  />
+                </div>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-[140px] h-9">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        <span className="capitalize">{category}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -119,11 +171,17 @@ export function DeathReportForm({ animals }: DeathReportFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {animals.map((animal) => (
-                    <SelectItem key={animal.id} value={animal.id}>
-                      {animal.animal_id} ({animal.category})
-                    </SelectItem>
-                  ))}
+                  {filteredAnimals.length > 0 ? (
+                    filteredAnimals.map((animal) => (
+                      <SelectItem key={animal.id} value={animal.id}>
+                        {animal.animal_id} ({animal.category})
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="py-6 text-center text-sm text-gray-500">
+                      No animals found matching filters
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -187,9 +245,22 @@ export function DeathReportForm({ animals }: DeathReportFormProps) {
           )}
         />
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? 'Creating...' : 'Create Death Report'}
-        </Button>
+        <div className="flex gap-3">
+          {onCancel && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          )}
+          <Button type="submit" disabled={isSubmitting} className={onCancel ? 'flex-1' : 'w-full'}>
+            {isSubmitting ? 'Creating...' : 'Create Death Report'}
+          </Button>
+        </div>
       </form>
     </Form>
   )

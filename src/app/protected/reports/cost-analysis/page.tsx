@@ -137,79 +137,80 @@ export default async function CostAnalysisPage() {
       {/* Overall Financial Summary */}
       <div>
         <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Financial Summary</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Total Investment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold break-words">${totalInvestment.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">{totalAnimals} animals</p>
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Total Investment
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold">${totalInvestment.toFixed(2)}</p>
+                </div>
+                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Active Investment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-blue-600 break-words">
-                ${activeInvestment.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">{activeAnimals} animals</p>
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Active Investment
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-blue-600">${activeInvestment.toFixed(2)}</p>
+                </div>
+                <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Total Revenue
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-green-600 break-words">
-                ${totalRevenue.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">{totalAnimalsSold} sold</p>
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Total Revenue
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-green-600">${totalRevenue.toFixed(2)}</p>
+                </div>
+                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-green-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">
-                Death Losses
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-red-600 break-words">
-                ${totalDeathLoss.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">{totalDeaths} deaths</p>
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Death Losses
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-red-600">${totalDeathLoss.toFixed(2)}</p>
+                </div>
+                <TrendingDown className="h-6 w-6 sm:h-8 sm:w-8 text-red-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card className={netProfitLoss >= 0 ? 'bg-green-50' : 'bg-red-50'}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-1 sm:gap-2">
+          <Card className={`border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow ${netProfitLoss >= 0 ? 'bg-green-50' : 'bg-red-50'}`}>
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Net {netProfitLoss >= 0 ? 'Profit' : 'Loss'}
+                  </p>
+                  <p className={`text-xl sm:text-2xl font-bold ${netProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    ${Math.abs(netProfitLoss).toFixed(2)}
+                  </p>
+                </div>
                 {netProfitLoss >= 0 ? (
-                  <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-600 shrink-0" />
+                  <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-green-400 flex-shrink-0" />
                 ) : (
-                  <TrendingDown className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-600 shrink-0" />
+                  <TrendingDown className="h-6 w-6 sm:h-8 sm:w-8 text-red-400 flex-shrink-0" />
                 )}
-                <span className="truncate">Net {netProfitLoss >= 0 ? 'Profit' : 'Loss'}</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className={`text-xl sm:text-2xl font-bold break-words ${netProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                ${Math.abs(netProfitLoss).toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {netProfitLoss >= 0 ? 'Positive' : 'Negative'}
-              </p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -218,58 +219,60 @@ export default async function CostAnalysisPage() {
       {/* Operating Costs Breakdown */}
       <div>
         <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Operating Costs</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <ShoppingBag className="h-4 w-4 shrink-0" />
-                <span className="truncate">Feeding Costs</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold break-words">${totalFeedingCost.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">All feed types</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Feeding Costs
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold">${totalFeedingCost.toFixed(2)}</p>
+                </div>
+                <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Pill className="h-4 w-4 shrink-0" />
-                <span className="truncate">Medicine Costs</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold break-words">${totalMedicineCost.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">All treatments</p>
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Medicine Costs
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold">${totalMedicineCost.toFixed(2)}</p>
+                </div>
+                <Pill className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Syringe className="h-4 w-4 shrink-0" />
-                <span className="truncate">Vaccine Costs</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold break-words">${totalVaccineCost.toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">All vaccinations</p>
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Vaccine Costs
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold">${totalVaccineCost.toFixed(2)}</p>
+                </div>
+                <Syringe className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-orange-50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Package className="h-4 w-4 shrink-0" />
-                <span className="truncate">Total Operating</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl sm:text-2xl font-bold text-orange-600 break-words">
-                ${totalOperatingCost.toFixed(2)}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">All expenses</p>
+          <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+            <CardContent className="p-3 sm:p-4 h-full">
+              <div className="flex items-center justify-between h-full">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                    Total Operating
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-orange-600">${totalOperatingCost.toFixed(2)}</p>
+                </div>
+                <Package className="h-6 w-6 sm:h-8 sm:w-8 text-orange-400 flex-shrink-0" />
+              </div>
             </CardContent>
           </Card>
         </div>

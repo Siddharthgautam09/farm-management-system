@@ -1,13 +1,12 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { BackButton } from '@/components/ui/back-button'
-import Link from 'next/link'
-import { Plus, Skull, DollarSign, TrendingDown, Calendar, AlertTriangle } from 'lucide-react'
+import { Skull, DollarSign, TrendingDown, Calendar, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Database } from '@/lib/types/database.types'
 import { ExportButton } from '@/components/reports/ExportButton'
+import { AddDeathReportModal } from '@/components/reports/AddDeathReportModal'
 
 type DeathReport = Database['public']['Tables']['death_reports']['Row'] & {
   animals?: {
@@ -59,6 +58,12 @@ export default async function DeathReportsPage() {
 
   const displayReports = reports || []
 
+  // Fetch animals for the modal
+  const { data: animals } = await supabase
+    .from('animals')
+    .select('id, animal_id, category')
+    .order('animal_id')
+
   // Calculate total loss
   const totalLoss = displayReports.reduce((sum: number, r: DeathReport) => 
     sum + (r.animals?.purchase_price || 0), 0
@@ -96,67 +101,73 @@ export default async function DeathReportsPage() {
               data={exportData} 
               filename="death-reports"
             />
-            <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
-              <Link href="/protected/reports/death/new">
-                <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">New Report</span>
-                <span className="sm:hidden">New</span>
-              </Link>
-            </Button>
+            <AddDeathReportModal animals={animals || []} />
           </div>
         </div>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Reports</CardTitle>
-            <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold">{displayReports.length}</div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">All time</p>
+        <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Total Reports
+                </p>
+                <p className="text-xl sm:text-2xl font-bold">{displayReports.length}</p>
+              </div>
+              <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 flex-shrink-0" />
+            </div>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Total Loss</CardTitle>
-            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-red-600">
-              ${totalLoss.toFixed(2)}
+        <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Total Loss
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">
+                  ${totalLoss.toFixed(2)}
+                </p>
+              </div>
+              <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-red-400 flex-shrink-0" />
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Financial impact</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">Avg Loss</CardTitle>
-            <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-orange-600">
-              ${displayReports.length > 0 ? (totalLoss / displayReports.length).toFixed(2) : '0.00'}
+        <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  Avg Loss
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-orange-600">
+                  ${displayReports.length > 0 ? (totalLoss / displayReports.length).toFixed(2) : '0.00'}
+                </p>
+              </div>
+              <TrendingDown className="h-6 w-6 sm:h-8 sm:w-8 text-orange-400 flex-shrink-0" />
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Per incident</p>
           </CardContent>
         </Card>
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs sm:text-sm font-medium text-gray-600">This Month</CardTitle>
-            <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold text-purple-600">
-              {displayReports.filter((r: DeathReport) => {
-                const reportDate = new Date(r.death_date)
-                const now = new Date()
-                return reportDate.getMonth() === now.getMonth() && reportDate.getFullYear() === now.getFullYear()
-              }).length}
+        <Card className="border border-gray-200 h-20 sm:h-24 hover:shadow-md transition-shadow">
+          <CardContent className="p-3 sm:p-4 h-full">
+            <div className="flex items-center justify-between h-full">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">
+                  This Month
+                </p>
+                <p className="text-xl sm:text-2xl font-bold text-purple-600">
+                  {displayReports.filter((r: DeathReport) => {
+                    const reportDate = new Date(r.death_date)
+                    const now = new Date()
+                    return reportDate.getMonth() === now.getMonth() && reportDate.getFullYear() === now.getFullYear()
+                  }).length}
+                </p>
+              </div>
+              <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-purple-400 flex-shrink-0" />
             </div>
-            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Recent cases</p>
           </CardContent>
         </Card>
       </div>
@@ -176,12 +187,7 @@ export default async function DeathReportsPage() {
                 <Skull className="h-8 w-8 sm:h-10 sm:w-10 text-red-400" />
               </div>
               <p className="text-sm sm:text-base text-muted-foreground mb-4">No death reports found</p>
-              <Button asChild className="h-9 sm:h-10 text-sm sm:text-base">
-                <Link href="/protected/reports/death/new">
-                  <Plus className="h-4 w-4 mr-1 sm:mr-2" />
-                  Create your first report
-                </Link>
-              </Button>
+              <AddDeathReportModal animals={animals || []} />
             </div>
           ) : (
             <div className="overflow-x-auto -mx-3 sm:mx-0">

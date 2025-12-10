@@ -44,7 +44,7 @@ export default async function ReceivingPage() {
           <p className="text-sm sm:text-base text-gray-600 mt-1">Rooms A-E</p>
         </div>
         <Button asChild className="w-auto h-10 sm:h-11 text-sm sm:text-base shrink-0">
-          <Link href="/animals/new">
+          <Link href="/protected/animals">
             <Plus className="h-4 w-4 mr-1 sm:mr-2" />
             <span className="hidden sm:inline">Add Animal</span>
             <span className="sm:hidden">Add</span>
