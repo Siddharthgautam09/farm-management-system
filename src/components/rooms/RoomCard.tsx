@@ -72,7 +72,7 @@ export function RoomCard({ room }: RoomCardProps) {
             className="flex-1 h-9 text-xs sm:text-sm"
             asChild
           >
-            <Link href="/animals/new">
+            <Link href="/protected/animals">
               <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               Add
             </Link>
