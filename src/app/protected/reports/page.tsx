@@ -183,7 +183,7 @@ export default async function ReportsPage() {
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">About Reports</h3>
               <p className="text-sm text-gray-700 leading-relaxed">
-                Access comprehensive reports to track your farm's performance. Monitor slaughter house operations, 
+                Access comprehensive reports to track your farm&apos;s performance. Monitor slaughter house operations, 
                 analyze mortality rates, and get detailed cost breakdowns. All reports can be exported for further analysis 
                 and record-keeping purposes.
               </p>
