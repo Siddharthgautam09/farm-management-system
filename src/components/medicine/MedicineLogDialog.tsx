@@ -13,10 +13,12 @@ import { MedicineLogForm } from '@/components/animals/MedicineLogForm'
 
 type MedicineLogDialogProps = {
   animalId: string
+  roomId: string
+  stageId: string
   children: React.ReactNode
 }
 
-export function MedicineLogDialog({ animalId, children }: MedicineLogDialogProps) {
+export function MedicineLogDialog({ animalId, roomId, stageId, children }: MedicineLogDialogProps) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -31,6 +33,8 @@ export function MedicineLogDialog({ animalId, children }: MedicineLogDialogProps
         </DialogHeader>
         <MedicineLogForm 
           animalId={animalId}
+          roomId={roomId}
+          stageId={stageId}
           onSuccess={() => setOpen(false)}
         />
       </DialogContent>

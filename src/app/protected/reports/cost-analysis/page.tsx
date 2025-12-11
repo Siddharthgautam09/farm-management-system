@@ -56,23 +56,29 @@ export default async function CostAnalysisPage() {
   // ==========================================
   const { data: feedingLogs } = await supabase
     .from('feeding_logs')
-    .select('feed_type, mcr_quantity, mcr_price, concentrate_quantity, concentrate_price, bale_quantity, bale_price, premix_quantity, premix_price')
+    .select('feed_type, daily_use, mcr_price, concentrate_price, bale_price, premix_price')
 
   const feedingCostsByType = feedingLogs?.reduce((acc: Record<string, number>, log) => {
-    // Calculate cost based on feed type
+    // Calculate cost based on feed type and daily_use
     let cost = 0
-    if (log.mcr_quantity && log.mcr_price) {
-      cost += log.mcr_quantity * log.mcr_price
+    const quantity = log.daily_use || 0
+    
+    switch (log.feed_type) {
+      case 'mcr':
+        cost = quantity * (log.mcr_price || 0)
+        break
+      case 'concentrated_feed':
+        cost = quantity * (log.concentrate_price || 0)
+        break
+      case 'alfa_alfa':
+      case 'hay':
+        cost = quantity * (log.bale_price || 0)
+        break
+      case 'premix':
+        cost = quantity * (log.premix_price || 0)
+        break
     }
-    if (log.concentrate_quantity && log.concentrate_price) {
-      cost += log.concentrate_quantity * log.concentrate_price
-    }
-    if (log.bale_quantity && log.bale_price) {
-      cost += log.bale_quantity * log.bale_price
-    }
-    if (log.premix_quantity && log.premix_price) {
-      cost += log.premix_quantity * log.premix_price
-    }
+    
     acc[log.feed_type] = (acc[log.feed_type] || 0) + cost
     return acc
   }, {} as Record<string, number>) || {}
@@ -100,17 +106,26 @@ export default async function CostAnalysisPage() {
   // ==========================================
   const { data: vaccineLogs } = await supabase
     .from('vaccine_logs')
-    .select('vaccine_price')
+    .select('vaccine_dose, vaccine_price, vaccine_volume')
 
   const totalVaccineCost = vaccineLogs?.reduce(
-    (sum, log) => sum + (log.vaccine_price || 0), 0
+    (sum, log) => {
+      // Calculate cost: (vaccine_price / vaccine_volume) * vaccine_dose
+      // If vaccine_volume is not set, just use vaccine_price
+      const doseCost = log.vaccine_volume && log.vaccine_volume > 0
+        ? (log.vaccine_price || 0) / log.vaccine_volume * (log.vaccine_dose || 0)
+        : (log.vaccine_price || 0)
+      return sum + doseCost
+    }, 0
   ) || 0
 
   // ==========================================
   // 7. TOTAL COSTS & PROFIT/LOSS
   // ==========================================
   const totalOperatingCost = totalFeedingCost + totalMedicineCost + totalVaccineCost
-  const netProfitLoss = totalRevenue - (totalInvestment - activeInvestment + totalDeathLoss)
+  const totalCostOfSoldAnimals = (totalInvestment - activeInvestment) // Purchase price of sold animals
+  const totalExpenses = totalCostOfSoldAnimals + totalOperatingCost + totalDeathLoss
+  const netProfitLoss = totalRevenue - totalExpenses
 
   // Per-animal costs
   const avgCostPerAnimal = activeAnimals > 0 ? totalOperatingCost / activeAnimals : 0
@@ -215,6 +230,63 @@ export default async function CostAnalysisPage() {
           </Card>
         </div>
       </div>
+
+      {/* Detailed Breakdown */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base sm:text-lg">Profit & Loss Statement</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Complete financial breakdown</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {/* Revenue Section */}
+            <div className="border-b pb-3">
+              <p className="text-sm font-semibold text-green-600 mb-2">REVENUE</p>
+              <div className="flex justify-between text-sm">
+                <span>Sales Revenue ({totalAnimalsSold} animals)</span>
+                <span className="font-semibold">${totalRevenue.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Expenses Section */}
+            <div className="border-b pb-3">
+              <p className="text-sm font-semibold text-red-600 mb-2">EXPENSES</p>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between">
+                  <span className="pl-2">Cost of Sold Animals</span>
+                  <span>${totalCostOfSoldAnimals.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="pl-2">Feeding Costs</span>
+                  <span>${totalFeedingCost.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="pl-2">Medicine Costs</span>
+                  <span>${totalMedicineCost.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="pl-2">Vaccine Costs</span>
+                  <span>${totalVaccineCost.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="pl-2">Death Losses</span>
+                  <span>${totalDeathLoss.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between font-semibold pt-2 border-t">
+                  <span>Total Expenses</span>
+                  <span>${totalExpenses.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Net Result */}
+            <div className={`flex justify-between text-base font-bold ${netProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <span>NET {netProfitLoss >= 0 ? 'PROFIT' : 'LOSS'}</span>
+              <span>${Math.abs(netProfitLoss).toFixed(2)}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Operating Costs Breakdown */}
       <div>

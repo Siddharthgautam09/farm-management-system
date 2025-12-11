@@ -42,7 +42,7 @@ export async function addMedicineLog(data: MedicineLogData) {
     return { error: error.message }
   }
 
-  revalidatePath('/medicine')
+  revalidatePath('/protected/animals')
   return { success: true, medicine: medicineLog }
 }
 

@@ -13,10 +13,12 @@ import { VaccineLogForm } from '@/components/animals/VaccineLogForm'
 
 type VaccineLogDialogProps = {
   animalId: string
+  roomId: string
+  stageId: string
   children: React.ReactNode
 }
 
-export function VaccineLogDialog({ animalId, children }: VaccineLogDialogProps) {
+export function VaccineLogDialog({ animalId, roomId, stageId, children }: VaccineLogDialogProps) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -31,6 +33,8 @@ export function VaccineLogDialog({ animalId, children }: VaccineLogDialogProps) 
         </DialogHeader>
         <VaccineLogForm 
           animalId={animalId}
+          roomId={roomId}
+          stageId={stageId}
           onSuccess={() => setOpen(false)}
         />
       </DialogContent>

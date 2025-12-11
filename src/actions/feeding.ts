@@ -55,7 +55,7 @@ export async function addFeedingLog(data: FeedingLogData) {
     return { error: error.message }
   }
 
-  revalidatePath('/feeding')
+  revalidatePath('/protected/animals')
   return { success: true, feeding: feedingLog }
 }
 

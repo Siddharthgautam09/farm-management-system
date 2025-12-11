@@ -32,10 +32,12 @@ type VaccineFormValues = z.infer<typeof vaccineFormSchema>
 
 type VaccineLogFormProps = {
   animalId: string
+  roomId: string
+  stageId: string
   onSuccess?: () => void
 }
 
-export function VaccineLogForm({ animalId, onSuccess }: VaccineLogFormProps) {
+export function VaccineLogForm({ animalId, roomId, stageId, onSuccess }: VaccineLogFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -57,8 +59,8 @@ export function VaccineLogForm({ animalId, onSuccess }: VaccineLogFormProps) {
     try {
       const result = await addVaccineLog({
         animal_id: animalId,
-        room_id: '', // You may need to pass room_id as a prop
-        stage_id: '', // You may need to pass stage_id as a prop
+        room_id: roomId,
+        stage_id: stageId,
         vaccine_name: values.vaccine_name,
         vaccine_dose: 1,
         vaccine_price: values.vaccine_cost,
@@ -80,11 +82,12 @@ export function VaccineLogForm({ animalId, onSuccess }: VaccineLogFormProps) {
         router.refresh()
         onSuccess?.()
       }
-    } catch {
+    } catch (error) {
+      console.error('Vaccine log error:', error)
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to add vaccine log',
+        description: error instanceof Error ? error.message : 'Failed to add vaccine log',
       })
     } finally {
       setIsSubmitting(false)

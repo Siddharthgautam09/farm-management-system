@@ -238,8 +238,12 @@ export default async function AnimalDetailPage({
                   Feeding logs for Room {animal.current_room?.identifier}
                 </CardDescription>
               </div>
-              {animal.is_alive && !animal.is_sold && (
-                <FeedingLogDialog animalId={animal.id}>
+              {animal.is_alive && !animal.is_sold && animal.current_room_id && animal.current_stage_id && (
+                <FeedingLogDialog 
+                  animalId={animal.id}
+                  roomId={animal.current_room_id}
+                  stageId={animal.current_stage_id}
+                >
                   <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Feeding Log</Button>
                 </FeedingLogDialog>
               )}
@@ -266,8 +270,12 @@ export default async function AnimalDetailPage({
                   Treatment history and costs
                 </CardDescription>
               </div>
-              {animal.is_alive && !animal.is_sold && (
-                <MedicineLogDialog animalId={animal.id}>
+              {animal.is_alive && !animal.is_sold && animal.current_room_id && animal.current_stage_id && (
+                <MedicineLogDialog 
+                  animalId={animal.id}
+                  roomId={animal.current_room_id}
+                  stageId={animal.current_stage_id}
+                >
                   <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Medicine Record</Button>
                 </MedicineLogDialog>
               )}
@@ -290,8 +298,12 @@ export default async function AnimalDetailPage({
                   Vaccination history with dose schedules
                 </CardDescription>
               </div>
-              {animal.is_alive && !animal.is_sold && (
-                <VaccineLogDialog animalId={animal.id}>
+              {animal.is_alive && !animal.is_sold && animal.current_room_id && animal.current_stage_id && (
+                <VaccineLogDialog 
+                  animalId={animal.id}
+                  roomId={animal.current_room_id}
+                  stageId={animal.current_stage_id}
+                >
                   <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Vaccine Record</Button>
                 </VaccineLogDialog>
               )}

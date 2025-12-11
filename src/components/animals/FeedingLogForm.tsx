@@ -38,10 +38,12 @@ type FeedingFormValues = z.infer<typeof feedingFormSchema>
 
 type FeedingLogFormProps = {
   animalId: string
+  roomId: string
+  stageId: string
   onSuccess?: () => void
 }
 
-export function FeedingLogForm({ animalId, onSuccess }: FeedingLogFormProps) {
+export function FeedingLogForm({ animalId, roomId, stageId, onSuccess }: FeedingLogFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -60,17 +62,37 @@ export function FeedingLogForm({ animalId, onSuccess }: FeedingLogFormProps) {
   async function onSubmit(values: FeedingFormValues) {
     setIsSubmitting(true)
     try {
-      const result = await addFeedingLog({
-        room_id: animalId,
-        stage_id: '',
+      // Prepare the data based on feed type
+      const baseData = {
+        room_id: roomId,
+        stage_id: stageId,
         feed_type: values.feed_type,
-        daily_use: values.quantity,
+        daily_use: values.quantity!,
         date_of_use: values.date,
-        mcr_price: values.cost_per_unit,
-        concentrate_price: values.cost_per_unit,
-        bale_price: values.cost_per_unit,
-        premix_price: values.cost_per_unit,
-      })
+      }
+
+      // Add the appropriate price field based on feed type
+      let feedingData: any = { ...baseData }
+      
+      if (values.cost_per_unit !== undefined) {
+        switch (values.feed_type) {
+          case 'mcr':
+            feedingData.mcr_price = values.cost_per_unit
+            break
+          case 'concentrated_feed':
+            feedingData.concentrate_price = values.cost_per_unit
+            break
+          case 'alfa_alfa':
+          case 'hay':
+            feedingData.bale_price = values.cost_per_unit
+            break
+          case 'premix':
+            feedingData.premix_price = values.cost_per_unit
+            break
+        }
+      }
+
+      const result = await addFeedingLog(feedingData)
 
       if (result.error) {
         toast({
@@ -87,11 +109,12 @@ export function FeedingLogForm({ animalId, onSuccess }: FeedingLogFormProps) {
         router.refresh()
         onSuccess?.()
       }
-    } catch {
+    } catch (error) {
+      console.error('Feeding log error:', error)
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to add feeding log',
+        description: error instanceof Error ? error.message : 'Failed to add feeding log',
       })
     } finally {
       setIsSubmitting(false)

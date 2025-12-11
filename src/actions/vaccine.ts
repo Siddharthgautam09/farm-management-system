@@ -50,7 +50,7 @@ export async function addVaccineLog(data: VaccineLogData) {
     return { error: error.message }
   }
 
-  revalidatePath('/vaccine')
+  revalidatePath('/protected/animals')
   return { success: true, vaccine: vaccineLog }
 }
 

@@ -33,10 +33,12 @@ type MedicineFormValues = z.infer<typeof medicineFormSchema>
 
 type MedicineLogFormProps = {
   animalId: string
+  roomId: string
+  stageId: string
   onSuccess?: () => void
 }
 
-export function MedicineLogForm({ animalId, onSuccess }: MedicineLogFormProps) {
+export function MedicineLogForm({ animalId, roomId, stageId, onSuccess }: MedicineLogFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -59,8 +61,8 @@ export function MedicineLogForm({ animalId, onSuccess }: MedicineLogFormProps) {
     try {
       const result = await addMedicineLog({
         animal_id: animalId,
-        room_id: '', // You may need to pass room_id as a prop
-        stage_id: '', // You may need to pass stage_id as a prop
+        room_id: roomId,
+        stage_id: stageId,
         drug_name: values.drug_name,
         drug_type: 'ml' as const,
         drug_dose: values.dosage,
@@ -84,11 +86,12 @@ export function MedicineLogForm({ animalId, onSuccess }: MedicineLogFormProps) {
         router.refresh()
         onSuccess?.()
       }
-    } catch {
+    } catch (error) {
+      console.error('Medicine log error:', error)
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to add medicine log',
+        description: error instanceof Error ? error.message : 'Failed to add medicine log',
       })
     } finally {
       setIsSubmitting(false)
