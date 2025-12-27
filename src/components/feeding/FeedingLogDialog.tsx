@@ -12,13 +12,12 @@ import {
 import { FeedingLogForm } from '@/components/animals/FeedingLogForm'
 
 type FeedingLogDialogProps = {
-  animalId: string
   roomId: string
   stageId: string
   children: React.ReactNode
 }
 
-export function FeedingLogDialog({ animalId, roomId, stageId, children }: FeedingLogDialogProps) {
+export function FeedingLogDialog({ roomId, stageId, children }: FeedingLogDialogProps) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -32,7 +31,6 @@ export function FeedingLogDialog({ animalId, roomId, stageId, children }: Feedin
           </DialogDescription>
         </DialogHeader>
         <FeedingLogForm 
-          animalId={animalId}
           roomId={roomId}
           stageId={stageId}
           onSuccess={() => setOpen(false)}

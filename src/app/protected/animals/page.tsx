@@ -1,18 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Header } from '@/components/layout/Header'
-import { Plus, Users, MoveRight, TrendingUp, Activity, Package, AlertCircle } from 'lucide-react'
-import Link from 'next/link'
-import { format } from 'date-fns'
-import { AnimalSearch } from '@/components/animals/AnimalSearch'
-import { MoveAnimalDialog } from '@/components/animals/MoveAnimalDialog'
-import { AddAnimalModal } from '@/components/animals/AddAnimalModal'
-import { DeleteAnimalButton } from '@/components/animals/DeleteAnimalButton'
+import { Users, Activity, Package, AlertCircle } from 'lucide-react'
 import { AnimalsPageClient } from '@/components/animals/AnimalsPageClient'
-import { getDashboardStats } from '@/actions/dashboard'
 
 export default async function AnimalsPage() {
   const supabase = await createClient()
@@ -21,10 +10,6 @@ export default async function AnimalsPage() {
   if (!user) {
     redirect('/login')
   }
-
-  // Get alert count
-  const stats = await getDashboardStats()
-  const alertCount = (stats.lowStockItems?.length || 0) + (stats.upcomingVaccines?.length || 0)
 
   // Fetch all animals with their current stage and room
   const { data: animals, error } = await supabase

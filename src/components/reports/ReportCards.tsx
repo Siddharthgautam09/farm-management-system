@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
-import { ShoppingCart, Skull, DollarSign, BarChart3, ArrowRight, Loader2, LucideIcon } from 'lucide-react'
+import { ShoppingCart, Skull, DollarSign, ArrowRight, Loader2, LucideIcon } from 'lucide-react'
 
 type ReportCategory = {
   title: string

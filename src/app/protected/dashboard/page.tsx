@@ -9,7 +9,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/layout/Header";
 import {
   Users,
   DollarSign,
@@ -32,10 +31,6 @@ export default async function DashboardPage() {
 
   const stats = await getDashboardStats();
   const financial = await getFinancialSummary();
-
-  // Calculate total alerts
-  const alertCount =
-    (stats.lowStockItems?.length || 0) + (stats.upcomingVaccines?.length || 0);
 
   return (
     <div className="space-y-4 sm:space-y-6">

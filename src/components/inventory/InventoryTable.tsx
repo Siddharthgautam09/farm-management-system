@@ -56,7 +56,7 @@ export function InventoryTable({ inventory }: InventoryTableProps) {
         })
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: 'Error',

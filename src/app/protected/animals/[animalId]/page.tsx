@@ -277,7 +277,6 @@ export default async function AnimalDetailPage({
               </div>
               {animal.is_alive && !animal.is_sold && animal.current_room_id && animal.current_stage_id && (
                 <FeedingLogDialog 
-                  animalId={animal.id}
                   roomId={animal.current_room_id}
                   stageId={animal.current_stage_id}
                 >

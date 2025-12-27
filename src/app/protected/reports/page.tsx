@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { BackButton } from '@/components/ui/back-button'
-import { FileText, Skull, ShoppingCart, DollarSign, TrendingUp, BarChart3 } from 'lucide-react'
+import { FileText, Skull, ShoppingCart, TrendingUp, BarChart3 } from 'lucide-react'
 import { ReportCards } from '@/components/reports/ReportCards'
 
 export default async function ReportsPage() {

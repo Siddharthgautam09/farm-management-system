@@ -36,14 +36,13 @@ const feedingFormSchema = z.object({
 
 type FeedingFormValues = z.infer<typeof feedingFormSchema>
 
-type FeedingLogFormProps = {
-  animalId: string
+interface FeedingLogFormProps {
   roomId: string
   stageId: string
   onSuccess?: () => void
 }
 
-export function FeedingLogForm({ animalId, roomId, stageId, onSuccess }: FeedingLogFormProps) {
+export function FeedingLogForm({ roomId, stageId, onSuccess }: FeedingLogFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -72,7 +71,7 @@ export function FeedingLogForm({ animalId, roomId, stageId, onSuccess }: Feeding
       }
 
       // Add the appropriate price field based on feed type
-      let feedingData: any = { ...baseData }
+      const feedingData = { ...baseData } as Record<string, unknown>
       
       if (values.cost_per_unit !== undefined) {
         switch (values.feed_type) {
@@ -92,7 +91,7 @@ export function FeedingLogForm({ animalId, roomId, stageId, onSuccess }: Feeding
         }
       }
 
-      const result = await addFeedingLog(feedingData)
+      const result = await addFeedingLog(feedingData as Parameters<typeof addFeedingLog>[0])
 
       if (result.error) {
         toast({

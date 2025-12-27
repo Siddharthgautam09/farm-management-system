@@ -22,7 +22,6 @@ export default async function CostAnalysisPage() {
   const totalInvestment = animals?.reduce((sum, a) => sum + (a.purchase_price || 0), 0) || 0
   const activeInvestment = animals?.filter(a => a.is_alive && !a.is_sold)
     .reduce((sum, a) => sum + (a.purchase_price || 0), 0) || 0
-  const totalAnimals = animals?.length || 0
   const activeAnimals = animals?.filter(a => a.is_alive && !a.is_sold).length || 0
 
   // ==========================================
@@ -49,7 +48,6 @@ export default async function CostAnalysisPage() {
     }, 
     0
   ) || 0
-  const totalDeaths = deathReports?.length || 0
 
   // ==========================================
   // 4. FEEDING COSTS
