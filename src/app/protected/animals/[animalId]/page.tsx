@@ -94,96 +94,104 @@ export default async function AnimalDetailPage({
   const vaccineData = vaccineLogs.data || []
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-normal  gap-3 sm:gap-4">
-        <div className="flex items-center gap-2 sm:gap-4">
+      <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="flex items-start gap-3 sm:gap-4">
           <BackButton 
             href="/protected/animals"
             variant="ghost"
             size="icon"
-            className="h-9 w-9 sm:h-10 sm:w-10 shrink-0"
+            className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 mt-0.5"
           />
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate">{animal.animal_id}</h1>
-            <p className="text-xs sm:text-sm text-gray-600 truncate">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold break-words">
+              {animal.animal_id}
+            </h1>
+            <p className="text-xs sm:text-sm md:text-base text-gray-600 mt-1 break-words">
               {animal.category.charAt(0).toUpperCase() + animal.category.slice(1)} •{' '}
               {animal.current_stage?.display_name} • Room {animal.current_room?.identifier}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          {animal.is_alive && !animal.is_sold && (
-            <MoveAnimalDialog
-              animalId={animal.id}
-              currentStageId={animal.current_stage_id!}
-              stages={stages || []}
-              rooms={rooms || []}
-            >
-              <Button variant="outline" className="h-9 sm:h-10 text-sm sm:text-base w-full sm:w-auto">
-                <MoveRight className="h-4 w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Move Animal</span>
-                <span className="sm:hidden">Move</span>
-              </Button>
-            </MoveAnimalDialog>
-          )}
-        </div>
+        {animal.is_alive && !animal.is_sold && (
+          <MoveAnimalDialog
+            animalId={animal.id}
+            currentStageId={animal.current_stage_id!}
+            stages={stages || []}
+            rooms={rooms || []}
+          >
+            <Button variant="outline" className="h-10 sm:h-11 text-sm sm:text-base w-full sm:w-auto sm:self-start">
+              <MoveRight className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              Move Animal
+            </Button>
+          </MoveAnimalDialog>
+        )}
       </div>
 
       {/* Animal Info Card */}
-      <Card>
-        <CardHeader className="pb-3 sm:pb-4">
-          <CardTitle className="text-lg sm:text-xl">Animal Information</CardTitle>
-          <CardDescription className="text-xs sm:text-sm">Basic details about this animal</CardDescription>
+      <Card className="overflow-hidden">
+        <CardHeader className="pb-4 sm:pb-6">
+          <CardTitle className="text-lg sm:text-xl md:text-2xl">Animal Information</CardTitle>
+          <CardDescription className="text-xs sm:text-sm md:text-base">
+            Basic details about this animal
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Category</p>
-              <Badge variant="default" className="capitalize text-xs sm:text-sm">
+        <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Category</p>
+              <Badge variant="default" className="capitalize text-xs sm:text-sm px-2.5 py-1">
                 {animal.category}
               </Badge>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Entry Date</p>
-              <p className="text-sm sm:text-base font-medium">
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Entry Date</p>
+              <p className="text-sm sm:text-base font-medium break-words">
                 {format(new Date(animal.entry_date), 'MMM dd, yyyy')}
               </p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Incoming Company</p>
-              <p className="text-sm sm:text-base font-medium truncate">{animal.incoming_company || '-'}</p>
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Incoming Company</p>
+              <p className="text-sm sm:text-base font-medium break-words">
+                {animal.incoming_company || '-'}
+              </p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Old Calf Number</p>
-              <p className="text-sm sm:text-base font-medium truncate">{animal.old_calf_number || '-'}</p>
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Old Calf Number</p>
+              <p className="text-sm sm:text-base font-medium break-words">
+                {animal.old_calf_number || '-'}
+              </p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Entry Weight</p>
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Entry Weight</p>
               <p className="text-sm sm:text-base font-medium">
                 {animal.entry_weight ? `${animal.entry_weight} kg` : '-'}
               </p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Age (at entry)</p>
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Age (at entry)</p>
               <p className="text-sm sm:text-base font-medium">
                 {animal.age_months ? `${animal.age_months} months` : '-'}
               </p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Purchase Price</p>
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Purchase Price</p>
               <p className="text-sm sm:text-base font-medium break-words">
                 {animal.purchase_price ? `$${animal.purchase_price.toFixed(2)}` : '-'}
               </p>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Status</p>
-              <Badge variant={animal.is_alive ? 'default' : 'destructive'} className="text-xs sm:text-sm">
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Status</p>
+              <Badge 
+                variant={animal.is_alive ? 'default' : 'destructive'} 
+                className="text-xs sm:text-sm px-2.5 py-1"
+              >
                 {animal.is_alive ? (animal.is_sold ? 'Sold' : 'Alive') : 'Deceased'}
               </Badge>
             </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600 mb-1">Days on Farm</p>
+            <div className="space-y-1.5">
+              <p className="text-xs sm:text-sm text-gray-600">Days on Farm</p>
               <p className="text-sm sm:text-base font-medium">
                 {Math.floor((new Date().getTime() - new Date(animal.entry_date).getTime()) / (1000 * 60 * 60 * 24))} days
               </p>
@@ -194,21 +202,48 @@ export default async function AnimalDetailPage({
 
       {/* Tabs for different sections */}
       <Tabs defaultValue="weights" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 h-auto">
-          <TabsTrigger value="weights" className="text-xs sm:text-sm py-2 sm:py-2.5">Weights</TabsTrigger>
-          <TabsTrigger value="feeding" className="text-xs sm:text-sm py-2 sm:py-2.5">Feeding</TabsTrigger>
-          <TabsTrigger value="medicine" className="text-xs sm:text-sm py-2 sm:py-2.5">Medicine</TabsTrigger>
-          <TabsTrigger value="vaccine" className="text-xs sm:text-sm py-2 sm:py-2.5">Vaccine</TabsTrigger>
-          <TabsTrigger value="movements" className="text-xs sm:text-sm py-2 sm:py-2.5">Movements</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+          <TabsList className="inline-flex w-full sm:grid sm:grid-cols-5 h-auto min-w-max sm:min-w-0">
+            <TabsTrigger 
+              value="weights" 
+              className="text-xs sm:text-sm py-2 px-3 sm:px-4 whitespace-nowrap"
+            >
+              Weights
+            </TabsTrigger>
+            <TabsTrigger 
+              value="feeding" 
+              className="text-xs sm:text-sm py-2 px-3 sm:px-4 whitespace-nowrap"
+            >
+              Feeding
+            </TabsTrigger>
+            <TabsTrigger 
+              value="medicine" 
+              className="text-xs sm:text-sm py-2 px-3 sm:px-4 whitespace-nowrap"
+            >
+              Medicine
+            </TabsTrigger>
+            <TabsTrigger 
+              value="vaccine" 
+              className="text-xs sm:text-sm py-2 px-3 sm:px-4 whitespace-nowrap"
+            >
+              Vaccine
+            </TabsTrigger>
+            <TabsTrigger 
+              value="movements" 
+              className="text-xs sm:text-sm py-2 px-3 sm:px-4 whitespace-nowrap"
+            >
+              Movements
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* Weight History Tab */}
-        <TabsContent value="weights" className="space-y-3 sm:space-y-4 mt-4">
+        <TabsContent value="weights" className="space-y-4 mt-4">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 sm:pb-4">
-              <div className="flex-1">
-                <CardTitle className="text-lg sm:text-xl">Weight Records</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
+            <CardHeader className="flex flex-col gap-3 pb-4 sm:pb-6">
+              <div className="space-y-1.5">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl">Weight Records</CardTitle>
+                <CardDescription className="text-xs sm:text-sm md:text-base">
                   Track weight changes throughout the lifecycle
                 </CardDescription>
               </div>
@@ -218,11 +253,13 @@ export default async function AnimalDetailPage({
                   currentStageId={animal.current_stage_id!}
                   currentRoomId={animal.current_room_id!}
                 >
-                  <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Weight</Button>
+                  <Button className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base">
+                    Add Weight
+                  </Button>
                 </WeightEntryDialog>
               )}
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
               <WeightHistory weights={sortedWeights} />
             </CardContent>
           </Card>
@@ -231,10 +268,10 @@ export default async function AnimalDetailPage({
         {/* Feeding Tab */}
         <TabsContent value="feeding" className="mt-4">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 sm:pb-4">
-              <div className="flex-1">
-                <CardTitle className="text-lg sm:text-xl">Feeding Records</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
+            <CardHeader className="flex flex-col gap-3 pb-4 sm:pb-6">
+              <div className="space-y-1.5">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl">Feeding Records</CardTitle>
+                <CardDescription className="text-xs sm:text-sm md:text-base">
                   Feeding logs for Room {animal.current_room?.identifier}
                 </CardDescription>
               </div>
@@ -244,15 +281,17 @@ export default async function AnimalDetailPage({
                   roomId={animal.current_room_id}
                   stageId={animal.current_stage_id}
                 >
-                  <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Feeding Log</Button>
+                  <Button className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base">
+                    Add Feeding Log
+                  </Button>
                 </FeedingLogDialog>
               )}
             </CardHeader>
-            <CardContent className="p-3 sm:p-6">
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
               {feedingData && feedingData.length > 0 ? (
                 <FeedingLogsList logs={feedingData} />
               ) : (
-                <p className="text-center text-sm sm:text-base text-gray-500 py-6 sm:py-8">
+                <p className="text-center text-sm sm:text-base text-gray-500 py-8 sm:py-12">
                   No feeding records for this room yet
                 </p>
               )}
@@ -263,10 +302,10 @@ export default async function AnimalDetailPage({
         {/* Medicine Tab */}
         <TabsContent value="medicine" className="mt-4">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 sm:pb-4">
-              <div className="flex-1">
-                <CardTitle className="text-lg sm:text-xl">Medicine Records</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
+            <CardHeader className="flex flex-col gap-3 pb-4 sm:pb-6">
+              <div className="space-y-1.5">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl">Medicine Records</CardTitle>
+                <CardDescription className="text-xs sm:text-sm md:text-base">
                   Treatment history and costs
                 </CardDescription>
               </div>
@@ -276,14 +315,14 @@ export default async function AnimalDetailPage({
                   roomId={animal.current_room_id}
                   stageId={animal.current_stage_id}
                 >
-                  <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Medicine Record</Button>
+                  <Button className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base">
+                    Add Medicine Record
+                  </Button>
                 </MedicineLogDialog>
               )}
             </CardHeader>
-            <CardContent>
-              <MedicineHistory 
-                logs={medicineData}
-              />
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+              <MedicineHistory logs={medicineData} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -291,10 +330,10 @@ export default async function AnimalDetailPage({
         {/* Vaccine Tab */}
         <TabsContent value="vaccine" className="mt-4">
           <Card>
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 sm:pb-4">
-              <div className="flex-1">
-                <CardTitle className="text-lg sm:text-xl">Vaccine Records</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
+            <CardHeader className="flex flex-col gap-3 pb-4 sm:pb-6">
+              <div className="space-y-1.5">
+                <CardTitle className="text-lg sm:text-xl md:text-2xl">Vaccine Records</CardTitle>
+                <CardDescription className="text-xs sm:text-sm md:text-base">
                   Vaccination history with dose schedules
                 </CardDescription>
               </div>
@@ -304,28 +343,28 @@ export default async function AnimalDetailPage({
                   roomId={animal.current_room_id}
                   stageId={animal.current_stage_id}
                 >
-                  <Button className="w-full sm:w-auto h-9 sm:h-10 text-sm sm:text-base">Add Vaccine Record</Button>
+                  <Button className="w-full sm:w-auto h-10 sm:h-11 text-sm sm:text-base">
+                    Add Vaccine Record
+                  </Button>
                 </VaccineLogDialog>
               )}
             </CardHeader>
-            <CardContent>
-              <VaccineHistory 
-                logs={vaccineData}
-              />
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+              <VaccineHistory logs={vaccineData} />
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Movements Tab */}
-        <TabsContent value="movements" className="mt-4">
-          <Card>
-            <CardHeader className="pb-3 sm:pb-4">
-              <CardTitle className="text-lg sm:text-xl">Movement History</CardTitle>
-              <CardDescription className="text-xs sm:text-sm">
+        <TabsContent value="movements" className="mt-3 sm:mt-4">
+          <Card className="overflow-hidden">
+            <CardHeader className="p-4 pb-3 sm:p-6 sm:pb-4">
+              <CardTitle className="text-lg sm:text-xl md:text-2xl">Movement History</CardTitle>
+              <CardDescription className="text-xs sm:text-sm md:text-base">
                 Track all room and stage changes
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-3 sm:p-6">
+            <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
               {animal.movements && animal.movements.length > 0 ? (
                 <div className="space-y-3 sm:space-y-4">
                   {animal.movements
@@ -344,31 +383,29 @@ export default async function AnimalDetailPage({
                     }) => (
                       <div
                         key={movement.id}
-                        className="flex items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-gray-50"
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                       >
-                        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-                          <div className="text-xs sm:text-sm min-w-0">
-                            <p className="font-medium text-sm sm:text-base">
-                              {format(
-                                new Date(movement.movement_date),
-                                'MMM dd, yyyy HH:mm'
-                              )}
-                            </p>
-                            <p className="text-gray-600 mt-1 break-words">
-                              {movement.from_stage
-                                ? `${movement.from_stage.display_name} (Room ${movement.from_room?.identifier})`
-                                : 'Entry'}
-                              {' → '}
-                              {movement.to_stage?.display_name ?? 'Unknown'} (Room{' '}
-                              {movement.to_room?.identifier ?? 'Unknown'})
-                            </p>
-                          </div>
+                        <div className="flex flex-col gap-1.5 min-w-0">
+                          <p className="font-medium text-sm sm:text-base">
+                            {format(
+                              new Date(movement.movement_date),
+                              'MMM dd, yyyy HH:mm'
+                            )}
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600 break-words">
+                            {movement.from_stage
+                              ? `${movement.from_stage.display_name} (Room ${movement.from_room?.identifier})`
+                              : 'Entry'}
+                            {' → '}
+                            {movement.to_stage?.display_name ?? 'Unknown'} (Room{' '}
+                            {movement.to_room?.identifier ?? 'Unknown'})
+                          </p>
                         </div>
                       </div>
                     ))}
                 </div>
               ) : (
-                <p className="text-center text-sm sm:text-base text-gray-500 py-6 sm:py-8">
+                <p className="text-center text-sm sm:text-base text-gray-500 py-8 sm:py-12">
                   No movement history yet
                 </p>
               )}

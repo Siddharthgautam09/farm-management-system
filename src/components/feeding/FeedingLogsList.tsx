@@ -43,17 +43,15 @@ export function FeedingLogsList({ logs }: FeedingLogsListProps) {
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
+    <div className="relative overflow-x-auto rounded-md border">
+      <div className="min-w-[680px]">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Feed Type</TableHead>
             <TableHead>Company</TableHead>
             <TableHead>Daily Use</TableHead>
-            <TableHead>Daily Cost</TableHead>
-            <TableHead>Avg per Animal</TableHead>
-            <TableHead>Cost per Animal</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -71,19 +69,11 @@ export function FeedingLogsList({ logs }: FeedingLogsListProps) {
               <TableCell className="font-medium">
                 {log.daily_use?.toFixed(2) || '0.00'}
               </TableCell>
-              <TableCell>
-                ${log.dailyCost?.toFixed(2) || '0.00'}
-              </TableCell>
-              <TableCell>
-                {log.averageConsume?.toFixed(2) || '0.00'}
-              </TableCell>
-              <TableCell>
-                ${log.calfConsumeCost?.toFixed(2) || '0.00'}
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </div>
     </div>
   )
 }

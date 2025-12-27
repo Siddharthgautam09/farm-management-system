@@ -159,7 +159,6 @@ export function AnimalDetailTabs({
                       <th className="px-6 py-3">Date</th>
                       <th className="px-6 py-3">Feed Type</th>
                       <th className="px-6 py-3">Daily Use</th>
-                      <th className="px-6 py-3">Daily Cost</th>
                       <th className="px-6 py-3">Notes</th>
                     </tr>
                   </thead>
@@ -173,9 +172,6 @@ export function AnimalDetailTabs({
                           </Badge>
                         </td>
                         <td className="px-6 py-4">{log.daily_use} kg</td>
-                        <td className="px-6 py-4 font-semibold text-green-600">
-                          ${((log.daily_use || 0) * (log.mcr_price || log.concentrate_price || log.bale_price || 0)).toFixed(2)}
-                        </td>
                         <td className="px-6 py-4 text-gray-600">{log.notes || '-'}</td>
                       </tr>
                     ))}

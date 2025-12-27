@@ -65,8 +65,9 @@ export function MedicineHistory({ logs, totalCost }: MedicineHistoryProps) {
       )}
 
       {/* Medicine Table */}
-      <div className="rounded-md border">
-        <Table>
+      <div className="relative overflow-x-auto rounded-md border">
+        <div className="min-w-[760px]">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
@@ -119,7 +120,8 @@ export function MedicineHistory({ logs, totalCost }: MedicineHistoryProps) {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+          </Table>
+        </div>
       </div>
 
       {/* Total Cost Summary */}

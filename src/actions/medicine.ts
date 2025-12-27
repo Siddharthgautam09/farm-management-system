@@ -42,7 +42,9 @@ export async function addMedicineLog(data: MedicineLogData) {
     return { error: error.message }
   }
 
+  // Refresh animals and cost analysis pages
   revalidatePath('/protected/animals')
+  revalidatePath('/protected/reports/cost-analysis')
   return { success: true, medicine: medicineLog }
 }
 

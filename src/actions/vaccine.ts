@@ -50,7 +50,9 @@ export async function addVaccineLog(data: VaccineLogData) {
     return { error: error.message }
   }
 
+  // Refresh animals and cost analysis pages
   revalidatePath('/protected/animals')
+  revalidatePath('/protected/reports/cost-analysis')
   return { success: true, vaccine: vaccineLog }
 }
 

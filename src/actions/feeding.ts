@@ -55,7 +55,9 @@ export async function addFeedingLog(data: FeedingLogData) {
     return { error: error.message }
   }
 
+  // Refresh animals and cost analysis pages
   revalidatePath('/protected/animals')
+  revalidatePath('/protected/reports/cost-analysis')
   return { success: true, feeding: feedingLog }
 }
 

@@ -70,8 +70,9 @@ export function VaccineHistory({ logs, totalCost }: VaccineHistoryProps) {
       )}
 
       {/* Vaccine Table */}
-      <div className="rounded-md border">
-        <Table>
+      <div className="relative overflow-x-auto rounded-md border">
+        <div className="min-w-[720px]">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Vaccine Name</TableHead>
@@ -136,7 +137,8 @@ export function VaccineHistory({ logs, totalCost }: VaccineHistoryProps) {
               )
             })}
           </TableBody>
-        </Table>
+          </Table>
+        </div>
       </div>
 
       {/* Total Cost Summary */}

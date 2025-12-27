@@ -47,8 +47,9 @@ export function WeightHistory({ weights }: WeightHistoryProps) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border">
-        <Table>
+      <div className="relative overflow-x-auto rounded-md border">
+        <div className="min-w-[720px]">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
@@ -124,7 +125,8 @@ export function WeightHistory({ weights }: WeightHistoryProps) {
               )
             })}
           </TableBody>
-        </Table>
+          </Table>
+        </div>
       </div>
 
       {/* Weight Statistics */}
