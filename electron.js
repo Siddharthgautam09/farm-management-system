@@ -1,8 +1,9 @@
-const { app, BrowserWindow, Menu, shell, dialog, ipcMain } = require("electron");
+const { app, BrowserWindow, Menu, shell, dialog, ipcMain, Notification } = require("electron");
 const path = require("path");
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 let mainWindow;
+let isAppOnline = true;
 
 // Platform-specific configurations
 const isWindows = process.platform === 'win32';
@@ -232,3 +233,39 @@ ipcMain.handle('get-platform', () => ({
   isLinux,
   isDev
 }));
+
+// Window controls
+ipcMain.handle('window-minimize', () => {
+  if (mainWindow) mainWindow.minimize();
+});
+
+ipcMain.handle('window-maximize', () => {
+  if (mainWindow) {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  }
+});
+
+ipcMain.handle('window-close', () => {
+  if (mainWindow) mainWindow.close();
+});
+
+// Show notification
+ipcMain.handle('show-notification', (event, { title, body }) => {
+  if (Notification.isSupported()) {
+    const notification = new Notification({
+      title,
+      body
+    });
+    notification.show();
+  }
+  return true;
+});
+
+// Check online status
+ipcMain.handle('check-online', () => {
+  return isAppOnline;
+});

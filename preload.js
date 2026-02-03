@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require("electron");
+import { contextBridge, ipcRenderer } from "electron";
 
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
@@ -29,4 +29,19 @@ contextBridge.exposeInMainWorld("electronAPI", {
   
   // System notifications
   showNotification: (title, body) => ipcRenderer.invoke('show-notification', { title, body }),
+  
+  // Offline/Online status
+  isOnline: () => navigator.onLine,
+  onOnlineStatusChange: (callback) => {
+    window.addEventListener('online', () => callback(true))
+    window.addEventListener('offline', () => callback(false))
+  },
+  
+  // IndexedDB storage info
+  getStorageEstimate: async () => {
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+      return await navigator.storage.estimate()
+    }
+    return null
+  }
 });
