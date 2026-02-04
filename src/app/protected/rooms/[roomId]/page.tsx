@@ -70,8 +70,8 @@ export default async function RoomDetailPage({
   const utilizationRate = room.capacity ? (totalAnimals / room.capacity) * 100 : 0
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href={`/${room.stage.name}`}>
             <ArrowLeft className="h-4 w-4" />
@@ -81,14 +81,14 @@ export default async function RoomDetailPage({
           <h1 className="text-3xl font-bold">
             Room {room.identifier}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mt-1 sm:mt-0">
             {room.stage.display_name} • {room.current_count}/{room.capacity} animals
           </p>
         </div>
       </div>
 
       {/* Room Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
@@ -145,14 +145,14 @@ export default async function RoomDetailPage({
 
       {/* Animals List */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0">
           <div>
             <CardTitle>Animals in this Room</CardTitle>
             <CardDescription>
               Current animals housed in Room {room.identifier} with latest updates
             </CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap items-center">
             {animals && animals.length > 0 && (
               <Button variant="outline" asChild>
                 <Link href={`/protected/reports?room=${roomId}`}>
@@ -172,12 +172,12 @@ export default async function RoomDetailPage({
         <CardContent>
           {animals && animals.length > 0 ? (
             <div className="space-y-4">
-              {animals.map((animal) => {
+                {animals.map((animal) => {
                 const latestWeight = animal.weights?.[0]
                 
                 return (
                   <div key={animal.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-col md:flex-row items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <Link 
@@ -244,8 +244,8 @@ export default async function RoomDetailPage({
                           )}
                         </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2 ml-4">
+
+                      <div className="flex items-center gap-2 mt-4 md:mt-0 ml-0 md:ml-4">
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/protected/animals/${animal.animal_id}`}>
                             <Eye className="h-3 w-3 mr-1" />
@@ -258,7 +258,7 @@ export default async function RoomDetailPage({
                 )
               })}
               
-              {/* Bulk Actions */}
+              {/* Bulk Actions
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <h4 className="font-medium mb-3">Bulk Actions for All Animals</h4>
                 <div className="flex flex-wrap gap-2">
@@ -287,7 +287,7 @@ export default async function RoomDetailPage({
                     </Link>
                   </Button>
                 </div>
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="text-center py-8">

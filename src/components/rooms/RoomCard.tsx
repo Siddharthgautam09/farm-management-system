@@ -43,6 +43,7 @@ type RoomCardProps = {
 export function RoomCard({ room, rooms = [], stages = [] }: RoomCardProps) {
   const router = useRouter()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLoadingView, setIsLoadingView] = useState(false)
   const occupancyRate = (room.current_count / room.capacity) * 100
   
   const handleSuccess = () => {
@@ -85,10 +86,26 @@ export function RoomCard({ room, rooms = [], stages = [] }: RoomCardProps) {
             variant="outline"
             size="sm"
             className="flex-1 h-9 text-xs sm:text-sm"
-            onClick={() => router.push(`/rooms/${room.id}`)}
+            onClick={async () => {
+              try {
+                setIsLoadingView(true)
+                await router.push(`/rooms/${room.id}`)
+              } catch (e) {
+                // navigation failed, reset loading
+                setIsLoadingView(false)
+              }
+            }}
+            disabled={isLoadingView}
           >
-            <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-            View
+            {isLoadingView ? (
+              // rotating circle loader
+              <span className="inline-block mr-1">
+                <span className="block h-3 w-3 sm:h-4 sm:w-4 rounded-full border-2 border-gray-300 border-t-transparent animate-spin" />
+              </span>
+            ) : (
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+            )}
+            {isLoadingView ? 'Loading' : 'View'}
           </Button>
           <Button
             variant="default"

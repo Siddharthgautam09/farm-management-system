@@ -110,16 +110,16 @@ export default async function NewAnimalPage() {
   }
 
   return (
-    <div className="container mx-auto py-4 sm:py-6 px-4 sm:px-6 max-w-7xl">
+    <div className="container mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3">
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
           <BackButton href="/protected/animals" />
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Register New Animal</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold break-words">Register New Animal</h1>
         </div>
       </div>
 
       <Card className="w-full">
-        <CardHeader className="px-4 sm:px-6">
+        <CardHeader className="px-4 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <CardTitle className="text-lg sm:text-xl">Animal Information</CardTitle>
           <CardDescription className="text-sm sm:text-base">
             Fill in the details below to register a new animal

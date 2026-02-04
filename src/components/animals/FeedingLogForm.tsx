@@ -31,6 +31,7 @@ const feedingFormSchema = z.object({
   quantity: z.number().positive('Quantity must be positive'),
   date: z.string().min(1, 'Date is required'),
   cost_per_unit: z.number().optional(),
+  company_name: z.string().optional(),
   notes: z.string().optional(),
 })
 
@@ -54,6 +55,7 @@ export function FeedingLogForm({ roomId, stageId, onSuccess }: FeedingLogFormPro
       quantity: undefined,
       date: new Date().toISOString().split('T')[0],
       cost_per_unit: undefined,
+      company_name: '',
       notes: '',
     },
   })
@@ -68,6 +70,7 @@ export function FeedingLogForm({ roomId, stageId, onSuccess }: FeedingLogFormPro
         feed_type: values.feed_type,
         daily_use: values.quantity!,
         date_of_use: values.date,
+        company_name: values.company_name || undefined,
       }
 
       // Add the appropriate price field based on feed type
@@ -203,6 +206,23 @@ export function FeedingLogForm({ roomId, stageId, onSuccess }: FeedingLogFormPro
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="company_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Company Name</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter company name..."
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}
